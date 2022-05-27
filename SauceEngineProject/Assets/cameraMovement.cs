@@ -6,15 +6,11 @@ public class cameraMovement : MonoBehaviour
 {
     public controlCfg cfg;
     float mousePitch = 0;
-    private GameObject Player;
 
-    void Start()
-    {
-        Player = GameObject.Find("Player");
+    void Start(){
     }
 
-    void LateUpdate()
-    {
+    void LateUpdate(){
         // aim pitch
         float mouseY = (-cfg.sens * Input.GetAxis("Mouse Y"));
         mousePitch += mouseY;

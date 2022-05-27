@@ -197,31 +197,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - name: Jump
-    clip: {fileID: 8300000, guid: c6a985ad7e882104693db8658b319715, type: 3}
+    clip: {fileID: 8300000, guid: bc2a6bda70beb5d4cbc557ed3b4a82e5, type: 3}
     volume: 0.661
     pitch: 1
     source: {fileID: 0}
     loop: 0
-  - name: Surf
+  - name: Surfloop
     clip: {fileID: 8300000, guid: 74d892d97a1a88240994042fc72f0fc7, type: 3}
     volume: 0.613
     pitch: 1
     source: {fileID: 0}
     loop: 1
-  - name: SurfEnter
+  - name: Surfenter
     clip: {fileID: 8300000, guid: 290a8494d096309419329081016e7ee7, type: 3}
     volume: 0.545
     pitch: 1
     source: {fileID: 0}
     loop: 0
-  - name: SurfRelease
+  - name: Surfrelease
     clip: {fileID: 8300000, guid: 38f8970fe197a4048865fbe4ef7128bf, type: 3}
     volume: 0.545
     pitch: 1
     source: {fileID: 0}
     loop: 0
   - name: Slip
-    clip: {fileID: 8300000, guid: a0dd8ded53fe7244b8e6796fc824059f, type: 3}
+    clip: {fileID: 8300000, guid: 51387c8217348844eb8a95a2471d5567, type: 3}
     volume: 0.545
     pitch: 1
     source: {fileID: 0}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,6 +46,7 @@ public class playerMovement : MonoBehaviour
     bool isSurfing = false;
     bool isOnSlope = false;
     bool surfExecuted = false;
+    bool unsloped = false;
     bool isCrouching = false;
     bool isSliding = false;
 
@@ -53,7 +55,6 @@ public class playerMovement : MonoBehaviour
     Vector3 velocity;
     
     RaycastHit hit;
-    bool tryingToStand = false;
 
     // Start is called before the first frame update
     void Start()
@@ -190,7 +191,6 @@ public class playerMovement : MonoBehaviour
 
         // speed limit
         velocityXZ = new Vector3(velocity.x, 0, velocity.z);
-        float AVAngle = Vector3.Angle(accelXZ, velocity);
         float AVproj = Vector3.Dot(velocityXZ, accelXZ);
 
         if (!isOnGround)
@@ -240,17 +240,17 @@ public class playerMovement : MonoBehaviour
                 }
             }
 
-            if (hit.distance <= cc.height / 2 + player.gThreshold + 0.5 && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkLimit)
+            if (hit.distance <= cc.height / 2 + player.gThreshold + 0.5 && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkLimit - 1)
             {
                 //player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
+                //vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun
                 isSurfing = true;
                 isOnSlope = true;
+                unsloped = false;
                 if (!surfExecuted)
                 {
-                    FindObjectOfType<AudioManager>().Play("Surf");
-                    FindObjectOfType<AudioManager>().Play("SurfEnter");
-                    FindObjectOfType<AudioManager>().Stop("Slip");
                     surfExecuted = true;
+                    GameEvents.current.playerSurfEnter(this);
                 }
 
             }
@@ -258,36 +258,37 @@ public class playerMovement : MonoBehaviour
             {
                 isOnSlope = true;
                 isSurfing = false;
+                unsloped = false;
 
                 if (surfExecuted)
                 {
-                    FindObjectOfType<AudioManager>().Play("Slip");
+                    GameEvents.current.playerSlipEnter(this);
                     surfExecuted = false;
                 }
-
-
-                FindObjectOfType<AudioManager>().Stop("Surf");
             }
             else
             {
                 isOnSlope = false;
                 isSurfing = false;
+                if (!unsloped){
+                    unsloped = true;
+                    GameEvents.current.playerUnslope(this);
+                }
+
                 if (surfExecuted)
                 {
-                    FindObjectOfType<AudioManager>().Play("SurfRelease");
+                    GameEvents.current.playerUnsurf(this);
                     surfExecuted = false;
                 }
-                FindObjectOfType<AudioManager>().Stop("Surf");
-                FindObjectOfType<AudioManager>().Stop("Slip");
             }
         }
 
 
-        // - SLIP (prevets players from using the base air control speed to just float up ramps if they aren't surfing)
-        if (isOnSlope && !isSurfing && velocity.y > -0.5)
+        // - SLIP (prevets players from using the base air control speed to just float up ramps if they aren't surfing because that feels weird)
+        if (isOnSlope && !isSurfing && velocity.y > -1)
         {
             float slip = velocityXZ.magnitude * Time.deltaTime * 20;
-            Vector3 slipVector = Vector3.Lerp(-transform.up, hit.normal, 0.3F) * slip;
+            Vector3 slipVector = Vector3.Lerp(-transform.up, hit.normal, 0.4F) * slip;
             velocity = velocity + slipVector;
         }
 
@@ -366,16 +367,16 @@ public class playerMovement : MonoBehaviour
         {
             onCrouchInput();
             crouchExited = false;
-            tryingToStand = true;
+            isCrouching = true;
         }
-        else if (Physics.Raycast(transform.position + cc.center, transform.up, out roofHit) && roofHit.distance <= player.height && tryingToStand) //stops player from getting up while in too small of a space
+        else if (Physics.Raycast(transform.position + cc.center, transform.up, out roofHit) && roofHit.distance <= player.height && isCrouching) //stops player from getting up while in too small of a space
         {
             onCrouchInput();
             crouchExited = false;
         }
         else if (!crouchExited)
         {
-            tryingToStand = false;
+            isCrouching = false;
             onCrouchExit();
             crouchExited = true;
         }
@@ -386,9 +387,9 @@ public class playerMovement : MonoBehaviour
         if (crouchLerp > 0 && !isCrouching)
         {
             crouchLerp -= Time.deltaTime * 8;
-            if (isOnGround)
+            if (isOnGround && !jumpQueueOn)
             {
-                //forces player up to avoid collider expanding into the ground
+                //forces player up to avoid collider expanding into the ground. doesnt activate when player jump is being processed
                 cc.enabled = false;
                 transform.position = new Vector3(transform.position.x, hit.point.y - cc.center.y + cc.height/2 + 0.1F, transform.position.z);
                 cc.enabled = true;
@@ -396,37 +397,34 @@ public class playerMovement : MonoBehaviour
         }
 
         // - GRAVITY
-        if (!isOnGround && velocity.y <= player.terminalVelocity)
-        {
+        if (!isOnGround && velocity.y <= player.terminalVelocity){
             onGravity();
         }
-        else if (velocity.y <= -player.terminalVelocity)
-        {
+        else if (velocity.y <= -player.terminalVelocity){
             Debug.Log("terminal velocity reached");
-        }
+        } 
 
-        //sets player velocity every frame
+        //sets player velocity every frame, then sends info to the event system
         cc.Move(velocity * Time.deltaTime);
+        Vector3[] playerUpdateVectors = {velocity, accelXZ};
+        GameEvents.current.playerUpdate(this, playerUpdateVectors);
     }
 
-    public void onJumpInput()
-    {
-        if (!jumpTimerOn)
-        {
+    public void onJumpInput(){
+
+        if (!jumpTimerOn){
             jumpTimerOn = true;
             jumpQueueOn = true;
         }
 
-        if (jumpQueueOn && !jumpExecuted && !isCrouching)
-        {
+        if (jumpQueueOn && !jumpExecuted && !isCrouching){
 
             if (hit.distance <= cc.height/2 + 0.1 && Vector3.Dot(hit.normal, transform.up) > player.maxSlope  || coyoteTicks >= 1) // first arg is replacement for isOnGround, just tighter to prevent a "floaty" feeling
             {
                 jumpExecuted = true;
                 velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
                 jumpCurrently = true;
-                FindObjectOfType<AudioManager>().Play("Jump");
-
+                GameEvents.current.playerJump(this);
             }
         }
         if (jumpCurrently) //extends jump force application to prevent inputs from being eaten
@@ -435,9 +433,7 @@ public class playerMovement : MonoBehaviour
         }
     }
 
-    public void onCrouchInput()
-    {
-        isCrouching = true;
+    public void onCrouchInput(){
         cc.center = new Vector3(0, 0.5F * crouchLerp, 0);
         cc.height = Mathf.Lerp(player.height, player.height / 2.0F, crouchLerp);
         walkLimitAdj = player.walkLimit / 2.0F;
@@ -456,24 +452,27 @@ public class playerMovement : MonoBehaviour
         
     }
     
-    public void onCrouchExit()
-    {
+    public void onCrouchExit(){
         walkLimitAdj = player.walkLimit;
-        isCrouching = false;
     }
 
-    public void onGravity()
-    {
+    public void onGravity(){
+        RaycastHit floorHit;
         Vector3 gravityVector = new Vector3(0, player.gravity * Time.deltaTime, 0);
-        if (velocity.y < 0 && !isSurfing)
+
+        //only adds the fall multiplier if player is falling and close to standable ground to let people soar through the air
+        if (velocity.y < 0 && !isSurfing && Physics.Raycast(transform.position + cc.center, -transform.up, out floorHit) && floorHit.distance <= player.groundPull && Vector3.Dot(floorHit.normal, transform.up) > player.maxSlope)
         {
             gravityVector = gravityVector * player.fallMultiplier;
+        }
+        if (isSurfing)
+        {
+            gravityVector = gravityVector * player.surfLift;
         }
         velocity = velocity - gravityVector;
     }
 
-    void OnControllerColliderHit(ControllerColliderHit cHit)
-    {
+    void OnControllerColliderHit(ControllerColliderHit cHit){
         //this code allows source engine surfing to happen whithout using rigidbody physics - in fact, i totally just copied it from the source engine's source code! lmao! thanks heckteck for helping me understand this bit
         float backoff = Vector3.Dot(velocity, cHit.normal);
         velocity = velocity - (backoff * cHit.normal);
