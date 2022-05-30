@@ -1,5 +1,6 @@
 using UnityEngine.Audio;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -20,6 +21,8 @@ public class AudioManager : MonoBehaviour
     private void Start(){
         GameEvents.current.onPlaySound += Play;
         GameEvents.current.onStopSound += Stop;
+        GameEvents.current.onPlayFadeSound += PlayFade;
+        GameEvents.current.onStopFadeSound += StopFade;
     }
 
     public void Play(string name){
@@ -27,14 +30,50 @@ public class AudioManager : MonoBehaviour
         //Debug.Log(name);
         s.source.Play();
     }
+
+    public void PlayFade(string name, float speed){
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        //Debug.Log(name);
+        StartCoroutine(FadeIn(s, speed));
+        s.source.Play();
+    }
+
     public void Stop(string name){
         Sound s = Array.Find(sounds, sound => sound.name == name);
         //Debug.Log(name);
         s.source.Stop();
     }
 
+    public void StopFade(string name, float speed){
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        //Debug.Log(name);
+        StartCoroutine(FadeOut(s, speed));
+    }
+
+    IEnumerator FadeIn(Sound s, float speed){
+        int fadeLerp = 0;
+        while (fadeLerp <= 50){
+            s.source.volume = Mathf.Lerp(0, 1, fadeLerp/50f);
+            yield return new WaitForSeconds(speed/100f);
+            fadeLerp++;
+        }
+        s.source.volume = 1;
+    }
+
+    IEnumerator FadeOut(Sound s, float speed){
+        int fadeLerp = 50;
+        while (fadeLerp >= 0){
+            s.source.volume = Mathf.Lerp(0, 1, fadeLerp/50f);
+            yield return new WaitForSeconds(speed/100f);
+            fadeLerp--;
+        }
+        s.source.Stop();
+    }
+
     private void OnDestroy() {
         GameEvents.current.onPlaySound -= Play;
         GameEvents.current.onStopSound -= Stop;
+        GameEvents.current.onPlayFadeSound -= PlayFade;
+        GameEvents.current.onStopFadeSound -= StopFade;
     }
 }

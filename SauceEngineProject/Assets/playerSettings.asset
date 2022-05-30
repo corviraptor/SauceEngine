@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d73d36ae5653da34e97adf89735bd62b, type: 3}
   m_Name: playerSettings
   m_EditorClassIdentifier: 
+  sens: 0.7
   moveSpeed: 40
   vLimit: 100
   walkLimit: 20
@@ -19,16 +20,15 @@ MonoBehaviour:
   height: 2
   jumpForce: 6
   gravity: 14
-  fallMultiplier: 2.5
-  groundPull: 6
-  surfLift: 0.4
-  terminalVelocity: 56
+  fallMultiplier: 3
+  groundPull: 4
+  terminalVelocity: -100
   gThreshold: 0.3
   maxSlope: 0.9
-  frictionFactor: 0.98
-  frictionForgiveness: 5
-  overcomeThreshold: 17
-  frictionCutoff: 5
+  frictionFactor: 0.95
+  frictionForgiveness: 10
+  overcomeThreshold: 30
+  frictionCutoff: 22
   jumpForgiveness: 7
   jumpCooldown: 15
   coyoteTime: 10

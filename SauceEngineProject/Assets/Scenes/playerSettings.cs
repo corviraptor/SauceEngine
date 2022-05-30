@@ -4,6 +4,7 @@ using UnityEngine;
 
 //[CreateAssetMenu(fileName = "playerSettings", menuName = "SauceEngineProject/playerSettings", order = 0)]
 public class playerSettings : ScriptableObject{
+    public float sens = 0.7f;
     public float moveSpeed = 40F;
     public float vLimit = 20F;
     public float walkLimit = 10F;
@@ -13,7 +14,6 @@ public class playerSettings : ScriptableObject{
     public float gravity = 9.81F;
     public float fallMultiplier = 1.2F;
     public float groundPull = 6F;
-    public float surfLift = 0.4F;
     public float terminalVelocity = 56F;
     public float gThreshold = 0.1F;
     public float maxSlope = 0.4F;
