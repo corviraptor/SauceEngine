@@ -6,27 +6,35 @@ using UnityEngine;
 public class GameEvents : MonoBehaviour
 {
     public static GameEvents current;
+    public EventSettings eventSettings;
 
     private void Awake(){
         current = this;
+    }
+
+    public void inputUpdate(object sender, float[] a, bool[] b){
     }
 
     bool windPlayed = false;
     public void playerUpdate(object sender, Vector3 playerVelocity, float accelX, float accelZ, Transform pTransform, float height, Vector3 center){
         // sends velocity and accel vectors to the UI system to give some visual feedback
         //Debug.Log(new Vector3(playerVelocity.x, 0, playerVelocity.z).magnitude);
-        if (playerVelocity.magnitude >= 30 && !windPlayed){
+        if (new Vector3(playerVelocity.x, 0, playerVelocity.z).magnitude >= eventSettings.windThreshold && !windPlayed){
             windPlayed = true;
-            playFadeSound("Wind", 1F);
+            playFadeSound("Wind", 2F);
         }
-        else if (playerVelocity.magnitude <= 28 && windPlayed){
+        else if (playerVelocity.magnitude >= eventSettings.windThreshold){
+            float pitch = (playerVelocity.magnitude - eventSettings.windThreshold + 1) * eventSettings.windPitchShift;
+            pitchShift("Wind", pitch);
+        }
+        else if (playerVelocity.magnitude <= eventSettings.windThreshold * 1.2F && windPlayed){
             windPlayed = false;
-            stopFadeSound("Wind", 0.1F);
+            stopFadeSound("Wind", 0.4F);
         }
         playerPositionUpdate(sender, pTransform, height, center);
         onPlayerHudUpdate(sender, pTransform, playerVelocity, accelX, accelZ);
     }
-
+    
     public event Action<object, Transform, Vector3, float, float> onPlayerHudUpdate;
     public void playerHudUpdate(object sender, Transform pTransform, Vector3 velocity, float accelX, float accelZ){
         if (onPlayerHudUpdate != null){
@@ -92,6 +100,13 @@ public class GameEvents : MonoBehaviour
     public void stopFadeSound(string name, float speed){
         if (onStopFadeSound != null){
             onStopFadeSound(name, speed);
+        }
+    }
+
+    public event Action<string, float> onPitchShift;
+    public void pitchShift(string name, float pitch){
+        if (onPitchShift != null){
+            onPitchShift(name, pitch);
         }
     }
 }

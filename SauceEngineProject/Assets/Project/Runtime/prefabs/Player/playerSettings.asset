@@ -13,22 +13,22 @@ MonoBehaviour:
   m_Name: playerSettings
   m_EditorClassIdentifier: 
   sens: 0.7
-  moveSpeed: 40
-  vLimit: 100
-  walkLimit: 20
-  walkSpeed: 2000
+  airAccel: 150
+  vLimit: 50
+  walkSpeed: 20
   height: 2
-  jumpForce: 6
-  gravity: 14
+  jumpForce: 7
+  gravity: 16
   fallMultiplier: 3
-  groundPull: 4
+  groundPull: 3
   terminalVelocity: -100
-  gThreshold: 0.3
+  gThreshold: 0.2
+  gMagnetism: 1
+  gMagThreshold: 0.3
   maxSlope: 0.9
-  frictionFactor: 0.95
+  surfLift: 5
+  frictionFactor: 0.93
   frictionForgiveness: 10
-  overcomeThreshold: 30
-  frictionCutoff: 22
-  jumpForgiveness: 7
-  jumpCooldown: 15
+  overcomeThreshold: 22
+  jumpForgiveness: 5
   coyoteTime: 10

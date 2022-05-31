@@ -23,6 +23,12 @@ public class AudioManager : MonoBehaviour
         GameEvents.current.onStopSound += Stop;
         GameEvents.current.onPlayFadeSound += PlayFade;
         GameEvents.current.onStopFadeSound += StopFade;
+        GameEvents.current.onPitchShift += pitchShift;
+    }
+
+    public void pitchShift(string name, float pitch){
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        s.source.pitch = Mathf.Clamp(pitch, 0.8F, 2.3F);
     }
 
     public void Play(string name){

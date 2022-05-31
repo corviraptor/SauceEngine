@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class cameraMovement : MonoBehaviour
 {
-    public playerSettings player;
+    public PlayerSettings player;
     float mousePitch = 0;
     Transform playerTransform;
     float playerHeight;

@@ -5,21 +5,19 @@ using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
-    const float TAU = Mathf.PI * 2;
-
     public CharacterController cc;
-    public playerSettings player;
+    public PlayerSettings player;
 
     //initializations
     public bool isOnGround = false;
-    // player.walkLimitAdj is the max walking speed after modification by crouching.
-    float walkLimitAdj = 10F;
+    // player.walkSpeedAdj is the max walking speed after modification by crouching.
+    float walkSpeedAdj = 10F;
 
     bool frictionTimerOn = false;
     bool frictionTimerExecuted = false;
 
     bool frictionImpossibleTimerOn = false;
-    bool frictionImpossibleTimerExecuted = false;
+    bool groundImpact = false;
 
     bool jumpExecuted = false;
 
@@ -27,12 +25,6 @@ public class playerMovement : MonoBehaviour
 
     bool coyoteTimerOn = false;
     bool coyoteTimerExecuted = false;
-
-    Vector3 localWalkVector = Vector3.zero;
-
-    float wasSpeed;
-    Vector3 wasDirection;
-    Vector3 adjVelocity;
 
     bool isSurfing = false;
     bool isOnSlope = false;
@@ -76,16 +68,16 @@ public class playerMovement : MonoBehaviour
         Vector3 zHat = transform.forward;
 
         //determines vector being inputted on the XZ plane
-        accelZ = player.moveSpeed * Input.GetAxis("Vertical");
-        accelX = player.moveSpeed * Input.GetAxis("Horizontal");
+        accelZ = Input.GetAxis("Vertical");
+        accelX = Input.GetAxis("Horizontal");
         accelXZ = ((accelX * xHat) + (accelZ * zHat)) / 2;
         // locked cursor wizardry
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetButtonDown("Cancel"))
         {
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetButtonDown("Fire1"))
         {
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -97,8 +89,7 @@ public class playerMovement : MonoBehaviour
 
         /* - GROUND TEST 
         Detects if the player is on the ground, if they are on a slope too steep to walk on, and if they are surfing on that slope
-        i know i could be using guard clauses for these nested if statements, but they make much more sense to me this way in this application
-        and i dont want to figure out how to refactor this stuff all into their own functions. sorry! lmao!
+        i know i could be using guard clauses for these nested if statements, but they make much more sense to me this way in this applicationsorry! lmao!
         transform.position + cc.center = worldspace center */
         if (Physics.Raycast(transform.position + cc.center, -transform.up, out hit))
         {
@@ -107,9 +98,10 @@ public class playerMovement : MonoBehaviour
                 isOnGround = true;
                 coyoteTimerExecuted = false;
 
-                // makes friction impossible for 1 tick to let jumps through
-                if (!frictionImpossibleTimerExecuted){
+                if (!groundImpact){
                     StartCoroutine(frictionImpossibleTimer());
+                    groundImpact = true;
+                    jumpExecuted = false;
                 }
                 /*Friction timer activates at decent speeds, essentially stops player from experiencing friction and disables walking 
                 for a brief time to give a bigger window for bunnyhopping. player.overcomeThreshold should only activate at bunnyhopping 
@@ -123,8 +115,8 @@ public class playerMovement : MonoBehaviour
                 isOnGround = false;
 
                 //resets friction timers when off the ground
-                if (frictionImpossibleTimerExecuted){
-                    frictionImpossibleTimerExecuted = false;
+                if (groundImpact){
+                    groundImpact = false;
                 }
                 if (frictionTimerExecuted){
                     frictionTimerExecuted = false;
@@ -138,13 +130,23 @@ public class playerMovement : MonoBehaviour
                 }
             }
 
+            // ground magnetism
+            if (hit.distance <= cc.height / 2 + player.gMagThreshold && !jumpExecuted && !isOnGround && !isOnSlope){
+                velocity -= Vector3.up * player.gMagnetism;
+            }
+
             // slope detection & surfing
-            if (hit.distance <= cc.height / 2 + player.gThreshold + 0.5 && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkLimit - 1){
+            if (hit.distance <= cc.height / 2 + player.gThreshold + 0.5 && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkSpeed){
                 //player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
                 //vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun
                 isSurfing = true;
                 isOnSlope = true;
                 unsloped = false;
+
+                //surf lift - lets player to ride at an angle that keeps them from losing speed
+                Vector3 surfaceX = Vector3.Cross(transform.up, hit.normal);
+                Vector3 surfaceZ = Vector3.Cross(hit.normal, surfaceX);
+                velocity += surfaceZ * player.surfLift * Time.deltaTime;
                 
                 //calls the GameEvents system to invoke the SurfEnter event only once, as soon as the player enters the surfing state
                 if (!surfExecuted){
@@ -193,19 +195,18 @@ public class playerMovement : MonoBehaviour
             Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
             float slip = velocityXZ.magnitude * Time.deltaTime * 20;
             Vector3 slipVector = Vector3.Lerp(-transform.up, hit.normal, 0.4F) * slip;
-            velocity = velocity + slipVector;
+            velocity += slipVector;
         }
 
         // - WALKING
-        if (!frictionTimerOn && isOnGround && !jumpExecuted && new Vector3(velocity.x, 0, velocity.z).magnitude < walkLimitAdj && accelXZ.magnitude > 0)
+        if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && isOnGround && accelXZ.magnitude > 0.1F)
         {
             onWalk();
         }
-
-        // - FRICTION
-        //only applies friction if a jump isn't in progress and the friction timers aren't active
-        if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && isOnGround)
+        else if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && isOnGround && accelXZ.magnitude < 0.1F)
         {
+            // - FRICTION
+            //only applies friction if a jump isn't in progress and the friction timers aren't active
             onFriction();
         }
 
@@ -263,23 +264,19 @@ public class playerMovement : MonoBehaviour
     public void airControl(){
         // speed limit
         Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
-        float AVproj = Vector3.Dot(velocityXZ, accelXZ);
+        float AVproj = Vector3.Dot(velocityXZ, accelXZ * player.airAccel);
 
         if (AVproj < player.vLimit - (accelXZ.magnitude * Time.deltaTime))
         { // look at how delightfully simple this code is. pure math. no bullshit. now look at the rest of this file and cry
-            velocityXZ = velocityXZ + (accelXZ * Time.deltaTime);
+            velocityXZ = velocityXZ + (accelXZ * player.airAccel * Time.deltaTime);
             velocity = new Vector3(velocityXZ.x, velocity.y, velocityXZ.z);
         }
     }
 
     public void onWalk(){
-        Vector3 walkVector = new Vector3(accelXZ.normalized.x * player.walkSpeed, velocity.y, accelXZ.normalized.z * player.walkSpeed);
-
-        Vector3 localWalkDirection = Vector3.Lerp(walkVector.normalized, -hit.normal, 0.5F);
-        localWalkVector = walkVector.magnitude * localWalkDirection;
-        Vector3 localWalkVectorAdj = localWalkVector;
-
-        velocity = (localWalkVectorAdj * Time.deltaTime) + Vector3.Lerp(velocity, localWalkDirection, 30 * Time.deltaTime);
+        Vector3 localWalkDirection = Vector3.ProjectOnPlane(accelXZ, hit.normal).normalized;
+        Vector3 localWalkVector = localWalkDirection * walkSpeedAdj;
+        velocity = localWalkVector;
     }
 
     public void onFriction(){
@@ -300,10 +297,9 @@ public class playerMovement : MonoBehaviour
     }
 
     IEnumerator frictionImpossibleTimer(){
-        frictionImpossibleTimerExecuted = true;
         frictionImpossibleTimerOn = true;
         int i = 0;
-        while (i <= 1){
+        while (i <= 2){
             i++;
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }
@@ -317,15 +313,19 @@ public class playerMovement : MonoBehaviour
         if (!jumpQueueOn){
             StartCoroutine(jumpQueue());
         }
-
-        if (jumpQueueOn && !jumpExecuted && !isCrouching){
-            // first arg is replacement for isOnGround, just tighter to prevent a "floaty" feeling
-            if (hit.distance <= cc.height/2 + 0.1 && Vector3.Dot(hit.normal, transform.up) > player.maxSlope  || coyoteTimerOn) 
-            {
-                jumpExecuted = true;
-                velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
-                GameEvents.current.playerJump(this);
-            }
+        
+        if (!jumpQueueOn || jumpExecuted || isCrouching){
+            return;
+        }
+        if (coyoteTimerOn){
+            jumpExecuted = true;
+            velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
+            GameEvents.current.playerJump(this);
+        }
+        if (Vector3.Dot(hit.normal, transform.up) > player.maxSlope && isOnGround){
+            jumpExecuted = true;
+            velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
+            GameEvents.current.playerJump(this);
         }
     }
 
@@ -337,15 +337,7 @@ public class playerMovement : MonoBehaviour
             yield return new WaitForSeconds(Time.fixedDeltaTime);
             onJumpInput();
         }
-        while (i <= player.jumpForgiveness * 2){ 
-            /* cooldown for jumping, prevents the player from jumping right after a jump in order to prevent spammed inputs from stacking jumps.
-            continues setting jump velocity in this short period of time to avoid inputs being eaten too*/
-            jumpExecuted = true;
-            i++;
-            yield return new WaitForSeconds(Time.fixedDeltaTime);
-        }
         jumpQueueOn = false;
-        jumpExecuted = false;
         i = 0;
     }
 
@@ -366,7 +358,7 @@ public class playerMovement : MonoBehaviour
     public void onCrouchInput(){
         cc.center = new Vector3(0, 0.5F * crouchLerp, 0);
         cc.height = Mathf.Lerp(player.height, player.height / 2.0F, crouchLerp);
-        walkLimitAdj = player.walkLimit / 2.0F;
+        walkSpeedAdj = player.walkSpeed / 2.0F;
 
         if (crouchLerp < 1)
         {
@@ -383,7 +375,7 @@ public class playerMovement : MonoBehaviour
     }
     
     public void onCrouchExit(){
-        walkLimitAdj = player.walkLimit;
+        walkSpeedAdj = player.walkSpeed;
     }
 
     public void onGravity(){

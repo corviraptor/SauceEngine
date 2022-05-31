@@ -20,12 +20,12 @@ public class hudManager : MonoBehaviour
 
     private void hudUpdate(object sender, Transform transform, Vector3 velocity, float accelX, float accelZ){
         if (!hudUpdateInProgress){
-            StartCoroutine(hudUpdateCycle(sender, transform, velocity, accelX, accelZ));
+            StartCoroutine(hudUpdateCycle(sender, velocity, accelX, accelZ));
         }
     }
 
     float newSpeed;
-    IEnumerator hudUpdateCycle(object sender, Transform transform, Vector3 velocity, float accelX, float accelZ){
+    IEnumerator hudUpdateCycle(object sender, Vector3 velocity, float accelX, float accelZ){
         //accel indicator
         float i = 0;
         Vector3 newAccelRotationVector = new Vector3(accelX, accelZ, 0);
@@ -41,7 +41,7 @@ public class hudManager : MonoBehaviour
 
         //speedometer text
         float oldSpeed = newSpeed;
-        newSpeed = velocity.magnitude;
+        newSpeed = new Vector3(velocity.x, 0, velocity.z).magnitude;
 
         while (i < 1 && newAccelRotationVector.magnitude > 0.1){
             //accel indicator
@@ -59,13 +59,27 @@ public class hudManager : MonoBehaviour
             if (brakeVelocityFactor <= 0.3F){brakeVelocityFactor += 0.5F;}
             Quaternion trueVelocityRotation = Quaternion.Lerp(oldVelocityRotation, newVelocityRotation, i * brakeVelocityFactor);
             velocityDisplay.transform.SetPositionAndRotation(velocityDisplay.transform.position, trueVelocityRotation);
+            
+            //speedometer text
+            speedText.text = $"v = {Mathf.Round(Mathf.Lerp(oldSpeed, newSpeed, i))} m/s";
 
             hudUpdateInProgress = true;
             i += Time.deltaTime * 30;
             yield return null;
+        }
+        while (i < 1 && newAccelRotationVector.magnitude < 0.1){
+            //resets values to 1pi when not recieving anything to put them at the bottom of the crosshair
+            newVelocityRotation.eulerAngles = new Vector3(0, 0, 180F);
+            Quaternion trueAccelRotation = Quaternion.Lerp(oldAccelRotation, newVelocityRotation, i);
+            accelDisplay.transform.SetPositionAndRotation(accelDisplay.transform.position, trueAccelRotation);
+
+            Quaternion trueVelocityRotation = Quaternion.Lerp(oldVelocityRotation, newVelocityRotation, i);
+            velocityDisplay.transform.SetPositionAndRotation(velocityDisplay.transform.position, trueVelocityRotation);
             
             //speedometer text
-            speedText.text = $"v = {Mathf.Round(Mathf.Lerp(oldSpeed, newSpeed, i))} m/s";
+            speedText.text = $"v = {Mathf.Round(Mathf.Lerp(oldSpeed, 0, i))} m/s";
+            i += Time.deltaTime * 30;
+            yield return null;
         }
         hudUpdateInProgress = false;
         i=0;
