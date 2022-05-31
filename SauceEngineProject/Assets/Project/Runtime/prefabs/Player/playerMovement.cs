@@ -94,7 +94,6 @@ public class playerMovement : MonoBehaviour
         transform.position + cc.center = center of capsule*/
         if (Physics.Raycast(transform.position + cc.center, -transform.up, out hit, Mathf.Infinity, layerMask))
         {
-            Debug.DrawLine(hit.point, hit.point + hit.normal, Color.red, 1F);
             //isOnGround, only triggers if player is within gThreshold of the ground surface and the ground surface isn't too steep
             if (hit.distance <= cc.height / 2 + player.gThreshold && Vector3.Dot(hit.normal, transform.up) > player.maxSlope){
                 isOnGround = true;
@@ -141,7 +140,6 @@ public class playerMovement : MonoBehaviour
             if (hit.distance <= cc.height / 2 + player.gMagThreshold && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkSpeed){
                 /*player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
                 vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun*/
-                Debug.Log("SURF " + Vector3.Dot(hit.normal, transform.up) + " " + hit.normal);
                 isSurfing = true;
                 isOnSlope = true;
                 unsloped = false;
