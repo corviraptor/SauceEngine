@@ -26,5 +26,9 @@ public class PlayerSettings : ScriptableObject{
     public float overcomeThreshold = 20F;
     public int jumpForgiveness = 5;
     public int coyoteTime = 10;
+    public int slideITicks = 12;
+    public int slideCooldown = 30;
+    public float slideForce = 25F;
+    public float slidePenalty = 7F;
 }
     

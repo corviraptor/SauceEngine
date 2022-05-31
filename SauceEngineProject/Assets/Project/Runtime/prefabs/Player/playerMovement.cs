@@ -7,6 +7,7 @@ public class playerMovement : MonoBehaviour
 {
     public CharacterController cc;
     public PlayerSettings player;
+    [SerializeField] private LayerMask layerMask;
 
     //initializations
     public bool isOnGround = false;
@@ -58,7 +59,7 @@ public class playerMovement : MonoBehaviour
 
         //sets player velocity at the end of every frame, then sends info to the event system
         cc.Move(velocity * Time.deltaTime);
-        GameEvents.current.playerUpdate(this, localVelocity, accelX, accelZ, transform, cc.height, cc.center);
+        GameEvents.current.playerUpdate(this, localVelocity, accelX, accelZ, transform, player.height, cc.center, isOnGround);
     }
 
     void Update()
@@ -90,9 +91,10 @@ public class playerMovement : MonoBehaviour
         /* - GROUND TEST 
         Detects if the player is on the ground, if they are on a slope too steep to walk on, and if they are surfing on that slope
         i know i could be using guard clauses for these nested if statements, but they make much more sense to me this way in this applicationsorry! lmao!
-        transform.position + cc.center = worldspace center */
-        if (Physics.Raycast(transform.position + cc.center, -transform.up, out hit))
+        transform.position + cc.center = center of capsule*/
+        if (Physics.Raycast(transform.position + cc.center, -transform.up, out hit, Mathf.Infinity, layerMask))
         {
+            Debug.DrawLine(hit.point, hit.point + hit.normal, Color.red, 1F);
             //isOnGround, only triggers if player is within gThreshold of the ground surface and the ground surface isn't too steep
             if (hit.distance <= cc.height / 2 + player.gThreshold && Vector3.Dot(hit.normal, transform.up) > player.maxSlope){
                 isOnGround = true;
@@ -136,9 +138,10 @@ public class playerMovement : MonoBehaviour
             }
 
             // slope detection & surfing
-            if (hit.distance <= cc.height / 2 + player.gThreshold + 0.5 && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkSpeed){
-                //player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
-                //vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun
+            if (hit.distance <= cc.height / 2 + player.gMagThreshold && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkSpeed){
+                /*player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
+                vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun*/
+                Debug.Log("SURF " + Vector3.Dot(hit.normal, transform.up) + " " + hit.normal);
                 isSurfing = true;
                 isOnSlope = true;
                 unsloped = false;
@@ -155,7 +158,7 @@ public class playerMovement : MonoBehaviour
                 }
 
             }
-            else if (hit.distance <= cc.height / 2 + player.gThreshold + 0.5 && Vector3.Dot(hit.normal, transform.up) < player.maxSlope)
+            else if (hit.distance <= cc.height / 2 + player.gMagThreshold + 0.5F && Vector3.Dot(hit.normal, transform.up) < player.maxSlope)
             {
                 isOnSlope = true;
                 isSurfing = false;
@@ -190,8 +193,7 @@ public class playerMovement : MonoBehaviour
 
 
         // - SLIP (prevets players from using the base air control speed to just float up ramps if they aren't surfing because that feels weird)
-        if (isOnSlope && !isSurfing && velocity.y > -1)
-        {
+        if (isOnSlope && !isSurfing && velocity.y > -1){
             Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
             float slip = velocityXZ.magnitude * Time.deltaTime * 20;
             Vector3 slipVector = Vector3.Lerp(-transform.up, hit.normal, 0.4F) * slip;
@@ -199,39 +201,34 @@ public class playerMovement : MonoBehaviour
         }
 
         // - WALKING
-        if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && isOnGround && accelXZ.magnitude > 0.1F)
-        {
+        if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && !isSliding && isOnGround && accelXZ.magnitude > 0.1F){
             onWalk();
         }
-        else if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && isOnGround && accelXZ.magnitude < 0.1F)
-        {
+        else if (!jumpExecuted && !frictionTimerOn && !frictionImpossibleTimerOn && !isSliding && isOnGround && accelXZ.magnitude < 0.1F){
             // - FRICTION
             //only applies friction if a jump isn't in progress and the friction timers aren't active
             onFriction();
         }
 
         // - JUMP
-        if (Input.GetButtonDown("Jump"))
-        {
+        if (Input.GetButtonDown("Jump")){
             onJumpInput();
         }
 
         // - CROUCH
         RaycastHit roofHit;
-        if (Input.GetButton("Crouch"))
-        {
+        if (Input.GetButton("Crouch")){
             onCrouchInput();
             crouchExited = false;
             isCrouching = true;
         }
+        
         //stops player from getting up while in too small of a space. uses BoxCast to prevent player from getting up at the edge of a roof and clipping it
-        else if (Physics.BoxCast(transform.position + cc.center - Vector3.up * cc.radius, Vector3.one * cc.radius, transform.up, out roofHit) && roofHit.distance <= player.height / 2 + cc.center.y && isCrouching) 
-        {
+        else if (Physics.BoxCast(transform.position + cc.center - Vector3.up * cc.radius, Vector3.one * cc.radius, transform.up, out roofHit) && roofHit.distance <= player.height / 2 + cc.center.y && isCrouching){
             onCrouchInput();
             crouchExited = false;
         }
-        else if (!crouchExited)
-        {
+        else if (!crouchExited){
             isCrouching = false;
             onCrouchExit();
             crouchExited = true;
@@ -252,12 +249,18 @@ public class playerMovement : MonoBehaviour
             }
         }
 
+        // - SLIDE
+        if (Input.GetButtonDown("Crouch") && velocity.magnitude > player.walkSpeed * 0.9F && !slideCooldownActive && isOnGround){
+            slideCooldownActive = true;
+            isSliding = true;
+            StartCoroutine(slide());
+        }
+
         // - GRAVITY
         if (!isOnGround && velocity.y >= player.terminalVelocity){
             onGravity();
         }
         else if (velocity.y <= player.terminalVelocity){
-            Debug.Log("terminal velocity reached");
         } 
     }
 
@@ -314,7 +317,7 @@ public class playerMovement : MonoBehaviour
             StartCoroutine(jumpQueue());
         }
         
-        if (!jumpQueueOn || jumpExecuted || isCrouching){
+        if (!jumpQueueOn || jumpExecuted){
             return;
         }
         if (coyoteTimerOn){
@@ -355,27 +358,66 @@ public class playerMovement : MonoBehaviour
         i = 0;
     }
 
+    bool slideCooldownActive = false;
     public void onCrouchInput(){
         cc.center = new Vector3(0, 0.5F * crouchLerp, 0);
         cc.height = Mathf.Lerp(player.height, player.height / 2.0F, crouchLerp);
         walkSpeedAdj = player.walkSpeed / 2.0F;
 
-        if (crouchLerp < 1)
-        {
-            crouchLerp += Time.deltaTime * 7;
-            if (isOnGround)
-            {
-                //when the player is on the ground, this moves them down when crouching to keep their feet at the same level, essentially meaning they just duck instead of having to fall after picking up their feet
-                cc.enabled = false;
-                transform.position = new Vector3(transform.position.x, hit.point.y - cc.center.y + cc.height/2 + 0.05F, transform.position.z);
-                cc.enabled = true;
-            }
+        if (crouchLerp >= 1){
+            return;
         }
-        
+        else {
+            crouchLerp += Time.deltaTime * 7;
+        }
+        if (isOnGround && !jumpExecuted){
+            //when the player is on the ground, this moves them down when crouching to keep their feet at the same level, essentially meaning they just duck instead of having to fall after picking up their feet
+            cc.enabled = false;
+            transform.position = new Vector3(transform.position.x, hit.point.y - cc.center.y + cc.height/2 + 0.05F, transform.position.z);
+            cc.enabled = true;
+        }
     }
     
     public void onCrouchExit(){
         walkSpeedAdj = player.walkSpeed;
+    }
+
+    IEnumerator slide(){
+        int i = 0;
+        Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
+        Vector3 slideVector;
+        bool interrupted = false;
+        if (accelXZ.magnitude > 0.1F){
+            slideVector = accelXZ.normalized;
+        }
+        else {
+            slideVector = transform.forward;
+        }
+        GameEvents.current.playerSlide(this);
+
+        while (i <= player.slideITicks && !jumpExecuted){
+            if (velocityXZ.magnitude < player.slideForce){
+                velocity = slideVector * player.slideForce;
+            }
+            else{
+                velocity = slideVector * velocityXZ.magnitude;
+            }
+
+            i++;
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+        }
+        while (i <= player.slideCooldown){
+            if (jumpExecuted && !interrupted){
+                GameEvents.current.playerSlideInterrupted(this);
+                interrupted = true;
+            }
+            isSliding = false;
+
+            i++;
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+        }
+        slideCooldownActive = false;
+        i = 0;
     }
 
     public void onGravity(){

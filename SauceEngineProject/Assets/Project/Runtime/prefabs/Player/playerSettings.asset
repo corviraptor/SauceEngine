@@ -24,11 +24,15 @@ MonoBehaviour:
   terminalVelocity: -100
   gThreshold: 0.2
   gMagnetism: 1
-  gMagThreshold: 0.3
+  gMagThreshold: 0.5
   maxSlope: 0.9
   surfLift: 5
   frictionFactor: 0.93
-  frictionForgiveness: 10
+  frictionForgiveness: 5
   overcomeThreshold: 22
   jumpForgiveness: 5
   coyoteTime: 10
+  slideITicks: 12
+  slideCooldown: 30
+  slideForce: 30
+  slidePenalty: 0.9

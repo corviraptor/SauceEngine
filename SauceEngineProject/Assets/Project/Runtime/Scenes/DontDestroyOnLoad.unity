@@ -277,6 +277,12 @@ MonoBehaviour:
     pitch: 1
     source: {fileID: 0}
     loop: 1
+  - name: Slide
+    clip: {fileID: 8300000, guid: 30f94e6afb3802a479badc97cce1efb1, type: 3}
+    volume: 0.545
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
 --- !u!4 &1603751507
 Transform:
   m_ObjectHideFlags: 0

@@ -16,10 +16,10 @@ public class GameEvents : MonoBehaviour
     }
 
     bool windPlayed = false;
-    public void playerUpdate(object sender, Vector3 playerVelocity, float accelX, float accelZ, Transform pTransform, float height, Vector3 center){
+    public void playerUpdate(object sender, Vector3 playerVelocity, float accelX, float accelZ, Transform pTransform, float height, Vector3 center, bool isOnGround){
         // sends velocity and accel vectors to the UI system to give some visual feedback
         //Debug.Log(new Vector3(playerVelocity.x, 0, playerVelocity.z).magnitude);
-        if (new Vector3(playerVelocity.x, 0, playerVelocity.z).magnitude >= eventSettings.windThreshold && !windPlayed){
+        if (new Vector3(playerVelocity.x, 0, playerVelocity.z).magnitude >= eventSettings.windThreshold && !windPlayed && !isOnGround){
             windPlayed = true;
             playFadeSound("Wind", 2F);
         }
@@ -72,6 +72,13 @@ public class GameEvents : MonoBehaviour
 
     public void playerJump(object sender){
         playSound("Jump");
+    }
+
+    public void playerSlide(object sender){
+        playSound("Slide");
+    }
+    public void playerSlideInterrupted(object sender){
+        stopSound("Slide");
     }
 
     // SOUNDS
