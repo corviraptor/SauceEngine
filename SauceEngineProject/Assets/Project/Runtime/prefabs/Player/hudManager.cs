@@ -10,18 +10,25 @@ public class hudManager : MonoBehaviour
     [SerializeField] private GameObject accelDisplay;
     [SerializeField] private GameObject speedometerDisplay;
     [SerializeField] private Text speedText;
+    [SerializeField] private Slider heatBar;
     bool hudUpdateInProgress = false;
 
     // Start is called before the first frame update
     void Start()
     {
         GameEvents.current.onPlayerHudUpdate += hudUpdate;
+        GameEvents.current.onHeatUpdate += heatUpdate;
     }
 
     private void hudUpdate(object sender, Transform transform, Vector3 velocity, float accelX, float accelZ){
         if (!hudUpdateInProgress){
             StartCoroutine(hudUpdateCycle(sender, velocity, accelX, accelZ));
         }
+    }
+
+    void heatUpdate(object sender, float heat){
+        Debug.Log(heat);
+        heatBar.value = heat;
     }
 
     float newSpeed;

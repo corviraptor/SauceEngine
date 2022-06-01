@@ -10,9 +10,11 @@ public class playerMovement : MonoBehaviour
     [SerializeField] private LayerMask layerMask;
 
     //initializations
-    public bool isOnGround = false;
+    float heat = 0;
     // player.walkSpeedAdj is the max walking speed after modification by crouching.
     float walkSpeedAdj = 10F;
+
+    public bool isOnGround = false;
 
     bool frictionTimerOn = false;
     bool frictionTimerExecuted = false;
@@ -33,8 +35,6 @@ public class playerMovement : MonoBehaviour
     bool unsloped = false;
     bool isCrouching = false;
     bool isSliding = false;
-
-    float crouchLerp = 0;
     
     Vector3 velocity;
     Vector3 accelXZ;
@@ -47,6 +47,11 @@ public class playerMovement : MonoBehaviour
     void Start()
     {
         gameObject.tag = "Player";
+        GameEvents.current.onHeatUpdate += heatUpdate;
+    }
+
+    void heatUpdate(object sender, float h){
+        heat = h;
     }
 
     void LateUpdate()
@@ -62,29 +67,21 @@ public class playerMovement : MonoBehaviour
         GameEvents.current.playerUpdate(this, localVelocity, accelX, accelZ, transform, player.height, cc.center, isOnGround);
     }
 
-    void Update()
-    {
-        // - LOCAL SPACE
-        Vector3 xHat = transform.right;
-        Vector3 zHat = transform.forward;
-
+    void Update(){
         //determines vector being inputted on the XZ plane
         accelZ = Input.GetAxis("Vertical");
         accelX = Input.GetAxis("Horizontal");
-        accelXZ = ((accelX * xHat) + (accelZ * zHat)) / 2;
+        accelXZ = ((accelX * transform.right) + (accelZ * transform.forward)) / 2;
         // locked cursor wizardry
-        if (Input.GetButtonDown("Cancel"))
-        {
+        if (Input.GetButtonDown("Cancel")){
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (Input.GetButtonDown("Fire1"))
-        {
+        if (Input.GetButtonDown("Fire1")){
             Cursor.lockState = CursorLockMode.Locked;
         }
 
-        if (!isOnGround)
-        {
+        if (!isOnGround){
             airControl();
         }
 
@@ -92,8 +89,7 @@ public class playerMovement : MonoBehaviour
         Detects if the player is on the ground, if they are on a slope too steep to walk on, and if they are surfing on that slope
         i know i could be using guard clauses for these nested if statements, but they make much more sense to me this way in this applicationsorry! lmao!
         transform.position + cc.center = center of capsule*/
-        if (Physics.Raycast(transform.position + cc.center, -transform.up, out hit, Mathf.Infinity, layerMask))
-        {
+        if (Physics.Raycast(transform.position + cc.center, -transform.up, out hit, Mathf.Infinity, layerMask)){
             //isOnGround, only triggers if player is within gThreshold of the ground surface and the ground surface isn't too steep
             if (hit.distance <= cc.height / 2 + player.gThreshold && Vector3.Dot(hit.normal, transform.up) > player.maxSlope){
                 isOnGround = true;
@@ -156,8 +152,7 @@ public class playerMovement : MonoBehaviour
                 }
 
             }
-            else if (hit.distance <= cc.height / 2 + player.gMagThreshold + 0.5F && Vector3.Dot(hit.normal, transform.up) < player.maxSlope)
-            {
+            else if (hit.distance <= cc.height / 2 + player.gMagThreshold + 0.5F && Vector3.Dot(hit.normal, transform.up) < player.maxSlope){
                 isOnSlope = true;
                 isSurfing = false;
                 unsloped = false;
@@ -169,8 +164,7 @@ public class playerMovement : MonoBehaviour
                     surfExecuted = false;
                 }
             }
-            else
-            {
+            else{
                 isOnSlope = false;
                 isSurfing = false;
                 if (!unsloped){
@@ -233,33 +227,22 @@ public class playerMovement : MonoBehaviour
         }
 
         //gets player back up whilst uncrouched
-        cc.center = new Vector3(0, 0.5F * crouchLerp, 0);
-        cc.height = Mathf.Lerp(player.height, player.height / 2.0F, crouchLerp);
-        if (crouchLerp > 0 && !isCrouching)
-        {
-            crouchLerp -= Time.deltaTime * 8;
-            if (isOnGround && !jumpQueueOn)
-            {
-                //forces player up to avoid collider expanding into the ground. doesnt activate when player jump is being processed
-                cc.enabled = false;
-                transform.position = new Vector3(transform.position.x, hit.point.y - cc.center.y + cc.height/2 + 0.1F, transform.position.z);
-                cc.enabled = true;
-            }
+        if (!isCrouching){
+            crouchStand();
         }
 
         // - SLIDE
-        if (Input.GetButtonDown("Crouch") && velocity.magnitude > player.walkSpeed * 0.9F && !slideCooldownActive && isOnGround){
+        if (Input.GetButtonDown("Crouch") && velocity.magnitude > player.walkSpeed * 0.9F && !slideCooldownActive && isOnGround && heat < 1){
             slideCooldownActive = true;
             isSliding = true;
             StartCoroutine(slide());
+            GameEvents.current.heatPlayer(this, "Slide");
         }
 
         // - GRAVITY
         if (!isOnGround && velocity.y >= player.terminalVelocity){
             onGravity();
         }
-        else if (velocity.y <= player.terminalVelocity){
-        } 
     }
 
     public void airControl(){
@@ -356,7 +339,7 @@ public class playerMovement : MonoBehaviour
         i = 0;
     }
 
-    bool slideCooldownActive = false;
+    float crouchLerp = 0;
     public void onCrouchInput(){
         cc.center = new Vector3(0, 0.5F * crouchLerp, 0);
         cc.height = Mathf.Lerp(player.height, player.height / 2.0F, crouchLerp);
@@ -380,6 +363,23 @@ public class playerMovement : MonoBehaviour
         walkSpeedAdj = player.walkSpeed;
     }
 
+    public void crouchStand(){
+        cc.center = new Vector3(0, 0.5F * crouchLerp, 0);
+        cc.height = Mathf.Lerp(player.height, player.height / 2.0F, crouchLerp);
+        if (crouchLerp > 0 && !isCrouching)
+        {
+            crouchLerp -= Time.deltaTime * 8;
+            if (isOnGround && !jumpQueueOn)
+            {
+                //forces player up to avoid collider expanding into the ground. doesnt activate when player jump is being processed
+                cc.enabled = false;
+                transform.position = new Vector3(transform.position.x, hit.point.y - cc.center.y + cc.height/2 + 0.1F, transform.position.z);
+                cc.enabled = true;
+            }
+        }
+    }
+
+    bool slideCooldownActive = false;
     IEnumerator slide(){
         int i = 0;
         Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
@@ -436,5 +436,9 @@ public class playerMovement : MonoBehaviour
         //this code allows source engine surfing to happen whithout using rigidbody physics - in fact, i totally just copied it from the source engine's source code! lmao! thanks heckteck for helping me understand this bit
         float backoff = Vector3.Dot(velocity, cHit.normal);
         velocity = velocity - (backoff * cHit.normal);
+    }
+
+    void onDestroy(){
+        GameEvents.current.onHeatUpdate -= heatUpdate;
     }
 }

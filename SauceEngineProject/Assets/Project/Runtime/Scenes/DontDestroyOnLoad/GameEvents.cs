@@ -35,6 +35,23 @@ public class GameEvents : MonoBehaviour
         onPlayerHudUpdate(sender, pTransform, playerVelocity, accelX, accelZ);
     }
     
+    public event Action<object, string> onHeatPlayer;
+    public void heatPlayer(object sender, string name){
+        if (onHeatPlayer != null){
+            onHeatPlayer(sender, name);
+        }
+        else{
+            Debug.Log("HELP!!!!!");
+        }
+    }
+
+    public event Action<object, float> onHeatUpdate;
+    public void heatUpdate(object sender, float heat){
+        if (onHeatUpdate != null){
+            onHeatUpdate(sender, heat);
+        }
+    }
+    
     public event Action<object, Transform, Vector3, float, float> onPlayerHudUpdate;
     public void playerHudUpdate(object sender, Transform pTransform, Vector3 velocity, float accelX, float accelZ){
         if (onPlayerHudUpdate != null){

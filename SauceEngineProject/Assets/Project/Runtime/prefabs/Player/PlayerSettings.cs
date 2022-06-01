@@ -29,6 +29,8 @@ public class PlayerSettings : ScriptableObject{
     public int slideITicks = 12;
     public int slideCooldown = 30;
     public float slideForce = 25F;
-    public float slidePenalty = 7F;
+
+    public float heatDecay = 0.1F;
+    public float slideHeat = 0.334F;
 }
     
