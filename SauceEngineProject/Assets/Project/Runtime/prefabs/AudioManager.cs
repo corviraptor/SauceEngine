@@ -19,11 +19,11 @@ public class AudioManager : MonoBehaviour
     }
 
     private void Start(){
-        GameEvents.current.onPlaySound += Play;
-        GameEvents.current.onStopSound += Stop;
-        GameEvents.current.onPlayFadeSound += PlayFade;
-        GameEvents.current.onStopFadeSound += StopFade;
-        GameEvents.current.onPitchShift += pitchShift;
+        GameEvents.current.OnPlaySound += Play;
+        GameEvents.current.OnStopSound += Stop;
+        GameEvents.current.OnPlayFadeSound += PlayFade;
+        GameEvents.current.OnStopFadeSound += StopFade;
+        GameEvents.current.OnPitchShift += pitchShift;
     }
 
     public void pitchShift(string name, float pitch){
@@ -77,9 +77,10 @@ public class AudioManager : MonoBehaviour
     }
 
     private void OnDestroy() {
-        GameEvents.current.onPlaySound -= Play;
-        GameEvents.current.onStopSound -= Stop;
-        GameEvents.current.onPlayFadeSound -= PlayFade;
-        GameEvents.current.onStopFadeSound -= StopFade;
+        GameEvents.current.OnPlaySound -= Play;
+        GameEvents.current.OnStopSound -= Stop;
+        GameEvents.current.OnPlayFadeSound -= PlayFade;
+        GameEvents.current.OnStopFadeSound -= StopFade;
+        GameEvents.current.OnPitchShift -= pitchShift;
     }
 }

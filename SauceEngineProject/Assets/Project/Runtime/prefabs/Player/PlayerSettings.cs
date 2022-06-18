@@ -19,8 +19,7 @@ public class PlayerSettings : ScriptableObject{
     public float gMagThreshold = 0.5F;
     public float maxSlope = 0.4F;
     public float surfLift = 10F;
-    [Range(0f, 1f)]
-    public float frictionFactor = 0.98F; //should always be between 0 and 1
+    public float frictionFactor = 10F;
     //forgiveness thresholds, in ticks
     public int frictionForgiveness = 10;
     public float overcomeThreshold = 20F;

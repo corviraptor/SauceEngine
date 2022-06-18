@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: playerSettings
   m_EditorClassIdentifier: 
   sens: 0.7
-  airAccel: 150
-  vLimit: 50
-  walkSpeed: 20
+  airAccel: 200
+  vLimit: 80
+  walkSpeed: 17
   height: 2
   jumpForce: 7
   gravity: 16
@@ -27,12 +27,13 @@ MonoBehaviour:
   gMagThreshold: 0.5
   maxSlope: 0.9
   surfLift: 5
-  frictionFactor: 0.93
+  frictionFactor: 20
   frictionForgiveness: 5
-  overcomeThreshold: 22
+  overcomeThreshold: 25
   jumpForgiveness: 5
   coyoteTime: 10
   slideITicks: 12
   slideCooldown: 30
-  slideForce: 30
-  slidePenalty: 0.9
+  slideForce: 25
+  heatDecay: 0.05
+  slideHeat: 0.5

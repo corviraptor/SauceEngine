@@ -16,23 +16,22 @@ public class hudManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameEvents.current.onPlayerHudUpdate += hudUpdate;
-        GameEvents.current.onHeatUpdate += heatUpdate;
+        GameEvents.current.OnPlayerHudUpdate += hudUpdate;
+        GameEvents.current.OnHeatUpdate += heatUpdate;
     }
 
     private void hudUpdate(object sender, Transform transform, Vector3 velocity, float accelX, float accelZ){
         if (!hudUpdateInProgress){
-            StartCoroutine(hudUpdateCycle(sender, velocity, accelX, accelZ));
+            StartCoroutine(HudUpdateCycle(sender, velocity, accelX, accelZ));
         }
     }
 
     void heatUpdate(object sender, float heat){
-        Debug.Log(heat);
         heatBar.value = heat;
     }
 
     float newSpeed;
-    IEnumerator hudUpdateCycle(object sender, Vector3 velocity, float accelX, float accelZ){
+    IEnumerator HudUpdateCycle(object sender, Vector3 velocity, float accelX, float accelZ){
         //accel indicator
         float i = 0;
         Vector3 newAccelRotationVector = new Vector3(accelX, accelZ, 0);
@@ -93,6 +92,6 @@ public class hudManager : MonoBehaviour
     }
 
     void OnDestroy() {
-        GameEvents.current.onPlayerHudUpdate -= hudUpdate;
+        GameEvents.current.OnPlayerHudUpdate -= hudUpdate;
     }
 }

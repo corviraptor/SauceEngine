@@ -9,17 +9,15 @@ public class playerHeat : MonoBehaviour
     float heat;
 
     void Start(){
-        GameEvents.current.onHeatPlayer += heatPlayer;
-        Debug.Log("SUBSCRIBED!!!");
+        GameEvents.current.OnHeatPlayer += HeatPlayer;
     }
 
-    void heatPlayer(object sender, string name){
+    void HeatPlayer(object sender, string name){
         switch (name)
         {
             case "Slide":
                 if (heat < 1){
                     heat += player.slideHeat;
-                    Debug.Log(heat);
                 }
                 break;
             default:
@@ -32,11 +30,11 @@ public class playerHeat : MonoBehaviour
     private void Update() {
         if (heat > 0){
             heat -= player.heatDecay * Time.deltaTime;
-            GameEvents.current.heatUpdate(this, heat); //multiply or add something for stuff that cools the player
+            GameEvents.current.HeatUpdate(this, heat); //multiply or add something for stuff that cools the player
         }
     }
 
     void onDestroy(){
-        GameEvents.current.onHeatPlayer -= heatPlayer;
+        GameEvents.current.OnHeatPlayer -= HeatPlayer;
     }
 }

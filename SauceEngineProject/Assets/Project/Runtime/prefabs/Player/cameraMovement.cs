@@ -10,7 +10,7 @@ public class cameraMovement : MonoBehaviour
     float playerHeight;
 
     void Start(){
-        GameEvents.current.onPlayerPositionUpdate += posUpdate;
+        GameEvents.current.OnPlayerPositionUpdate += posUpdate;
     }
 
     // should be called *after* LateUpdate
@@ -28,6 +28,6 @@ public class cameraMovement : MonoBehaviour
     }
 
     void OnDestroy() {
-        GameEvents.current.onPlayerPositionUpdate -= posUpdate;
+        GameEvents.current.OnPlayerPositionUpdate -= posUpdate;
     }
 }
