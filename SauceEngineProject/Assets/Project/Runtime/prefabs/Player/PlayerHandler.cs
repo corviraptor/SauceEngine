@@ -35,6 +35,7 @@ public class PlayerHandler : MonoBehaviour
 
     void LateUpdate(){
         GameEvents.current.PlayerInfo(this, playerArgs);
+
         PlayerPositionUpdate(this, playerArgs.transform, playerArgs.controller.height, playerArgs.controller.center);
         PlayerHudUpdate(this, playerArgs);
     }
