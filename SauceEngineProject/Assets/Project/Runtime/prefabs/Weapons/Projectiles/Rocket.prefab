@@ -131,4 +131,4 @@ MonoBehaviour:
   id: 
   rb: {fileID: 5504433046805047334}
   blastRadius: 5
-  blastPower: 50
+  blastPower: 150
