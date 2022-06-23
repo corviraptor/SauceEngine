@@ -22,9 +22,9 @@ MonoBehaviour:
   jumpForce: 7
   jumpForgiveness: 5
   coyoteTime: 10
-  gravity: 30
-  fallMultiplier: 1
-  groundPull: 0
+  gravity: 23
+  fallMultiplier: 4
+  groundPull: 5
   terminalVelocity: -100
   gThreshold: 0.2
   gMagnetism: 1
