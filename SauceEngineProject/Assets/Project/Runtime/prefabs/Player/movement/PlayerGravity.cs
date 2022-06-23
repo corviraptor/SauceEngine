@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class PlayerGravity : MonoBehaviour
 {
+    public PlayerMovement playerMovement;
     void OnEnable(){
-        PlayerMovementEvents.current.OnGravity += Gravity;
+        playerMovement.OnGravity += Gravity;
     }
 
     void OnDestroy(){
-        PlayerMovementEvents.current.OnGravity -= Gravity;
+        playerMovement.OnGravity -= Gravity;
     }
 
     void Gravity(object sender, PlayerSettings player, Vector3 velocity, RaycastHit hit){
@@ -22,11 +23,11 @@ public class PlayerGravity : MonoBehaviour
         Vector3 gravityVector = new Vector3(0, player.gravity * Time.deltaTime, 0);
         
         //strong gravity
-        if (velocity.y < 0 && hit.distance <= player.groundPull && Vector3.Dot(hit.normal, transform.up) > player.maxSlope && PlayerMovementEvents.current.clocks["postJumpGravity"] != 0){
+        if (velocity.y < 0 && hit.distance <= player.groundPull && Vector3.Dot(hit.normal, transform.up) > player.maxSlope && playerMovement.clocks["postJumpGravity"] != 0){
             gravityVector = gravityVector * player.fallMultiplier;
         }
 
         velocity -= gravityVector;
-        PlayerMovementEvents.current.velocity = velocity;
+        playerMovement.velocity = velocity;
     }
 }

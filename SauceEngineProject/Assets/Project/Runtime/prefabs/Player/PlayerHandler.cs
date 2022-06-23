@@ -6,26 +6,27 @@ using UnityEngine;
 public class PlayerHandler : MonoBehaviour
 {
     public static PlayerHandler current;
-    public GameObject movement;
+    public GameObject controllerObject;
     public PlayerSettings player;
     public PlayerArgs playerArgs;
+    public PlayerMovement playerMovement;
 
     void Start()
     {   
         current = this;
 
-        foreach (Behaviour script in movement.GetComponents<Behaviour>()){
+        foreach (Behaviour script in controllerObject.GetComponents<Behaviour>()){
             script.enabled = true;
         }
 
-        playerArgs = new PlayerArgs(Vector3.zero, Vector3.zero, 0F, transform, PlayerMovementEvents.current.cc, transform);
+        playerArgs = new PlayerArgs(Vector3.zero, Vector3.zero, 0F, transform, playerMovement.cc, transform);
 
         GameEvents.current.OnPlayerUpdate += PlayerUpdate;
     }
 
     void OnDestroy()
     {   
-        foreach (Behaviour script in movement.GetComponents<Behaviour>()){
+        foreach (Behaviour script in controllerObject.GetComponents<Behaviour>()){
             script.enabled = false;
         }
 
