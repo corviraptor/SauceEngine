@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     float temperature;
     float walkSpeedAdj;
     
+	public bool frictionForgiven => clocks["frictionTimer"] > 0 && new Vector3(velocity.x, 0, velocity.z).magnitude > player.overcomeThreshold;
 
     void OnEnable(){
 

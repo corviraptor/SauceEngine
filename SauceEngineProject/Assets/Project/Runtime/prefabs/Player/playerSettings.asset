@@ -16,15 +16,15 @@ MonoBehaviour:
   airAccel: 200
   vLimit: 80
   walkSpeed: 17
-  walkAcceleration: 40
+  walkAcceleration: 15
   height: 2
   mass: 10
   jumpForce: 7
   jumpForgiveness: 5
   coyoteTime: 10
-  gravity: 23
-  fallMultiplier: 4
-  groundPull: 5
+  gravity: 30
+  fallMultiplier: 1
+  groundPull: 0
   terminalVelocity: -100
   gThreshold: 0.2
   gMagnetism: 1
@@ -32,8 +32,8 @@ MonoBehaviour:
   maxSlope: 0.9
   surfLift: 5
   frictionFactor: 20
-  frictionForgiveness: 10
-  overcomeThreshold: 25
+  frictionForgiveness: 5
+  overcomeThreshold: 15
   slideITicks: 12
   slideCooldown: 30
   slideForce: 25

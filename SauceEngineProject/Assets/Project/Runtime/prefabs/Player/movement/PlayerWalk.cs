@@ -14,11 +14,7 @@ public class PlayerWalk : MonoBehaviour
     }
 
     void Walk(object sender, PlayerSettings player, Vector3 velocity, Vector3 accelXZ, RaycastHit hit, float walkSpeedAdj){
-        //no friction after the first frame on the ground to let walks through queued jumps
-        if (playerMovement.clocks["frictionTimer"] >= 1){
-            return;
-        }
-        if (playerMovement.clocks["frictionTimer"] >= player.frictionForgiveness && velocity.KillY().magnitude > player.overcomeThreshold){
+        if (playerMovement.frictionForgiven){
             return;
         }
         Vector3 localWalkDirection = Vector3.ProjectOnPlane(accelXZ, hit.normal).normalized;
