@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class PlayerJump : MonoBehaviour
 {
+    public PlayerMovement playerMovement;
     void OnEnable(){
-        PlayerMovementEvents.current.OnJump += Jump;
+        playerMovement.OnJump += Jump;
     }
 
     void OnDestroy(){
-        PlayerMovementEvents.current.OnJump -= Jump;
+        playerMovement.OnJump -= Jump;
     }
 
     //called on spacebar press & during timer 
@@ -18,19 +19,19 @@ public class PlayerJump : MonoBehaviour
         if (isOnGround){
 
             velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
-            PlayerMovementEvents.current.velocity = velocity;
+            playerMovement.velocity = velocity;
 
-            PlayerMovementEvents.current.StartJumpCooldown();
+            playerMovement.StartJumpCooldown();
             GameEvents.current.SoundCommand("Jump", "Play", 0);
 
             return;
         }
-        if (PlayerMovementEvents.current.clocks["coyoteTime"] <= player.coyoteTime && PlayerMovementEvents.current.clocks["coyoteTime"] != 0){
+        if (playerMovement.clocks["coyoteTime"] <= player.coyoteTime && playerMovement.clocks["coyoteTime"] != 0){
 
             velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
-            PlayerMovementEvents.current.velocity = velocity;
+            playerMovement.velocity = velocity;
 
-            PlayerMovementEvents.current.StartJumpCooldown();
+            playerMovement.StartJumpCooldown();
             GameEvents.current.SoundCommand("Jump", "Play", 0);
 
             return;

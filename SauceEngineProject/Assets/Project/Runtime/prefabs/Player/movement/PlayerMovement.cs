@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovementEvents : MonoBehaviour, IBlastible
+public class PlayerMovement : MonoBehaviour, IBlastible
 {
-    public static PlayerMovementEvents current;
     public GameObject logic;
 
     public CharacterController cc;
@@ -34,7 +33,6 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
     void OnEnable(){
 
-        current = this;
         gameObject.tag = "Player";
 
         clocks.Add("jumpBuffer", 0);
@@ -44,8 +42,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
         clocks.Add("slideBuffer", 0);
         clocks.Add("slide", 0);
         clocks.Add("blastTime", 0);
-
-        foreach (Behaviour module in logic.GetComponents<Behaviour>()){
+        foreach (MonoBehaviour module in logic.GetComponents<MonoBehaviour>()){
             module.enabled = true;
         }
         walkSpeedAdj = player.walkSpeed;
@@ -53,7 +50,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
     void onDestroy(){
 
-        foreach (Behaviour module in logic.GetComponents<Behaviour>()){
+        foreach (MonoBehaviour module in logic.GetComponents<MonoBehaviour>()){
             module.enabled = false;
         }
     }
@@ -171,8 +168,9 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
             Slide();
         }
         else if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature > player.heatLimit && !slideFailPlayed) {
-            slideFailPlayed = true;
             GameEvents.current.SoundCommand("SlideFail", "Play", 0);
+            slideFailPlayed = true;
+            StartCoroutine(Clock("slide", player.slideCooldown));
         }
         else if (clocks["slideBuffer"] == 0){
             slideFailPlayed = false;
@@ -252,7 +250,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
             slideVector = transform.forward;
         }
 
-        if (clocks["jumpCooldown"] != 0 && clocks["slide"] < player.slideITicks){ //slide jump
+        if (clocks["jumpCooldown"] != 0 && clocks["slide"] < player.slideITicks && temperature <= player.heatLimit){ //slide jump
             slideState = 0;
             if (!slideJumped){
                 slideJumped = true;
@@ -267,6 +265,11 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
             slideState = 0;
             slideJumped = false;
 
+            return;
+        }
+
+        if (temperature > player.heatLimit){
+            // no slide redirection or anything if over heat limit, but slide state stays to stop friction and walking from eating your momentum
             return;
         }
 

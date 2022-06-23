@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class PlayerAirControl : MonoBehaviour
 {
+    public PlayerMovement playerMovement;
     void OnEnable(){
-        PlayerMovementEvents.current.OnAirControl += AirControl;
+        playerMovement.OnAirControl += AirControl;
     }
 
     void OnDestroy(){
-        PlayerMovementEvents.current.OnAirControl -= AirControl;
+        playerMovement.OnAirControl -= AirControl;
     }
 
     // Update is called once per frame
@@ -21,7 +22,7 @@ public class PlayerAirControl : MonoBehaviour
         if (AVproj < player.vLimit - (accelXZ.magnitude * Time.deltaTime))
         { 
             velocityXZ = velocityXZ + (accelXZ * player.airAccel * Time.deltaTime);
-            PlayerMovementEvents.current.velocity = new Vector3(velocityXZ.x, velocity.y, velocityXZ.z);
+            playerMovement.velocity = new Vector3(velocityXZ.x, velocity.y, velocityXZ.z);
         }
     }
 }

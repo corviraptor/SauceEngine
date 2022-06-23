@@ -18,7 +18,6 @@ public class CameraMovement : MonoBehaviour
     void Update(){
         if (!initialized){
             PlayerHandler.current.OnPlayerPositionUpdate += PosUpdate;
-            PlayerMovementEvents.current.OnJump += Jump;
             mousePitch = 0;
             initialized = true;
         }
@@ -37,18 +36,6 @@ public class CameraMovement : MonoBehaviour
         transform.position = playerTransform.position + Vector3.up * height / 4;
 
         PlayerHandler.current.playerArgs.cameraTransform = transform;
-    }
-
-    private void Jump(object sender, PlayerSettings player, Vector3 velocity, bool isOnGround, RaycastHit hit){
-        if (isOnGround){
-
-            return;
-        }
-        if (PlayerMovementEvents.current.clocks["coyoteTime"] <= player.coyoteTime && PlayerMovementEvents.current.clocks["coyoteTime"] != 0){
-
-            return;
-        }
-
     }
 
     void OnDestroy() {

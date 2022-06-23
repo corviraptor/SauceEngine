@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class PlayerSlopes : MonoBehaviour
 {
+    public PlayerMovement playerMovement;
     void OnEnable(){
-        PlayerMovementEvents.current.OnSlope += Slope;
+        playerMovement.OnSlope += Slope;
     }
 
     void OnDestroy(){
-        PlayerMovementEvents.current.OnSlope -= Slope;
+        playerMovement.OnSlope -= Slope;
     }
 
     void Slope(object sender, PlayerSettings player, Vector3 velocity, int slopeState, RaycastHit hit){
