@@ -247,6 +247,17 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""d3eef02d-9853-4045-a399-e1d9b4b1c033"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""30ad2853-ea93-4604-ae23-57bc6707f018"",
                     ""path"": """",
                     ""interactions"": """",
