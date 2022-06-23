@@ -20,7 +20,7 @@ public class PlayerFriction : MonoBehaviour
             return;
         }
         //inequalities here are flipped from what they are in walk since this isn't a guard statement
-        if (playerMovement.clocks["frictionTimer"] == 0 || new Vector3(velocity.x, 0, velocity.z).magnitude < player.overcomeThreshold){
+        if (playerMovement.clocks["frictionTimer"] == 0 || new Vector3(velocity.x, 0, velocity.z).magnitude <= player.overcomeThreshold){
             playerMovement.velocity -= new Vector3(velocity.x, 0, velocity.z) * player.frictionFactor * Time.deltaTime;
         }
     }

@@ -18,7 +18,7 @@ public class PlayerWalk : MonoBehaviour
         if (playerMovement.clocks["frictionTimer"] >= 1){
             return;
         }
-        if (playerMovement.clocks["frictionTimer"] >= player.frictionForgiveness && new Vector3(velocity.x, 0, velocity.z).magnitude > player.overcomeThreshold){
+        if (playerMovement.clocks["frictionTimer"] >= player.frictionForgiveness && velocity.KillY().magnitude > player.overcomeThreshold){
             return;
         }
         Vector3 localWalkDirection = Vector3.ProjectOnPlane(accelXZ, hit.normal).normalized;
