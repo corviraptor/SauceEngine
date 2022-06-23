@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerWalk : MonoBehaviour
 {
     void OnEnable(){
-        Debug.Log("WALKING ENABLED");
         PlayerMovementEvents.current.OnWalk += Walk;
     }
 
@@ -23,6 +22,6 @@ public class PlayerWalk : MonoBehaviour
         }
         Vector3 localWalkDirection = Vector3.ProjectOnPlane(accelXZ, hit.normal).normalized;
         Vector3 localWalkVector = localWalkDirection * accelXZ.magnitude * walkSpeedAdj;
-        PlayerMovementEvents.current.velocity = localWalkVector;
+        PlayerMovementEvents.current.velocity = velocity - player.walkAcceleration * velocity * Time.deltaTime + player.walkAcceleration * localWalkVector * Time.deltaTime;
     }
 }

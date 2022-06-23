@@ -12,15 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d73d36ae5653da34e97adf89735bd62b, type: 3}
   m_Name: playerSettings
   m_EditorClassIdentifier: 
-  sens: 0.7
+  sens: 0.05
   airAccel: 200
   vLimit: 80
   walkSpeed: 17
+  walkAcceleration: 40
   height: 2
+  mass: 10
   jumpForce: 7
-  gravity: 16
-  fallMultiplier: 3
-  groundPull: 3
+  jumpForgiveness: 5
+  coyoteTime: 10
+  gravity: 23
+  fallMultiplier: 4
+  groundPull: 5
   terminalVelocity: -100
   gThreshold: 0.2
   gMagnetism: 1
@@ -28,12 +32,13 @@ MonoBehaviour:
   maxSlope: 0.9
   surfLift: 5
   frictionFactor: 20
-  frictionForgiveness: 5
+  frictionForgiveness: 10
   overcomeThreshold: 25
-  jumpForgiveness: 5
-  coyoteTime: 10
   slideITicks: 12
   slideCooldown: 30
   slideForce: 25
   heatDecay: 0.05
-  slideHeat: 0.5
+  heatLimit: 60
+  overheat: 90
+  slideHeat: 10
+  rocketJumpHeat: 10

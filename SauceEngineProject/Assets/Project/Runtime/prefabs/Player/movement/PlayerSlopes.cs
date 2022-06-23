@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerSlopes : MonoBehaviour
 {
     void OnEnable(){
-        Debug.Log("SLOPE BEHAVIOR ENABLED");
         PlayerMovementEvents.current.OnSlope += Slope;
     }
 

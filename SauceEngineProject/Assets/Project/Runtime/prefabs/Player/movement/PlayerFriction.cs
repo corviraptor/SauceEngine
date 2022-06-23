@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerFriction : MonoBehaviour
 {
     void OnEnable(){
-        Debug.Log("FRICTION ENABLED");
         PlayerMovementEvents.current.OnFriction += Friction;
     }
 

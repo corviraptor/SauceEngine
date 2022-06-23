@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerGravity : MonoBehaviour
 {
     void OnEnable(){
-        Debug.Log("GRAVITY ENABLED");
         PlayerMovementEvents.current.OnGravity += Gravity;
     }
 
@@ -21,10 +20,13 @@ public class PlayerGravity : MonoBehaviour
         }
 
         Vector3 gravityVector = new Vector3(0, player.gravity * Time.deltaTime, 0);
+        
         //strong gravity
-        if (velocity.y < 0 && hit.distance <= player.groundPull && Vector3.Dot(hit.normal, transform.up) > player.maxSlope){
+        if (velocity.y < 0 && hit.distance <= player.groundPull && Vector3.Dot(hit.normal, transform.up) > player.maxSlope && PlayerMovementEvents.current.clocks["postJumpGravity"] != 0){
             gravityVector = gravityVector * player.fallMultiplier;
         }
-        PlayerMovementEvents.current.velocity = velocity - gravityVector;
+
+        velocity -= gravityVector;
+        PlayerMovementEvents.current.velocity = velocity;
     }
 }

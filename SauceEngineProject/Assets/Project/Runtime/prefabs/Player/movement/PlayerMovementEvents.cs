@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovementEvents : MonoBehaviour
+public class PlayerMovementEvents : MonoBehaviour, IBlastible
 {
     public static PlayerMovementEvents current;
     public GameObject logic;
@@ -12,48 +12,47 @@ public class PlayerMovementEvents : MonoBehaviour
     public PlayerSettings player;
     [SerializeField] private LayerMask layerMask;
 
-    //key name, bool for if its complete, int for progress
+    //key name, int for progress
     public Dictionary<string, int> clocks = new Dictionary<string, int>();
 
-    Vector3 center;
+    public Vector3 center;
 
     public Vector3 velocity;
+    public Vector3 oldPosition;
     Vector3 accelXZ;
     RaycastHit hit;
-    public bool isOnGround;
-    bool crouchExited;
+
+    public bool isOnGround = false;
+    bool slideFailPlayed = false;
     int slopeState = 0;
     int crouchState = 0;
     int slideState = 0;
 
-    float heat;
+    float temperature;
     float walkSpeedAdj;
-
-    //temp
-    float accelX;
-    float accelZ;
     
 
-    void Start(){
+    void OnEnable(){
+
         current = this;
         gameObject.tag = "Player";
-        GameEvents.current.OnHeatUpdate += HeatUpdate;
+
         clocks.Add("jumpBuffer", 0);
         clocks.Add("coyoteTime", 0);
         clocks.Add("jumpCooldown", 0);
+        clocks.Add("postJumpGravity", 0);
         clocks.Add("slideBuffer", 0);
         clocks.Add("slide", 0);
+        clocks.Add("blastTime", 0);
 
         foreach (Behaviour module in logic.GetComponents<Behaviour>()){
             module.enabled = true;
         }
-
         walkSpeedAdj = player.walkSpeed;
     }
 
     void onDestroy(){
-        GameEvents.current.OnHeatUpdate -= HeatUpdate;
-        
+
         foreach (Behaviour module in logic.GetComponents<Behaviour>()){
             module.enabled = false;
         }
@@ -61,36 +60,39 @@ public class PlayerMovementEvents : MonoBehaviour
 
     void LateUpdate(){
         // - YAW ROTATION
-        float mouseYaw = player.sens * Input.GetAxis("Mouse X");
+        float mouseYaw = InputManager.current.lookVector.x;
         transform.Rotate(0, mouseYaw, 0);
 
         //sets player velocity at the end of every frame, then sends info to the event system
         cc.Move(velocity * Time.deltaTime);
 
-        Vector3 localVelocity = this.transform.InverseTransformVector(velocity);
-        GameEvents.current.playerUpdate(this, localVelocity, accelX, accelZ, transform, player.height, cc.center, isOnGround);
-    }
+        Vector3 realVelocity = (transform.position - oldPosition) / Time.deltaTime;
 
-    void HeatUpdate(object sender, float h){
-        heat = h;
+        //assigns PlayerArgs instance for PlayerHandler
+        PlayerHandler.current.playerArgs.velocity = realVelocity;
+        PlayerHandler.current.playerArgs.localVelocity = this.transform.InverseTransformVector(realVelocity);
+        PlayerHandler.current.playerArgs.transform = transform;
+        PlayerHandler.current.playerArgs.controller = cc;
+
+        oldPosition = transform.position;
     }
 
     // Update is called once per frame
     void Update(){
+        temperature = PlayerHandler.current.playerArgs.temperature;
+
         center = transform.position + cc.center;
         // locked cursor wizardry
-        if (Input.GetButtonDown("Cancel")){
+        if (InputManager.current.menu){
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (Input.GetButtonDown("Fire1")){
+        if (InputManager.current.attack){
             Cursor.lockState = CursorLockMode.Locked;
         }
 
         //input direction
-        accelZ = Input.GetAxis("Vertical");
-        accelX = Input.GetAxis("Horizontal");
-        accelXZ = (accelX * transform.right + accelZ * transform.forward);
+        accelXZ = InputManager.current.naiveAccelXY.x * transform.right + InputManager.current.naiveAccelXY.y * transform.forward;
         if (accelXZ.magnitude > 1){
             accelXZ = accelXZ.normalized;
         }
@@ -99,7 +101,7 @@ public class PlayerMovementEvents : MonoBehaviour
         SlopeTest();
 
         // - JUMP
-        if (Input.GetButtonDown("Jump") && clocks["jumpCooldown"] == 0){
+        if (InputManager.current.jump && clocks["jumpCooldown"] == 0){
             StartCoroutine(Clock("jumpBuffer", player.jumpForgiveness));
             StartCoroutine(Clock("frictionTimer", 2));
         }
@@ -108,6 +110,10 @@ public class PlayerMovementEvents : MonoBehaviour
             Jump(this, player, velocity, isOnGround, hit);
         }
 
+        //maintains jump velocity for a few ticks to make sure it goes through
+        if (clocks["jumpCooldown"] != 0 && clocks["jumpCooldown"] < 5){
+            velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
+        }
 
         // air
         if (!isOnGround){
@@ -116,7 +122,7 @@ public class PlayerMovementEvents : MonoBehaviour
         }
 
         // - CROUCH: 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
-        if (Input.GetButton("Crouch")){
+        if (InputManager.current.crouched){
             cc.center = new Vector3(0, 0.5F, 0);
             cc.height = player.height / 2.0F;
             walkSpeedAdj = player.walkSpeed / 2;
@@ -134,33 +140,42 @@ public class PlayerMovementEvents : MonoBehaviour
         }
 
         // slide
-        if (Input.GetButtonDown("Crouch") && velocity.magnitude > player.walkSpeed * 0.9F && clocks["slideBuffer"] == 0 && isOnGround && heat < 1){
+        if (InputManager.current.slide && velocity.magnitude > 0.1F && clocks["slideBuffer"] == 0){
             StartCoroutine(Clock("slideBuffer", player.jumpForgiveness));
-        }
-        else if (Input.GetButtonDown("Crouch") && heat >= 1) {
-            Debug.Log("Too hot!");
-        }
-
-        if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0){
-
-            GameEvents.current.playerSlide(this);
-            GameEvents.current.HeatPlayer(this, "Slide");
-            StartCoroutine(Clock("slide", player.slideCooldown));
-            Slide();
         }
 
         if (clocks["slide"] !=0){
             Slide();
         }
 
-        //ground magnetism - will push you down perpendicular to a standable surface when youre very close to it to keep you from ramping off tiny things
-        if (hit.distance <= cc.height / 2 + player.gMagThreshold && clocks["jumpCooldown"] == 0 && slopeState == 0){
+        // ground magnetism - will push you down perpendicular to a standable surface when youre very close to it to keep you from ramping off tiny things
+        if (hit.distance <= cc.height / 2 + player.gMagThreshold && clocks["jumpCooldown"] == 0 && slopeState == 0 && clocks["blastTime"] == 0){
             velocity -= hit.normal * player.gMagnetism;
         }
 
         if (!isOnGround){
             // we know we're on the ground if we get past here because of this guard statement
             return;
+        }
+
+        if (clocks["blastTime"] != 0){
+            // we know we havent just blast jumped past here because of this guard statement
+            return;
+        }
+        
+        // more slide logic
+        if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature <= player.heatLimit){
+            GameEvents.current.HeatPlayer(this, "Slide");
+            GameEvents.current.SoundCommand("Slide", "Play", 0);
+            StartCoroutine(Clock("slide", player.slideCooldown));
+            Slide();
+        }
+        else if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature > player.heatLimit && !slideFailPlayed) {
+            slideFailPlayed = true;
+            GameEvents.current.SoundCommand("SlideFail", "Play", 0);
+        }
+        else if (clocks["slideBuffer"] == 0){
+            slideFailPlayed = false;
         }
 
         if (slideState == 1){
@@ -175,10 +190,12 @@ public class PlayerMovementEvents : MonoBehaviour
             Friction(this, player, velocity);
         }
     }
-    
+
     public void StartJumpCooldown(){
         if (clocks["jumpCooldown"] == 0){
-            StartCoroutine(Clock("jumpCooldown", player.coyoteTime));
+            StartCoroutine(Clock("jumpCooldown", player.coyoteTime + 10));
+            StopCoroutine(Clock("postJumpGravity", 30));
+            StartCoroutine(Clock("postJumpGravity", 30));
         }
     }
 
@@ -217,28 +234,38 @@ public class PlayerMovementEvents : MonoBehaviour
             Crouch(this, player, crouchState, isOnGround, hit);
             crouchState = 0;
         }
-    }
+    }  
 
+    bool slideJumped = false;
     void Slide(){ //i know its weird that slide doesn't have its own script but it'd be a hassle to try and manage the timers in another script and it isnt that big so whatever
         Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
         Vector3 slideVector;
 
-        if (accelXZ.magnitude > 0.1F){
+        if (clocks["slide"] != 1){
+            //slide should only change the player's velocity direction at the beginning of the slide, to prevent weirdness of slide angle being adjusted mid-slide
+            slideVector = velocityXZ.normalized;
+        }
+        else if (accelXZ.magnitude > 0.5){
             slideVector = accelXZ.normalized;
         }
         else {
             slideVector = transform.forward;
         }
 
-        if (clocks["jumpCooldown"] != 0){ //slide jump
-            GameEvents.current.playerSlideInterrupted(this);
+        if (clocks["jumpCooldown"] != 0 && clocks["slide"] < player.slideITicks){ //slide jump
             slideState = 0;
+            if (!slideJumped){
+                slideJumped = true;
+                GameEvents.current.SoundCommand("SlideJump", "Play", 0);
+                GameEvents.current.SoundCommand("Slide", "Stop", 0);
+            }
 
             return;
         }
 
-        if (clocks["slide"] > player.slideITicks){ //end of slide i frames
+        if (clocks["slide"] > player.slideITicks || clocks["slide"] == 0){ //end of slide's boost
             slideState = 0;
+            slideJumped = false;
 
             return;
         }
@@ -246,16 +273,19 @@ public class PlayerMovementEvents : MonoBehaviour
         //we know slide will be executed after this point
         slideState = 1;
         if (velocityXZ.magnitude < player.slideForce){
-            velocity = slideVector * player.slideForce;
+            velocity = (slideVector * player.slideForce) + (Vector3.up * velocity.y);
         }
         else{
-            velocity = slideVector * velocityXZ.magnitude;
+            velocity = (slideVector * velocityXZ.magnitude) + (Vector3.up * velocity.y);
         }
     }
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(center, new Vector3(cc.radius * 2, cc.height, cc.radius * 2));
+        //feet
+        Gizmos.DrawSphere(center - Vector3.up * (cc.height / 2) + Vector3.up * cc.radius, cc.radius); 
+        //head
+        Gizmos.DrawSphere(center + Vector3.up * (cc.height / 2) - Vector3.up * cc.radius, cc.radius);
     }
 
     bool unsloped = false;
@@ -269,7 +299,9 @@ public class PlayerMovementEvents : MonoBehaviour
             unsloped = false;
             Slope(this, player, velocity, slopeState, hit);
             if (!surfed){
-                GameEvents.current.playerSurfEnter(this);
+                GameEvents.current.SoundCommand("SurfAttack", "Play", 0);
+                GameEvents.current.SoundCommand("SlipLoop", "StopFade", 10);
+                GameEvents.current.SoundCommand("SurfLoop", "PlayFade", 10);
                 surfed = true;
                 slipped = false;
             }
@@ -280,7 +312,8 @@ public class PlayerMovementEvents : MonoBehaviour
             Slope(this, player, velocity, slopeState, hit);
 
             if (surfed && !slipped){
-                GameEvents.current.playerSlipEnter(this);
+                GameEvents.current.SoundCommand("SlipLoop", "PlayFade", 10);
+                GameEvents.current.SoundCommand("SurfLoop", "StopFade", 10);
                 surfed = false;
                 slipped = true;
             }
@@ -289,13 +322,17 @@ public class PlayerMovementEvents : MonoBehaviour
             slopeState = 0;
             if (!unsloped){
                 //calls the GameEvents system to invoke the Unslope event only once
+                GameEvents.current.SoundCommand("SlipLoop", "StopFade", 10);
+                GameEvents.current.SoundCommand("SurfLoop", "StopFade", 10);
                 unsloped = true;
+            }
+            if (slipped){
+                GameEvents.current.SoundCommand("SlipRelease", "Play", 10);
                 slipped = false;
-                GameEvents.current.playerUnslope(this);
             }
             if (surfed){
+                GameEvents.current.SoundCommand("SurfRelease", "Play", 10);
                 surfed = false;
-                GameEvents.current.playerUnsurf(this);
             }
         }
     }
@@ -313,6 +350,24 @@ public class PlayerMovementEvents : MonoBehaviour
     void OnGroundExit(){
         StartCoroutine(Clock("coyoteTime", player.coyoteTime));
     }
+
+    public void Blast(object sender, string id, Vector3 blastForceVector){
+        StartCoroutine(Clock("blastTime", 10));
+        velocity = new Vector3(velocity.x, velocity.y / 2, velocity.z);
+        if (Vector3.Dot(velocity, blastForceVector) >= 0){
+            velocity += blastForceVector / player.mass;
+        }
+        else {
+            //half horizontal blast force if heading into the blast to prevent all of your momentum from being eaten
+            velocity +=  new Vector3(blastForceVector.x, 0, blastForceVector.z)/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
+        }
+
+        if (id == "Rocket"){
+            GameEvents.current.HeatPlayer(this, "Rocket");
+        }
+    }
+
+
 
     public event Action<object, PlayerSettings, Vector3, Vector3> OnAirControl;
     public void AirControl(object sender, PlayerSettings player, Vector3 v, Vector3 a){
@@ -364,17 +419,15 @@ public class PlayerMovementEvents : MonoBehaviour
     }
 
     IEnumerator Clock(string id, int interval){
-        //adds clock if it doesn't exist
-        try {
+        int temp;
+        //adds clock if it doesn't exist already
+        if(!clocks.TryGetValue(id, out temp)){
             clocks.Add(id, 0);
-        }
-        catch {
         }
         int i = 0;
         while (i <= interval){
             i++;
             clocks[id] = i;
-            if (id == "slide" ){ Debug.Log(id + ": " + i); }
 
             yield return new WaitForSeconds(Time.fixedDeltaTime);
         }

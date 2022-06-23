@@ -123,6 +123,64 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &830587818
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 830587819}
+  - component: {fileID: 830587820}
+  m_Layer: 0
+  m_Name: InputManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &830587819
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830587818}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &830587820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830587818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21e6f6b2291deb540b123671652e169a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 11400000, guid: 4f1f159af22dd8a458989b038e6c8465, type: 2}
+  naiveAccelXY: {x: 0, y: 0, z: 0}
+  lookVector: {x: 0, y: 0}
+  jump: 0
+  crouched: 0
+  slide: 0
+  attack: 0
+  attack2: 0
+  spell: 0
+  menu: 0
+  weapon0: 0
+  weapon1: 0
+  weapon2: 0
+  weapon3: 0
+  weapon4: 0
 --- !u!1 &1157205881
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,46 +298,77 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 591bd1cea0464e64abc4bd27fc58a0bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds:
+  playerMovementSFX:
   - name: Jump
-    clip: {fileID: 8300000, guid: bc2a6bda70beb5d4cbc557ed3b4a82e5, type: 3}
-    volume: 0.56
+    clip: {fileID: 8300000, guid: 06f99590a00968342a11f93389f0e7bc, type: 3}
+    volume: 1
     pitch: 1
     source: {fileID: 0}
     loop: 0
-  - name: Surfloop
-    clip: {fileID: 8300000, guid: 74d892d97a1a88240994042fc72f0fc7, type: 3}
-    volume: 0.613
-    pitch: 1
-    source: {fileID: 0}
-    loop: 1
-  - name: Surfenter
-    clip: {fileID: 8300000, guid: 290a8494d096309419329081016e7ee7, type: 3}
-    volume: 0.545
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: Surfrelease
-    clip: {fileID: 8300000, guid: 38f8970fe197a4048865fbe4ef7128bf, type: 3}
-    volume: 0.62
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: Slip
-    clip: {fileID: 8300000, guid: 51387c8217348844eb8a95a2471d5567, type: 3}
-    volume: 0.545
-    pitch: 1
-    source: {fileID: 0}
-    loop: 1
-  - name: Wind
-    clip: {fileID: 8300000, guid: 073baa16f0488174e97b60f3a4ddcc47, type: 3}
-    volume: 0.545
-    pitch: 1
-    source: {fileID: 0}
-    loop: 1
   - name: Slide
     clip: {fileID: 8300000, guid: 30f94e6afb3802a479badc97cce1efb1, type: 3}
-    volume: 0.545
+    volume: 0.473
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: SlideFail
+    clip: {fileID: 8300000, guid: b921e90ad0d47d54a90829aa0c2b7c74, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: SlideJump
+    clip: {fileID: 8300000, guid: 8c6966cea4bf52e40a4a28967b1b2173, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: SurfAttack
+    clip: {fileID: 8300000, guid: 6d9e0647fe5cf4d438ef1ba28f71af03, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: SurfLoop
+    clip: {fileID: 8300000, guid: bae5f505f2de8954b923937a99821bff, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 1
+  - name: SurfRelease
+    clip: {fileID: 8300000, guid: 56be3ca89c948824889cd446e13b7be9, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: SlipLoop
+    clip: {fileID: 8300000, guid: d0115c58d41315741b0d022c6276d30e, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 1
+  - name: SlipRelease
+    clip: {fileID: 8300000, guid: bf8451597a1ae1a4890d737e54f30470, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  playerSuitSFX:
+  - name: HeatLimit
+    clip: {fileID: 8300000, guid: 45a10650917f2b849b70d67ac2da0a77, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: HeatRecovery
+    clip: {fileID: 8300000, guid: 4559f4768e9fa7146a2b7a281cfe42a5, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: Overheat
+    clip: {fileID: 8300000, guid: 88c0dfd9134ee1149b15b675609aaa12, type: 3}
+    volume: 1
     pitch: 1
     source: {fileID: 0}
     loop: 0
@@ -324,16 +413,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 1697229288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 2064916234097673511, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: -1967631576421560919, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 8056856818456041789, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: 3279352641294131588, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: 3837173908680883260, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
 --- !u!114 &1697229290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,46 +460,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2113327545
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2113327546}
-  - component: {fileID: 2113327547}
-  m_Layer: 0
-  m_Name: InputManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2113327546
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2113327545}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 677, y: 427.7, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2113327547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2113327545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e8491a21bffc3143a67dfe1b6d23953, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

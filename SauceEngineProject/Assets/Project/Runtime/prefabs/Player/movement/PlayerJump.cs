@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerJump : MonoBehaviour
 {
     void OnEnable(){
-        Debug.Log("JUMPING ENABLED");
         PlayerMovementEvents.current.OnJump += Jump;
     }
 
@@ -22,7 +21,7 @@ public class PlayerJump : MonoBehaviour
             PlayerMovementEvents.current.velocity = velocity;
 
             PlayerMovementEvents.current.StartJumpCooldown();
-            GameEvents.current.playerJump(this);
+            GameEvents.current.SoundCommand("Jump", "Play", 0);
 
             return;
         }
@@ -32,7 +31,7 @@ public class PlayerJump : MonoBehaviour
             PlayerMovementEvents.current.velocity = velocity;
 
             PlayerMovementEvents.current.StartJumpCooldown();
-            GameEvents.current.playerJump(this);
+            GameEvents.current.SoundCommand("Jump", "Play", 0);
 
             return;
         }

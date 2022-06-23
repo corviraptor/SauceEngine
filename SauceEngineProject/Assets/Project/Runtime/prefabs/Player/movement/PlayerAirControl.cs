@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerAirControl : MonoBehaviour
 {
     void OnEnable(){
-        Debug.Log("AIR CONTROL ENABLED");
         PlayerMovementEvents.current.OnAirControl += AirControl;
     }
 
