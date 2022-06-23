@@ -22,7 +22,9 @@ public class Rocket : Projectile
         Collider[] hits = Physics.OverlapSphere(transform.position, blastRadius);
         foreach (Collider c in hits){
             if (c.gameObject.GetComponent<IBlastible>() != null){
-                Vector3 blastForceVector = (c.gameObject.transform.position - transform.position) * blastPower;
+				var diff = (c.gameObject.transform.position - transform.position);
+				var blastDistancePercent = (blastRadius - diff.magnitude) / blastRadius;
+                Vector3 blastForceVector = diff.normalized * blastPower * blastDistancePercent;
                 c.gameObject.GetComponent<IBlastible>().Blast(this, id, blastForceVector);
             }
         }

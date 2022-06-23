@@ -353,13 +353,13 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
     public void Blast(object sender, string id, Vector3 blastForceVector){
         StartCoroutine(Clock("blastTime", 10));
-        velocity = new Vector3(velocity.x, velocity.y / 2, velocity.z);
-        if (Vector3.Dot(velocity, blastForceVector) >= 0){
-            velocity += blastForceVector / player.mass;
+        velocity = new Vector3(velocity.x, velocity.y, velocity.z);
+        if (Vector3.Dot(velocity, -blastForceVector) >= 0.5f){
+			//half horizontal blast force if heading into the blast to prevent all of your momentum from being eaten
+            velocity +=  blastForceVector.KillY()/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
         }
         else {
-            //half horizontal blast force if heading into the blast to prevent all of your momentum from being eaten
-            velocity +=  blastForceVector.KillY()/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
+            velocity += blastForceVector / player.mass;
         }
 
         if (id == "Rocket"){
