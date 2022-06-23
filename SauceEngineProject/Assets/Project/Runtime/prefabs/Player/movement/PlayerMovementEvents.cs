@@ -93,7 +93,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
         //input direction
         accelXZ = InputManager.current.naiveAccelXY.x * transform.right + InputManager.current.naiveAccelXY.y * transform.forward;
-        if (accelXZ.magnitude > 1){
+        if (accelXZ.sqrMagnitude > 1){
             accelXZ = accelXZ.normalized;
         }
 
@@ -112,7 +112,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
         //maintains jump velocity for a few ticks to make sure it goes through
         if (clocks["jumpCooldown"] != 0 && clocks["jumpCooldown"] < 5){
-            velocity = new Vector3(velocity.x, player.jumpForce, velocity.z);
+            velocity = velocity.KillY() + (transform.up * player.jumpForce);
         }
 
         // air
@@ -123,7 +123,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
         // - CROUCH: 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
         if (InputManager.current.crouched){
-            cc.center = new Vector3(0, 0.5F, 0);
+            cc.center = Vector3.up * 0.5F;
             cc.height = player.height / 2.0F;
             walkSpeedAdj = player.walkSpeed / 2;
 
@@ -140,7 +140,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
         }
 
         // slide
-        if (InputManager.current.slide && velocity.magnitude > 0.1F && clocks["slideBuffer"] == 0){
+        if (InputManager.current.slide && velocity.sqrMagnitude > 0.01F && clocks["slideBuffer"] == 0){
             StartCoroutine(Clock("slideBuffer", player.jumpForgiveness));
         }
 
@@ -183,7 +183,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
             return;
         }
 
-        if (accelXZ.magnitude > 0.01F){
+        if (accelXZ.sqrMagnitude > 0.001F){
             Walk(this, player, velocity, accelXZ, hit, walkSpeedAdj);
         }
         else {
@@ -228,7 +228,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
         else {
             //this will only be called once, as once crouchState is 0 UncrouchTest will not be called by Update
             walkSpeedAdj = player.walkSpeed;
-            cc.center = new Vector3(0, 0, 0);
+            cc.center = Vector3.zero;
             cc.height = player.height;
 
             Crouch(this, player, crouchState, isOnGround, hit);
@@ -238,14 +238,14 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
     bool slideJumped = false;
     void Slide(){ //i know its weird that slide doesn't have its own script but it'd be a hassle to try and manage the timers in another script and it isnt that big so whatever
-        Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
+        Vector3 velocityXZ = velocity.KillY();
         Vector3 slideVector;
 
         if (clocks["slide"] != 1){
             //slide should only change the player's velocity direction at the beginning of the slide, to prevent weirdness of slide angle being adjusted mid-slide
             slideVector = velocityXZ.normalized;
         }
-        else if (accelXZ.magnitude > 0.5){
+        else if (accelXZ.sqrMagnitude > 0.25F){
             slideVector = accelXZ.normalized;
         }
         else {
@@ -272,7 +272,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
 
         //we know slide will be executed after this point
         slideState = 1;
-        if (velocityXZ.magnitude < player.slideForce){
+        if (velocityXZ.sqrMagnitude < player.slideForce * player.slideForce){
             velocity = (slideVector * player.slideForce) + (Vector3.up * velocity.y);
         }
         else{
@@ -292,7 +292,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
     bool surfed = false;
     bool slipped = false;
     void SlopeTest(){
-        if (hit.distance <= cc.height / 2 + player.gMagThreshold && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.magnitude > player.walkSpeed){
+        if (hit.distance <= cc.height / 2 + player.gMagThreshold && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.sqrMagnitude > player.walkSpeed * player.walkSpeed){
             /*player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
             vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun*/
             slopeState = 2;
@@ -359,7 +359,7 @@ public class PlayerMovementEvents : MonoBehaviour, IBlastible
         }
         else {
             //half horizontal blast force if heading into the blast to prevent all of your momentum from being eaten
-            velocity +=  new Vector3(blastForceVector.x, 0, blastForceVector.z)/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
+            velocity +=  blastForceVector.KillY()/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
         }
 
         if (id == "Rocket"){

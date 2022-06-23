@@ -46,10 +46,10 @@ public class PlayerHeat : MonoBehaviour, ITemperature
         float desiredTemperature = environmentalTemperature;
         float coolingRate = 1; // rate at which player loses heat, decreased due to wind, being wet, etc
 
-        if (playerArgs.velocity.magnitude  > player.walkSpeed){
+        if (playerArgs.velocity.sqrMagnitude  > player.walkSpeed * player.walkSpeed){
             coolingRate += Mathfs.Clamp((playerArgs.velocity.magnitude  - player.walkSpeed) / 150, 0, player.heatDecay * 4);
         }
-        if (playerArgs.velocity.magnitude  > player.walkSpeed){
+        if (playerArgs.velocity.sqrMagnitude  > player.walkSpeed * player.walkSpeed){
             //will approach a cooler temperature when moving faster to communicate to the player that you lose more heat when moving faster
             desiredTemperature = environmentalTemperature - Mathfs.Clamp(playerArgs.velocity.magnitude / 10, 0, 10);
         }
