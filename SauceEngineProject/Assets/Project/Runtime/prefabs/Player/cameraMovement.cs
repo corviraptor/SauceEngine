@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
+    public PlayerHandler playerHandler;
     public PlayerSettings player;
     float mousePitch;
     Transform playerTransform;
@@ -17,28 +18,28 @@ public class CameraMovement : MonoBehaviour
 
     void Update(){
         if (!initialized){
-            PlayerHandler.current.OnPlayerPositionUpdate += PosUpdate;
+            playerHandler.OnPlayerPositionUpdate += PosUpdate;
             mousePitch = 0;
             initialized = true;
         }
     }
 
     // should be called *after* LateUpdate
-    private void PosUpdate(object sender, Transform pTransform, float height, Vector3 center){
-        playerTransform = pTransform;
-        playerHeight = height;
+    private void PosUpdate(object sender, PlayerArgs playerArgs){
+        playerTransform = playerArgs.transform;
+        playerHeight = playerArgs.controller.height;
 
         float mouseY = (-InputManager.current.lookVector.y);
         mousePitch += mouseY;
         mousePitch = Mathf.Clamp(mousePitch, -90, 90);
         transform.eulerAngles = new Vector3(mousePitch, playerTransform.eulerAngles.y, playerTransform.eulerAngles.z);
-        //transform position plus the playercontroller's "center" vector = player's true center in worldspace
-        transform.position = playerTransform.position + Vector3.up * height / 4;
+        //transform position plus the playerArgs.center = player's true center in worldspace
+        transform.position = playerTransform.position + Vector3.up * playerArgs.controller.height / 4;
 
-        PlayerHandler.current.playerArgs.cameraTransform = transform;
+        playerHandler.playerArgs.cameraTransform = transform;
     }
 
     void OnDestroy() {
-        PlayerHandler.current.OnPlayerPositionUpdate -= PosUpdate;
+        playerHandler.OnPlayerPositionUpdate -= PosUpdate;
     }
 }

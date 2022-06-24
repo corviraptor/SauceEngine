@@ -6,7 +6,6 @@ using UnityEngine;
 public class GameEvents : MonoBehaviour
 {
     public static GameEvents current;
-    public EventSettings eventSettings;
 
     private void Awake(){
         current = this;
@@ -19,31 +18,14 @@ public class GameEvents : MonoBehaviour
     }
     
     public event Action<object> OnPlayerUpdate;
-    public void PlayerUpdate(object sender){
-        if (OnPlayerUpdate != null){
-            OnPlayerUpdate(sender);
-        }
-    }
+    public void PlayerUpdate(object sender){ OnPlayerUpdate?.Invoke(sender); }
     
-    public event Action<object, string> OnHeatPlayer;
-    public void HeatPlayer(object sender, string name){
-        if (OnHeatPlayer != null){
-            OnHeatPlayer(sender, name);
-        }
-    }
+    public event Action<object, float> OnHeatPlayer;
+    public void HeatPlayer(object sender, float amount){ OnHeatPlayer?.Invoke(sender, amount); }
 
     public event Action<object, string> OnGetWeapon;
-    public void GetWeapon(object sender, string gun){
-        if (OnGetWeapon != null){
-            OnGetWeapon(sender, gun);
-        }
-    }
+    public void GetWeapon(object sender, string gun){ OnGetWeapon?.Invoke(sender, gun); }
 
-    // SOUNDS
     public event Action<string, string, float> OnSoundCommand;
-    public void SoundCommand(string name, string command, float value){
-        if (OnSoundCommand != null){
-            OnSoundCommand(name, command, value);
-        }
-    }
+    public void SoundCommand(string name, string command, float value){ OnSoundCommand?.Invoke(name, command, value); }
 }

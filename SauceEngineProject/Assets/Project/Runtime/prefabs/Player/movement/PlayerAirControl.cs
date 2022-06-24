@@ -2,27 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAirControl : MonoBehaviour
+public class PlayerAirControl : MonoBehaviour, IAttachable
 {
-    public PlayerMovement playerMovement;
-    void OnEnable(){
-        playerMovement.OnAirControl += AirControl;
+    PlayerMovement pm;
+
+    public void InjectDependency(PlayerMovement playerMovement){
+        pm = playerMovement;
+        pm.OnAirControl += AirControl;
     }
 
     void OnDestroy(){
-        playerMovement.OnAirControl -= AirControl;
+        pm.OnAirControl -= AirControl;
     }
-
     // Update is called once per frame
-    void AirControl(object sender, PlayerSettings player, Vector3 velocity, Vector3 accelXZ){
+    void AirControl(object sender){
         // speed limit
-        Vector3 velocityXZ = new Vector3(velocity.x, 0, velocity.z);
-        float AVproj = Vector3.Dot(velocityXZ, accelXZ * player.airAccel);
+        Vector3 velocityXZ = pm.velocity.KillY();
+        float AVproj = Vector3.Dot(velocityXZ, pm.accelXZ * pm.player.airAccel);
 
-        if (AVproj < player.vLimit - (accelXZ.magnitude * Time.deltaTime))
+        if (AVproj < pm.player.vLimit - (pm.accelXZ.magnitude * Time.deltaTime))
         { 
-            velocityXZ = velocityXZ + (accelXZ * player.airAccel * Time.deltaTime);
-            playerMovement.velocity = new Vector3(velocityXZ.x, velocity.y, velocityXZ.z);
+            velocityXZ = velocityXZ + (pm.accelXZ * pm.player.airAccel * Time.deltaTime);
+            pm.velocity = new Vector3(velocityXZ.x, pm.velocity.y, velocityXZ.z);
         }
     }
 }

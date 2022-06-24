@@ -2,32 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerGravity : MonoBehaviour
+public class PlayerGravity : MonoBehaviour, IAttachable
 {
-    public PlayerMovement playerMovement;
-    void OnEnable(){
-        playerMovement.OnGravity += Gravity;
+    PlayerMovement pm;
+
+    public void InjectDependency(PlayerMovement playerMovement){
+        pm = playerMovement;
+        pm.OnGravity += Gravity;
     }
 
     void OnDestroy(){
-        playerMovement.OnGravity -= Gravity;
+        pm.OnGravity -= Gravity;
     }
 
-    void Gravity(object sender, PlayerSettings player, Vector3 velocity, RaycastHit hit){
+    void Gravity(object sender){
         //no gravity added if player is falling faster than terminal velocity
-        if (velocity.y <= player.terminalVelocity){
+        if (pm.velocity.y <= pm.player.terminalVelocity){
             Debug.Log("terminal velocity reached");
             return;
         }
 
-        Vector3 gravityVector = new Vector3(0, player.gravity * Time.deltaTime, 0);
+        Vector3 gravityVector = Vector3.up * pm.player.gravity * Time.deltaTime;
         
         //strong gravity
-        if (velocity.y < 0 && hit.distance <= player.groundPull && Vector3.Dot(hit.normal, transform.up) > player.maxSlope && playerMovement.clocks["postJumpGravity"] != 0){
-            gravityVector = gravityVector * player.fallMultiplier;
+        if (pm.velocity.y < 0 && pm.hit.distance <= pm.player.groundPull && Vector3.Dot(pm.hit.normal, pm.transform.up) > pm.player.maxSlope && pm.clocks["postJumpGravity"] != 0){
+            gravityVector = gravityVector * pm.player.fallMultiplier;
         }
 
-        velocity -= gravityVector;
-        playerMovement.velocity = velocity;
+        pm.velocity -= gravityVector;
     }
 }

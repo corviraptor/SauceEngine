@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class HudManager : MonoBehaviour
 {
+    public PlayerHandler playerHandler;
+    public PlayerSettings player;
+
     [SerializeField] private GameObject crosshair;
     [SerializeField] private GameObject velocityDisplay;
     [SerializeField] private GameObject accelDisplay;
@@ -13,7 +16,6 @@ public class HudManager : MonoBehaviour
     [SerializeField] private Text heatText;
     [SerializeField] private Slider heatBar;
     bool hudUpdateInProgress = false;
-    public PlayerSettings player;
     float newSpeed;
     float newTemperature;
     float temp;
@@ -25,18 +27,18 @@ public class HudManager : MonoBehaviour
     }
 
     void OnDestroy(){
-        PlayerHandler.current.OnPlayerHudUpdate -= HudUpdate;
+        playerHandler.OnPlayerHudUpdate -= HudUpdate;
     }
 
     void Update(){
         if (!initialized){
-            PlayerHandler.current.OnPlayerHudUpdate += HudUpdate;
+            playerHandler.OnPlayerHudUpdate += HudUpdate;
             initialized = true;
         }
     }
 
     private void HudUpdate(object sender, PlayerArgs playerArgs){
-        temp = PlayerHandler.current.playerArgs.temperature;
+        temp = playerHandler.playerArgs.temperature;
         if (!hudUpdateInProgress){
             Vector3 adjAccelXZ = InputManager.current.naiveAccelXY;
             StartCoroutine(HudUpdateCycle(sender, playerArgs.localVelocity, adjAccelXZ));

@@ -10,7 +10,6 @@ public class Rocket : Projectile
     public float blastPower = 50;
 
     void FixedUpdate(){
-        id = "Rocket";
         rb.AddForce((transform.forward * speed) - (transform.up * drop), ForceMode.VelocityChange);
     }
 
@@ -28,8 +27,6 @@ public class Rocket : Projectile
                 c.gameObject.GetComponent<IBlastible>().Blast(this, id, blastForceVector);
             }
         }
-
-        Debug.Log("booom!!!!! waah!@!! yowcch!!!" + collider.gameObject.name);
         gameObject.SetActive(false);
     }
 

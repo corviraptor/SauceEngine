@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Stakegun : WeaponParent
 {
+    public override void InjectDependency(WeaponManager wm){
+        weaponManager = wm;
+    }
+
     public override void Inputs(PlayerArgs playerArgs){
         if(InputManager.current.attack){ PrimaryFire(playerArgs); }
         if(InputManager.current.attack2){ SecondaryFire(playerArgs); }
@@ -18,7 +22,6 @@ public class Stakegun : WeaponParent
             GameEvents.current.SoundCommand("SurfAttack", "Play", 0);
             return;
         }
-        UnityEngine.Debug.Log("Fired Stakegun! 1");
     }
     
     public override void SecondaryFire(PlayerArgs playerArgs){
@@ -31,9 +34,11 @@ public class Stakegun : WeaponParent
             GameEvents.current.SoundCommand("SurfRelease", "Play", 0);
             return;
         }
-        UnityEngine.Debug.Log("Fired Stakegun! 2");
     }
 
+    public override void Reload(PlayerArgs playerArgs){}
+
     public override void WeaponSpell(PlayerArgs playerArgs){}
+
     public override void Cycle(string name){}
 }

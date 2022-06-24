@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerHandler : MonoBehaviour
 {
-    public static PlayerHandler current;
     public GameObject controllerObject;
     public PlayerSettings player;
     public PlayerArgs playerArgs;
@@ -13,9 +12,7 @@ public class PlayerHandler : MonoBehaviour
 
     void Start()
     {   
-        current = this;
-
-        foreach (Behaviour script in controllerObject.GetComponents<Behaviour>()){
+        foreach (Behaviour script in controllerObject.GetComponentsInChildren<Behaviour>()){
             script.enabled = true;
         }
 
@@ -36,7 +33,7 @@ public class PlayerHandler : MonoBehaviour
     void LateUpdate(){
         GameEvents.current.PlayerInfo(this, playerArgs);
 
-        PlayerPositionUpdate(this, playerArgs.transform, playerArgs.controller.height, playerArgs.controller.center);
+        PlayerPositionUpdate(this, playerArgs);
         PlayerHudUpdate(this, playerArgs);
     }
 
@@ -47,23 +44,11 @@ public class PlayerHandler : MonoBehaviour
     }
     
     public event Action<object, PlayerArgs> OnPlayerHudUpdate;
-    public void PlayerHudUpdate(object sender, PlayerArgs playerArgs){
-        if (OnPlayerHudUpdate != null){
-            OnPlayerHudUpdate(sender, playerArgs);
-        }
-    }
+    public void PlayerHudUpdate(object sender, PlayerArgs playerArgs){ OnPlayerHudUpdate?.Invoke(sender, playerArgs); }
 
-    public event Action<object, Transform, float, Vector3> OnPlayerPositionUpdate;
-    public void PlayerPositionUpdate(object sender, Transform pTransform, float height, Vector3 center){
-        if (OnPlayerPositionUpdate != null){
-            OnPlayerPositionUpdate(sender, pTransform, height, center);
-        }
-    }
+    public event Action<object, PlayerArgs> OnPlayerPositionUpdate;
+    public void PlayerPositionUpdate(object sender, PlayerArgs playerArgs){ OnPlayerPositionUpdate?.Invoke(sender, playerArgs); }
 
     public event Action<object, Vector3> OnBlast;
-    public void Blast(object sender, Vector3 blastForceVector){
-        if (OnBlast != null){
-            OnBlast(sender, blastForceVector);
-        }
-    }
+    public void Blast(object sender, Vector3 blastForceVector){ OnBlast?.Invoke(sender, blastForceVector); }
 }

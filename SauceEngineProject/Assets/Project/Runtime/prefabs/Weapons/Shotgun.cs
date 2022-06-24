@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Shotgun : WeaponParent
 {   
-    void OnEnable(){
-        loadedRounds = 1;
+    public override void InjectDependency(WeaponManager wm){
+        weaponManager = wm;
+        loadedRounds = 8;
         gunState = 0;
         clocks.Add("Shotgun", 0);
+        viewmodel = weaponManager.viewmodels["Shotgun"];
     }
 
     public override void Inputs(PlayerArgs playerArgs){
@@ -27,11 +29,8 @@ public class Shotgun : WeaponParent
         }
 
         gunState = 1;
+        viewmodel.SetTrigger("PrimaryFire");
         base.Cycle("Shotgun");
-    }
-
-    public override void Cycle(string name){
-        base.Cycle("Shotgun"); 
     }
     
     public override void SecondaryFire(PlayerArgs playerArgs){
@@ -51,8 +50,15 @@ public class Shotgun : WeaponParent
         rocketInstance.transform.rotation = playerArgs.cameraTransform.rotation;
 
         gunState = 1;
+        viewmodel.SetTrigger("SecondaryFire");
         base.Cycle("Shotgun");
     }
 
+    public override void Reload(PlayerArgs playerArgs){}
+
     public override void WeaponSpell(PlayerArgs playerArgs){}
+
+    public override void Cycle(string name){
+        base.Cycle("Shotgun"); 
+    }
 }

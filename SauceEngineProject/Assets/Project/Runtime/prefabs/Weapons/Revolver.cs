@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Revolver : WeaponParent
 {
+    public override void InjectDependency(WeaponManager wm){
+        weaponManager = wm;
+    }
+
     public override void Inputs(PlayerArgs playerArgs){
         if(InputManager.current.attack){ PrimaryFire(playerArgs); }
         if(InputManager.current.attack2){ SecondaryFire(playerArgs); }
@@ -18,7 +22,6 @@ public class Revolver : WeaponParent
             GameEvents.current.SoundCommand("HeatLimit", "Play", 0);
             return;
         }
-        UnityEngine.Debug.Log("Fired Revolver! 1");
     }
     
     public override void SecondaryFire(PlayerArgs playerArgs){
@@ -31,9 +34,11 @@ public class Revolver : WeaponParent
             GameEvents.current.SoundCommand("HeatRecovery", "Play", 0);
             return;
         }
-        UnityEngine.Debug.Log("Fired Revolver! 2");
     }
 
+    public override void Reload(PlayerArgs playerArgs){}
+
     public override void WeaponSpell(PlayerArgs playerArgs){}
+
     public override void Cycle(string name){}
 }

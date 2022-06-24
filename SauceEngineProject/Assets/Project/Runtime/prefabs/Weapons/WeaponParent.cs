@@ -6,42 +6,41 @@ public abstract class WeaponParent : MonoBehaviour
 {   
     public Dictionary<string, int> clocks = new Dictionary<string, int>();
 
+    public WeaponManager weaponManager;
+
+    public Animator viewmodel;  
+
     public int gunState = 0;
-    public int recoveryTime = 10;
-    public int actionTime = 10;
+    public int recoveryTime = 25;
     public int reloadTime = 10;
     public int magazineSize = 5;
     public int loadedRounds = 5;
 
     protected WeaponParent(){}
+
     
     public virtual void Inputs(PlayerArgs playerArgs){
         if(InputManager.current.attack){ PrimaryFire(playerArgs); }
         if(InputManager.current.attack2){ SecondaryFire(playerArgs); }
     }
 
+    public abstract void InjectDependency(WeaponManager wm);
+
     public abstract void PrimaryFire(PlayerArgs playerArgs);
 
     public abstract void SecondaryFire(PlayerArgs playerArgs);
+
+    public abstract void Reload(PlayerArgs playerArgs);
 
     public abstract void WeaponSpell(PlayerArgs playerArgs);
 
     public virtual void Cycle(string name){
         if (gunState == 1){
             StartCoroutine(Clock(name, recoveryTime));
-            Debug.Log("Recovering");
         }
         if (gunState == 2){
-            StartCoroutine(Clock(name, actionTime));
-            Debug.Log("Cycling the Action");
-        }
-        if (gunState == 3){
             StartCoroutine(Clock(name, reloadTime));
             Debug.Log("Reloading");
-        }
-        if (gunState > 3){
-            gunState = 0;
-            return;
         }
     }
 
@@ -61,7 +60,7 @@ public abstract class WeaponParent : MonoBehaviour
         }
         i = 0;
         clocks[id] = i;
-        gunState++;
+        gunState = 0;
         this.Cycle(id);
     }
 }

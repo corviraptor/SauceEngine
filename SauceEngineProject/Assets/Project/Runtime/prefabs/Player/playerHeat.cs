@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Freya;
 
-public class PlayerHeat : MonoBehaviour, ITemperature
+public class PlayerHeat : MonoBehaviour, IHeatable
 {
+    public PlayerHandler playerHandler;
     public CharacterController cc;
     public PlayerSettings player;
     float temperature = 30;
@@ -13,7 +14,7 @@ public class PlayerHeat : MonoBehaviour, ITemperature
 
     void Start(){
         GameEvents.current.OnHeatPlayer += HeatPlayer;
-        playerArgs = PlayerHandler.current.playerArgs;
+        playerArgs = playerHandler.playerArgs;
     }
 
     public void AddHeat(object sender, float heat){
@@ -24,20 +25,8 @@ public class PlayerHeat : MonoBehaviour, ITemperature
         environmentalTemperature = temp;
     }
 
-    void HeatPlayer(object sender, string name){
-        switch (name)
-        {
-            case "Slide":
-                AddHeat(this, player.slideHeat);
-                break;
-            case "Rocket":
-                AddHeat(this, player.rocketJumpHeat);
-                break;
-            default:
-                Debug.Log("UNREGISTERED HEAT EVENT");
-                break;
-        }
-        
+    void HeatPlayer(object sender, float amount){
+        AddHeat(this, amount);
     }
 
     bool heatLimited = false;
@@ -61,7 +50,7 @@ public class PlayerHeat : MonoBehaviour, ITemperature
             temperature -= player.heatDecay * coolingRate;
         }
 
-        PlayerHandler.current.HeatUpdate(this, temperature);
+        playerHandler.HeatUpdate(this, temperature);
 
         if (temperature > player.heatLimit && !heatLimited){
             GameEvents.current.SoundCommand("HeatLimit", "Play", 0);

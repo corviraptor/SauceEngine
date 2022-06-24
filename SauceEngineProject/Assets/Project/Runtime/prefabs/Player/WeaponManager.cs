@@ -5,14 +5,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
-{   
-    bool hasGuns = false;
+{      
+    public PlayerHandler playerHandler;
+    public GameObject viewmodelObject;
+
+    public Dictionary<string, Animator> viewmodels = new Dictionary<string, Animator>();
     Dictionary<string, WeaponParent> inventory = new Dictionary<string, WeaponParent>();
+
     string gunKey;
+    bool hasGuns = false;
+
     public PlayerArgs pArgs;
 
-    void Start(){
+    void OnEnable(){
         GameEvents.current.OnGetWeapon += GetWeapon;
+
+        foreach (Animator a in viewmodelObject.GetComponentsInChildren<Animator>()){
+            viewmodels.Add(a.gameObject.name, a);
+            viewmodels[a.gameObject.name].gameObject.SetActive(false);
+        }
     }
 
     void OnDestroy(){
@@ -29,16 +40,19 @@ public class WeaponManager : MonoBehaviour
         }
 
         gunKey = gun;
+        viewmodels[gunKey].gameObject.SetActive(true);
+
         hasGuns = true;
 
         WeaponParent gunComponent = (WeaponParent)gameObject.AddComponent(Type.GetType(gun));
+        gunComponent.InjectDependency(this);
         inventory.Add(gunKey, gunComponent);
     }
 
     WeaponParent heldGun;
     WeaponParent weaponTest;
     void Update(){
-        pArgs = PlayerHandler.current.playerArgs;
+        pArgs = playerHandler.playerArgs;
 
         if (!hasGuns){
             return;
@@ -46,14 +60,25 @@ public class WeaponManager : MonoBehaviour
 
         if(InputManager.current.weapon0 && inventory.TryGetValue("Stakegun", out weaponTest)){
             gunKey = "Stakegun";
+            foreach (Animator a in viewmodels.Values){
+                a.gameObject.SetActive(false);
+            }
+            viewmodels[gunKey].gameObject.SetActive(true);
         }
 
         if(InputManager.current.weapon1 && inventory.TryGetValue("Shotgun", out weaponTest)){
             gunKey = "Shotgun";
+            foreach (Animator a in viewmodels.Values){
+                a.gameObject.SetActive(false);
+            }
+            viewmodels[gunKey].gameObject.SetActive(true);
         }
 
         if(InputManager.current.weapon2 && inventory.TryGetValue("Revolver", out weaponTest)){
             gunKey = "Revolver";
+            foreach (Animator a in viewmodels.Values){
+                a.gameObject.SetActive(false);
+            }
         }
 
         if(inventory.TryGetValue(gunKey, out heldGun)){

@@ -19,7 +19,7 @@ MonoBehaviour:
   walkAcceleration: 15
   height: 2
   mass: 10
-  jumpForce: 7
+  jumpForce: 8
   jumpForgiveness: 5
   coyoteTime: 10
   gravity: 23
@@ -41,4 +41,4 @@ MonoBehaviour:
   heatLimit: 60
   overheat: 90
   slideHeat: 10
-  rocketJumpHeat: 10
+  rocketJumpHeatFactor: 0.5

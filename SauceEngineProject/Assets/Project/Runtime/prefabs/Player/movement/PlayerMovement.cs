@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour, IBlastible
 {
     public GameObject logic;
+    public PlayerHandler playerHandler;
 
     public CharacterController cc;
     public PlayerSettings player;
@@ -18,19 +19,20 @@ public class PlayerMovement : MonoBehaviour, IBlastible
 
     public Vector3 velocity;
     public Vector3 oldPosition;
-    Vector3 accelXZ;
-    RaycastHit hit;
+    public Vector3 accelXZ;
+    public RaycastHit hit;
+    public int crouchState = 0;
 
     public bool isOnGround = false;
+    public bool frictionForgiven => clocks["frictionTimer"] > 0 && velocity.KillY().magnitude > player.overcomeThreshold;
+    
+    public int slopeState = 0;
     bool slideFailPlayed = false;
-    int slopeState = 0;
-    int crouchState = 0;
     int slideState = 0;
 
     float temperature;
-    float walkSpeedAdj;
+    public float walkSpeedAdj;
     
-	public bool frictionForgiven => clocks["frictionTimer"] > 0 && new Vector3(velocity.x, 0, velocity.z).magnitude > player.overcomeThreshold;
 
     void OnEnable(){
 
@@ -43,9 +45,16 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         clocks.Add("slideBuffer", 0);
         clocks.Add("slide", 0);
         clocks.Add("blastTime", 0);
+
         foreach (MonoBehaviour module in logic.GetComponents<MonoBehaviour>()){
-            module.enabled = true;
+            if (module is IAttachable){
+                IAttachable attachable = (IAttachable)module;
+                attachable.InjectDependency(this);
+                module.enabled = true;
+            }
+            else { Debug.Log("HELP!!! In PlayerMovement 56"); }
         }
+
         walkSpeedAdj = player.walkSpeed;
     }
 
@@ -67,17 +76,17 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         Vector3 realVelocity = (transform.position - oldPosition) / Time.deltaTime;
 
         //assigns PlayerArgs instance for PlayerHandler
-        PlayerHandler.current.playerArgs.velocity = realVelocity;
-        PlayerHandler.current.playerArgs.localVelocity = this.transform.InverseTransformVector(realVelocity);
-        PlayerHandler.current.playerArgs.transform = transform;
-        PlayerHandler.current.playerArgs.controller = cc;
+        playerHandler.playerArgs.velocity = realVelocity;
+        playerHandler.playerArgs.localVelocity = this.transform.InverseTransformVector(realVelocity);
+        playerHandler.playerArgs.transform = transform;
+        playerHandler.playerArgs.controller = cc;
 
         oldPosition = transform.position;
     }
 
     // Update is called once per frame
     void Update(){
-        temperature = PlayerHandler.current.playerArgs.temperature;
+        temperature = playerHandler.playerArgs.temperature;
 
         center = transform.position + cc.center;
         // locked cursor wizardry
@@ -105,7 +114,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         }
 
         if (clocks["jumpBuffer"] <= player.jumpForgiveness && clocks["jumpBuffer"] != 0 && clocks["jumpCooldown"] == 0){
-            Jump(this, player, velocity, isOnGround, hit);
+            Jump(this);
         }
 
         //maintains jump velocity for a few ticks to make sure it goes through
@@ -115,8 +124,8 @@ public class PlayerMovement : MonoBehaviour, IBlastible
 
         // air
         if (!isOnGround){
-            AirControl(this, player, velocity, accelXZ);
-            Gravity(this, player, velocity, hit);
+            AirControl(this);
+            Gravity(this);
         }
 
         // - CROUCH: 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
@@ -125,7 +134,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             cc.height = player.height / 2.0F;
             walkSpeedAdj = player.walkSpeed / 2;
 
-            Crouch(this, player, crouchState, isOnGround, hit);
+            Crouch(this);
 
             crouchState = 2;
         }
@@ -142,7 +151,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             StartCoroutine(Clock("slideBuffer", player.jumpForgiveness));
         }
 
-        if (clocks["slide"] !=0){
+        if (clocks["slide"] != 0){
             Slide();
         }
 
@@ -163,7 +172,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         
         // more slide logic
         if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature <= player.heatLimit){
-            GameEvents.current.HeatPlayer(this, "Slide");
+            GameEvents.current.HeatPlayer(this, player.slideHeat);
             GameEvents.current.SoundCommand("Slide", "Play", 0);
             StartCoroutine(Clock("slide", player.slideCooldown));
             Slide();
@@ -183,10 +192,10 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         }
 
         if (accelXZ.sqrMagnitude > 0.001F){
-            Walk(this, player, velocity, accelXZ, hit, walkSpeedAdj);
+            Walk(this);
         }
         else {
-            Friction(this, player, velocity);
+            Friction(this);
         }
     }
 
@@ -216,12 +225,12 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         if (Physics.BoxCast(center, Vector3.one * cc.radius, Vector3.up, out roofHit, Quaternion.identity, Mathf.Infinity, layerMask) && roofHit.distance < cc.center.y + cc.height / 2){
             //stops player from getting up while in too small of a space. uses BoxCast to prevent player from getting up at the edge of a roof and clipping it
             crouchState = 1;
-            Crouch(this, player, crouchState, isOnGround, hit);
+            Crouch(this);
         }
         else if (slideState == 1){
             //stops player from getting up while in the middle of a slide
             crouchState = 1;
-            Crouch(this, player, crouchState, isOnGround, hit);
+            Crouch(this);
 
         }
         else {
@@ -230,7 +239,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             cc.center = Vector3.zero;
             cc.height = player.height;
 
-            Crouch(this, player, crouchState, isOnGround, hit);
+            Crouch(this);
             crouchState = 0;
         }
     }  
@@ -301,7 +310,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun*/
             slopeState = 2;
             unsloped = false;
-            Slope(this, player, velocity, slopeState, hit);
+            Slope(this);
             if (!surfed){
                 GameEvents.current.SoundCommand("SurfAttack", "Play", 0);
                 GameEvents.current.SoundCommand("SlipLoop", "StopFade", 10);
@@ -313,7 +322,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         else if (hit.distance <= cc.height / 2 + player.gMagThreshold + 0.5F && Vector3.Dot(hit.normal, transform.up) < player.maxSlope){
             slopeState = 1;
             unsloped = false;
-            Slope(this, player, velocity, slopeState, hit);
+            Slope(this);
 
             if (surfed && !slipped){
                 GameEvents.current.SoundCommand("SlipLoop", "PlayFade", 10);
@@ -355,72 +364,47 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         StartCoroutine(Clock("coyoteTime", player.coyoteTime));
     }
 
+    Vector3 adjustedForceVector;
     public void Blast(object sender, string id, Vector3 blastForceVector){
         StartCoroutine(Clock("blastTime", 10));
-        velocity = new Vector3(velocity.x, velocity.y, velocity.z);
         if (Vector3.Dot(velocity, -blastForceVector) >= 0.5f){
 			//half horizontal blast force if heading into the blast to prevent all of your momentum from being eaten
-            velocity +=  blastForceVector.KillY()/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
+            adjustedForceVector =  blastForceVector.KillY()/ 4 + (Vector3.up * blastForceVector.y) / player.mass; 
         }
         else {
-            velocity += blastForceVector / player.mass;
+            adjustedForceVector = blastForceVector / player.mass;
         }
 
-        if (id == "Rocket"){
-            GameEvents.current.HeatPlayer(this, "Rocket");
+        if (velocity.y < 0){
+            velocity -= Vector3.up * (velocity.y / 2); // dulls the existing vertical momentum a little if falling downards
         }
-    }
+        velocity += adjustedForceVector;
 
-
-
-    public event Action<object, PlayerSettings, Vector3, Vector3> OnAirControl;
-    public void AirControl(object sender, PlayerSettings player, Vector3 v, Vector3 a){
-        if (OnAirControl != null){
-            OnAirControl(sender, player, v, a);
+        if (sender is Rocket){
+            GameEvents.current.HeatPlayer(this, Mathf.Clamp(adjustedForceVector.magnitude * player.rocketJumpHeatFactor, 0, 20F));
         }
     }
 
-    public event Action<object, PlayerSettings, Vector3, RaycastHit> OnGravity;
-    public void Gravity(object sender, PlayerSettings player, Vector3 v, RaycastHit hit){
-        if (OnGravity != null){
-            OnGravity(sender, player, v, hit);
-        }
-    }
+    public event Action<object> OnAirControl;
+    public void AirControl(object sender){ OnAirControl?.Invoke(sender); }
 
-    public event Action<object, PlayerSettings, Vector3> OnFriction;
-    public void Friction(object sender, PlayerSettings player, Vector3 v){
-        if (OnFriction != null){
-            OnFriction(sender, player, v);
-        }
-    }
+    public event Action<object> OnGravity;
+    public void Gravity(object sender){ OnGravity?.Invoke(sender); }
 
-    public event Action<object, PlayerSettings, Vector3, Vector3, RaycastHit, float> OnWalk;
-    public void Walk(object sender, PlayerSettings player, Vector3 v, Vector3 a, RaycastHit hit, float w){
-        if (OnWalk != null){
-            OnWalk(sender, player, v, a, hit, w);
-        }
-    }
+    public event Action<object> OnFriction;
+    public void Friction(object sender){ OnFriction?.Invoke(sender); }
 
-    public event Action<object, PlayerSettings, Vector3, bool, RaycastHit> OnJump;
-    public void Jump(object sender, PlayerSettings player, Vector3 v, bool isOnGround, RaycastHit hit){
-        if (OnJump != null){
-            OnJump(sender, player, v, isOnGround, hit);
-        }
-    }
+    public event Action<object> OnWalk;
+    public void Walk(object sender){ OnWalk?.Invoke(sender); }
 
-    public event Action<object, PlayerSettings, Vector3, int, RaycastHit> OnSlope;
-    public void Slope(object sender, PlayerSettings player, Vector3 v, int slopeState, RaycastHit hit){
-        if (OnSlope != null){
-            OnSlope(sender, player, v, slopeState, hit);
-        }
-    }
+    public event Action<object> OnJump;
+    public void Jump(object sender){ OnJump?.Invoke(sender); }
 
-    public event Action<object, PlayerSettings, int, bool, RaycastHit> OnCrouch;
-    public void Crouch(object sender, PlayerSettings player, int crouchState, bool isOnGround, RaycastHit hit){
-        if (OnCrouch != null){
-            OnCrouch(sender, player, crouchState, isOnGround, hit);
-        }
-    }
+    public event Action<object> OnSlope;
+    public void Slope(object sender){ OnSlope?.Invoke(sender); }
+
+    public event Action<object> OnCrouch;
+    public void Crouch(object sender){ OnCrouch?.Invoke(sender); }
 
     IEnumerator Clock(string id, int interval){
         int temp;

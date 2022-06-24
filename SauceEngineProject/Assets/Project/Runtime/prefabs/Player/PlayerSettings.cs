@@ -41,6 +41,6 @@ public class PlayerSettings : ScriptableObject{
     public float heatLimit = 60F;
     public float overheat = 85F;
     public float slideHeat = 15F;
-    public float rocketJumpHeat = 10F;
+    public float rocketJumpHeatFactor = 0.7F;
 }
     

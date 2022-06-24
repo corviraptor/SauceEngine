@@ -2,26 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerFriction : MonoBehaviour
+public class PlayerFriction : MonoBehaviour, IAttachable
 {
-    public PlayerMovement playerMovement;
-    void OnEnable(){
-        playerMovement.OnFriction += Friction;
+    PlayerMovement pm;
+
+    public void InjectDependency(PlayerMovement playerMovement){
+        pm = playerMovement;
+        pm.OnFriction += Friction;
     }
 
     void OnDestroy(){
-        playerMovement.OnFriction -= Friction;
+        pm.OnFriction -= Friction;
     }
 
-    void Friction(object sender, PlayerSettings player, Vector3 velocity){
-        //Debug.Log(playerMovement.clocks["frictionTimer"]);
+    void Friction(object sender){
+        //Debug.Log(pm.clocks["frictionTimer"]);
         //no friction after the first frame on the ground to let bhops through queued jumps
-        if (playerMovement.clocks["frictionTimer"] >= 1){
+        if (pm.clocks["frictionTimer"] >= 1){
             return;
         }
         //inequalities here are flipped from what they are in walk since this isn't a guard statement
-        if (!playerMovement.frictionForgiven){
-            playerMovement.velocity -= new Vector3(velocity.x, 0, velocity.z) * player.frictionFactor * Time.deltaTime;
+        if (!pm.frictionForgiven){
+            pm.velocity -= pm.velocity.KillY() * pm.player.frictionFactor * Time.deltaTime;
         }
     }
 }

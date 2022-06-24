@@ -22,6 +22,7 @@ public class InputManager : MonoBehaviour
     public bool slide;
     public bool attack;
     public bool attack2;
+    public bool reload;
     public bool spell;
     public bool menu;
     public bool weapon0;
@@ -43,6 +44,7 @@ public class InputManager : MonoBehaviour
         bools.Add("slide", false);
         bools.Add("attack", false);
         bools.Add("attack2", false);
+        bools.Add("reload", false);
         bools.Add("spell", false);
         bools.Add("menu", false);
         bools.Add("weapon0", false);
@@ -63,6 +65,8 @@ public class InputManager : MonoBehaviour
 
         input.Player.SecondaryFire.performed += SecondaryFire;
 
+        input.Player.Reload.performed += Reload;
+
         input.Player.CastSpell.performed += CastSpell;
 
         input.Player.Menu.performed += Menu;
@@ -76,8 +80,7 @@ public class InputManager : MonoBehaviour
         input.Player.Enable();
     }
 
-    void onDisable()
-    {
+    void onDisable(){
 
         input.Player.Jump.performed -= Jump;
 
@@ -86,6 +89,8 @@ public class InputManager : MonoBehaviour
         input.Player.PrimaryFire.performed -= PrimaryFire;
 
         input.Player.SecondaryFire.performed -= SecondaryFire;
+
+        input.Player.Reload.performed -= Reload;
 
         input.Player.CastSpell.performed -= CastSpell;
 
@@ -99,6 +104,7 @@ public class InputManager : MonoBehaviour
 
         input.Player.Disable();
     }
+
     void Update(){
         naiveAccelXY = horizontal.ReadValue<Vector2>();
         lookVector = player.sens * look.ReadValue<Vector2>();
@@ -114,6 +120,7 @@ public class InputManager : MonoBehaviour
         slide = bools["slide"];
         attack = bools["attack"];
         attack2 = bools["attack2"];
+        reload = bools["reload"];
         spell = bools["spell"];
         menu = bools["menu"];
         weapon0 = bools["weapon0"];
@@ -141,6 +148,11 @@ public class InputManager : MonoBehaviour
     void SecondaryFire(InputAction.CallbackContext obj){
         bools["attack2"] = true;
         StartCoroutine(Reset("attack2"));
+    }
+
+    void Reload(InputAction.CallbackContext obj){
+        bools["reload"] = true;
+        StartCoroutine(Reset("reload"));
     }
 
     void CastSpell(InputAction.CallbackContext obj){
