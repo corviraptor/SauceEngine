@@ -10,19 +10,14 @@ public abstract class WeaponParent : MonoBehaviour
 
     public Animator viewmodel;  
 
+    public bool reloading = false;
     public int gunState = 0;
-    public int recoveryTime = 25;
-    public int reloadTime = 10;
+    public int recoveryTime = 30;
+    public int reloadTime = 30;
     public int magazineSize = 5;
     public int loadedRounds = 5;
 
     protected WeaponParent(){}
-
-    
-    public virtual void Inputs(PlayerArgs playerArgs){
-        if(InputManager.current.attack){ PrimaryFire(playerArgs); }
-        if(InputManager.current.attack2){ SecondaryFire(playerArgs); }
-    }
 
     public abstract void InjectDependency(WeaponManager wm);
 
@@ -30,17 +25,20 @@ public abstract class WeaponParent : MonoBehaviour
 
     public abstract void SecondaryFire(PlayerArgs playerArgs);
 
-    public abstract void Reload(PlayerArgs playerArgs);
+    public abstract void SecondaryRelease(PlayerArgs playerArgs);
+
+    public abstract void Reload();
 
     public abstract void WeaponSpell(PlayerArgs playerArgs);
 
-    public virtual void Cycle(string name){
+    public virtual void Cycle(string name, int interval){
         if (gunState == 1){
-            StartCoroutine(Clock(name, recoveryTime));
+            StopCoroutine(Clock(name, interval));
+            StartCoroutine(Clock(name, interval));
         }
         if (gunState == 2){
-            StartCoroutine(Clock(name, reloadTime));
-            Debug.Log("Reloading");
+            StopCoroutine(Clock(name, interval));
+            StartCoroutine(Clock(name, interval));
         }
     }
 
@@ -61,6 +59,5 @@ public abstract class WeaponParent : MonoBehaviour
         i = 0;
         clocks[id] = i;
         gunState = 0;
-        this.Cycle(id);
     }
 }

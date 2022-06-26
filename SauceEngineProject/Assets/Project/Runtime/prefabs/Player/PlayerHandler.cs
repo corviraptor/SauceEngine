@@ -46,6 +46,9 @@ public class PlayerHandler : MonoBehaviour
     public event Action<object, PlayerArgs> OnPlayerHudUpdate;
     public void PlayerHudUpdate(object sender, PlayerArgs playerArgs){ OnPlayerHudUpdate?.Invoke(sender, playerArgs); }
 
+    public event Action<WeaponManager> OnWeaponUpdate;
+    public void WeaponUpdate(WeaponManager sender){ OnWeaponUpdate?.Invoke(sender); }
+
     public event Action<object, PlayerArgs> OnPlayerPositionUpdate;
     public void PlayerPositionUpdate(object sender, PlayerArgs playerArgs){ OnPlayerPositionUpdate?.Invoke(sender, playerArgs); }
 

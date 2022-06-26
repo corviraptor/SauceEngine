@@ -641,7 +641,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7768595, y: 1}
+    m_SensorSize: {x: 1.776824, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1131,7 +1131,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7768595, y: 1}
+    m_SensorSize: {x: 1.776824, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -1365,7 +1365,7 @@ GameObject:
   - component: {fileID: 1340676123}
   - component: {fileID: 1340676122}
   - component: {fileID: 1340676121}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Weapon Pickup (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1570,13 +1570,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 1
-  m_UsePipelineSettings: 1
-  m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_LightCookieSize: {x: 1, y: 1}
+  m_Version: -510148416
+  m_UsePipelineSettings: 234
+  m_AdditionalLightsShadowResolutionTier: -512187584
+  m_LightLayerMask: 490
+  m_CustomShadowLayers: 2
+  m_ShadowLayerMask: 0
+  m_LightCookieSize: {x: 0, y: 0}
   m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &1408295388
 GameObject:
@@ -1923,14 +1923,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1946551605, guid: 64411a349f8c810478b7673b7ccdf1d3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132148199218777, guid: 64411a349f8c810478b7673b7ccdf1d3, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3869168078781095535, guid: 64411a349f8c810478b7673b7ccdf1d3, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2459,7 +2451,7 @@ GameObject:
   - component: {fileID: 1728017730}
   - component: {fileID: 1728017729}
   - component: {fileID: 1728017733}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Weapon Pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2570,7 +2562,7 @@ GameObject:
   - component: {fileID: 1939814123}
   - component: {fileID: 1939814122}
   - component: {fileID: 1939814121}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Weapon Pickup (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

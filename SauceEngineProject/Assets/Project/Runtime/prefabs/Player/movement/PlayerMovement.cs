@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             Cursor.lockState = CursorLockMode.None;
         }
 
-        if (InputManager.current.attack){
+        if (InputManager.current.onAttack){
             Cursor.lockState = CursorLockMode.Locked;
         }
 

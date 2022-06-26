@@ -15,6 +15,7 @@ public class HudManager : MonoBehaviour
     [SerializeField] private Text speedText;
     [SerializeField] private Text heatText;
     [SerializeField] private Slider heatBar;
+    [SerializeField] private Text ammoText;
     bool hudUpdateInProgress = false;
     float newSpeed;
     float newTemperature;
@@ -24,10 +25,12 @@ public class HudManager : MonoBehaviour
     void OnEnable()
     {
         initialized = false;
+        playerHandler.OnWeaponUpdate += WeaponUpdate;
     }
 
     void OnDestroy(){
         playerHandler.OnPlayerHudUpdate -= HudUpdate;
+        playerHandler.OnWeaponUpdate -= WeaponUpdate;
     }
 
     void Update(){
@@ -43,6 +46,16 @@ public class HudManager : MonoBehaviour
             Vector3 adjAccelXZ = InputManager.current.naiveAccelXY;
             StartCoroutine(HudUpdateCycle(sender, playerArgs.localVelocity, adjAccelXZ));
         }
+    }
+
+    private void WeaponUpdate(WeaponManager sender){
+        if (sender.heldGun == null){
+            return;
+        }
+        int loadedRounds = sender.heldGun.loadedRounds;
+        int magazineSize = sender.heldGun.magazineSize;
+
+        ammoText.text = $"{loadedRounds} / {magazineSize}";
     }
 
     IEnumerator HudUpdateCycle(object sender, Vector3 velocity, Vector3 accelXZ){

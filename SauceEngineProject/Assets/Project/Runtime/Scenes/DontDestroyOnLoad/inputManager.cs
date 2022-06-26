@@ -14,14 +14,15 @@ public class InputManager : MonoBehaviour
     private InputAction horizontal;
     private InputAction look;
     private InputAction crouch;
+    private InputAction attack;
+    private InputAction attack2;
 
     public Vector3 naiveAccelXY;
     public Vector2 lookVector;
     public bool jump;
-    public bool crouched;
     public bool slide;
-    public bool attack;
-    public bool attack2;
+    public bool onAttack;
+    public bool onAttack2;
     public bool reload;
     public bool spell;
     public bool menu;
@@ -30,6 +31,9 @@ public class InputManager : MonoBehaviour
     public bool weapon2;
     public bool weapon3;
     public bool weapon4;
+    public bool crouched;
+    public bool attacking;
+    public bool attack2ing;
     
     public Dictionary<string, bool> bools = new Dictionary<string, bool>();
 
@@ -42,8 +46,8 @@ public class InputManager : MonoBehaviour
         bools.Add("jump", false);
         bools.Add("crouched", false);
         bools.Add("slide", false);
-        bools.Add("attack", false);
-        bools.Add("attack2", false);
+        bools.Add("onAttack", false);
+        bools.Add("onAttack2", false);
         bools.Add("reload", false);
         bools.Add("spell", false);
         bools.Add("menu", false);
@@ -56,14 +60,16 @@ public class InputManager : MonoBehaviour
         horizontal = input.Player.Horizontal;
         look = input.Player.Look;
         crouch = input.Player.Crouch;
+        attack = input.Player.PrimaryFire;
+        attack2 = input.Player.SecondaryFire;
 
         input.Player.Jump.performed += Jump;
 
         input.Player.Crouch.performed += Slide;
 
-        input.Player.PrimaryFire.performed += PrimaryFire;
+        input.Player.PrimaryFire.performed += OnPrimaryFire;
 
-        input.Player.SecondaryFire.performed += SecondaryFire;
+        input.Player.SecondaryFire.performed += OnSecondaryFire;
 
         input.Player.Reload.performed += Reload;
 
@@ -86,9 +92,9 @@ public class InputManager : MonoBehaviour
 
         input.Player.Crouch.performed -= Slide;
 
-        input.Player.PrimaryFire.performed -= PrimaryFire;
+        input.Player.PrimaryFire.performed -= OnPrimaryFire;
 
-        input.Player.SecondaryFire.performed -= SecondaryFire;
+        input.Player.SecondaryFire.performed -= OnSecondaryFire;
 
         input.Player.Reload.performed -= Reload;
 
@@ -113,13 +119,23 @@ public class InputManager : MonoBehaviour
         if (crouch.ReadValue<float>() != 0){
             crouched = true;
         }
+
+        attacking = false;
+        if (attack.ReadValue<float>() != 0){
+            attacking = true;
+        }
+
+        attack2ing = false;
+        if (attack2.ReadValue<float>() != 0){
+            attack2ing = true;
+        }
     }
 
     void LateUpdate(){
         jump = bools["jump"];
         slide = bools["slide"];
-        attack = bools["attack"];
-        attack2 = bools["attack2"];
+        onAttack = bools["onAttack"];
+        onAttack2 = bools["onAttack2"];
         reload = bools["reload"];
         spell = bools["spell"];
         menu = bools["menu"];
@@ -140,14 +156,14 @@ public class InputManager : MonoBehaviour
         StartCoroutine(Reset("slide"));
     }
 
-    void PrimaryFire(InputAction.CallbackContext obj){
-        bools["attack"] = true;
-        StartCoroutine(Reset("attack"));
+    void OnPrimaryFire(InputAction.CallbackContext obj){
+        bools["onAttack"] = true;
+        StartCoroutine(Reset("onAttack"));
     }
 
-    void SecondaryFire(InputAction.CallbackContext obj){
-        bools["attack2"] = true;
-        StartCoroutine(Reset("attack2"));
+    void OnSecondaryFire(InputAction.CallbackContext obj){
+        bools["onAttack2"] = true;
+        StartCoroutine(Reset("onAttack2"));
     }
 
     void Reload(InputAction.CallbackContext obj){
