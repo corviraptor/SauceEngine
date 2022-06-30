@@ -33,7 +33,6 @@ public class CameraMovement : MonoBehaviour
         mousePitch += mouseY;
         mousePitch = Mathf.Clamp(mousePitch, -90, 90);
         transform.eulerAngles = new Vector3(mousePitch, playerTransform.eulerAngles.y, playerTransform.eulerAngles.z);
-        //transform position plus the playerArgs.center = player's true center in worldspace
         transform.position = playerTransform.position + Vector3.up * playerArgs.controller.height / 4;
 
         playerHandler.playerArgs.cameraTransform = transform;

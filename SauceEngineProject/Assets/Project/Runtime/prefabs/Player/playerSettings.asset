@@ -19,21 +19,19 @@ MonoBehaviour:
   walkAcceleration: 15
   height: 2
   mass: 10
-  jumpForce: 9
-  jumpForgiveness: 5
+  jumpForce: 11
+  jumpForgiveness: 10
   coyoteTime: 10
-  gravity: 23
-  fallMultiplier: 5
-  groundPull: 5
+  gravity: 30
+  postJumpPushDown: 3
   terminalVelocity: -100
-  gThreshold: 0.2
+  gThreshold: 0.3
   gMagnetism: 1
   gMagThreshold: 0.5
-  maxSlope: 0.9
-  surfLift: 5
-  frictionFactor: 20
+  maxSlope: 0.78
+  frictionFactor: 13
   frictionForgiveness: 5
-  overcomeThreshold: 15
+  overcomeThreshold: 18
   slideITicks: 12
   slideCooldown: 30
   slideForce: 25

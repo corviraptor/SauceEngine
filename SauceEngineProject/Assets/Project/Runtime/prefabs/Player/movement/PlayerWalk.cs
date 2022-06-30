@@ -15,7 +15,7 @@ public class PlayerWalk : MonoBehaviour, IAttachable
         pm.OnWalk -= Walk;
     }
 
-    void Walk(object sender){
+    void Walk(){
         if (pm.frictionForgiven){
             return;
         }

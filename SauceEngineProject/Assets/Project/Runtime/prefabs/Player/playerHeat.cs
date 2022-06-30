@@ -53,16 +53,16 @@ public class PlayerHeat : MonoBehaviour, IHeatable
         playerHandler.HeatUpdate(this, temperature);
 
         if (temperature > player.heatLimit && !heatLimited){
-            GameEvents.current.SoundCommand("HeatLimit", "Play", 0);
+            playerHandler.SoundCommand("HeatLimit", "Play", 0);
             heatLimited = true;
         }
         if (temperature < player.heatLimit && heatLimited){
-            GameEvents.current.SoundCommand("HeatRecovery", "Play", 0);
+            playerHandler.SoundCommand("HeatRecovery", "Play", 0);
             heatLimited = false;
         }
 
         if (temperature > player.overheat && !overheated){
-            GameEvents.current.SoundCommand("Overheat", "Play", 0);
+            playerHandler.SoundCommand("Overheat", "Play", 0);
             overheated = true;
         }
         if (temperature <= player.overheat && overheated){

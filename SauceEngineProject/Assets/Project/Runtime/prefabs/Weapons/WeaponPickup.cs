@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponPickup : MonoBehaviour
 {      
-    public string gun = "Stakegun";
+    public string gun;
 
     void OnTriggerEnter(Collider other) {
         if(other.tag != "Player"){

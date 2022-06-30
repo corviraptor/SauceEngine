@@ -7,18 +7,18 @@ using Freya;
 
 public class AudioManager : MonoBehaviour
 {
-    public Sound[] playerMovementSFX;
-    public Sound[] playerSuitSFX;
-    List<Sound> sounds = new List<Sound>();
+    public LocalSound[] playerMovementSFX;
+    public LocalSound[] playerSuitSFX;
+    List<LocalSound> sounds = new List<LocalSound>();
 
      void Awake(){
-        foreach (Sound s in playerMovementSFX){
+        foreach (LocalSound s in playerMovementSFX){
             sounds.Add(s);
         }
-        foreach (Sound s in playerSuitSFX){
+        foreach (LocalSound s in playerSuitSFX){
             sounds.Add(s);
         }
-        foreach (Sound s in sounds)
+        foreach (LocalSound s in sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
@@ -66,8 +66,8 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PitchShift(string name, float pitch){
-        Sound s = null;
-        foreach (Sound sound in sounds){
+        LocalSound s = null;
+        foreach (LocalSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -79,8 +79,8 @@ public class AudioManager : MonoBehaviour
     }
 
     public void Play(string name){
-        Sound s = null;
-        foreach (Sound sound in sounds){
+        LocalSound s = null;
+        foreach (LocalSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -91,21 +91,22 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayFade(string name, float duration){
-        Sound s = null;
-        foreach (Sound sound in sounds){
+        LocalSound s = null;
+        foreach (LocalSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
         if (s != null){
             StartCoroutine(FadeIn(s, duration));
+            StopCoroutine(FadeOut(s, duration));
             s.source.Play();
         }
         else { Debug.Log("The desired sound was null!"); }
     }
 
     public void Stop(string name){
-        Sound s = null;
-        foreach (Sound sound in sounds){
+        LocalSound s = null;
+        foreach (LocalSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -116,18 +117,19 @@ public class AudioManager : MonoBehaviour
     }
 
     public void StopFade(string name, float duration){
-        Sound s = null;
-        foreach (Sound sound in sounds){
+        LocalSound s = null;
+        foreach (LocalSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
         if (s != null){
             StartCoroutine(FadeOut(s, duration));
+            StopCoroutine(FadeIn(s, duration));
         }
         else { Debug.Log("The desired sound was null!"); }
     }
 
-    IEnumerator FadeIn(Sound s, float duration){
+    IEnumerator FadeIn(LocalSound s, float duration){
         int d = (int)Mathfs.Round(duration); 
         int t = 0;
         while (t <= d){
@@ -138,7 +140,7 @@ public class AudioManager : MonoBehaviour
         s.source.volume = 1;
     }
 
-    IEnumerator FadeOut(Sound s, float duration){
+    IEnumerator FadeOut(LocalSound s, float duration){
         int d = (int)Mathfs.Round(duration);
         int t = d;
         while (t >= d){

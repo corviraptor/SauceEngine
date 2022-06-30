@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,23 +18,11 @@ public class InputManager : MonoBehaviour
 
     public Vector3 naiveAccelXY;
     public Vector2 lookVector;
-    public bool jump;
-    public bool slide;
-    public bool onAttack;
-    public bool onAttack2;
-    public bool reload;
-    public bool spell;
-    public bool menu;
-    public bool weapon0;
-    public bool weapon1;
-    public bool weapon2;
-    public bool weapon3;
-    public bool weapon4;
-    public bool crouched;
     public bool attacking;
     public bool attack2ing;
+    public bool crouched;
     
-    public Dictionary<string, bool> bools = new Dictionary<string, bool>();
+    public Dictionary<string, bool> buttons = new Dictionary<string, bool>();
 
     void Awake(){
         input = new FirstPersonActions();
@@ -43,19 +30,11 @@ public class InputManager : MonoBehaviour
     }
 
     void OnEnable(){
-        bools.Add("jump", false);
-        bools.Add("crouched", false);
-        bools.Add("slide", false);
-        bools.Add("onAttack", false);
-        bools.Add("onAttack2", false);
-        bools.Add("reload", false);
-        bools.Add("spell", false);
-        bools.Add("menu", false);
-        bools.Add("weapon0", false);
-        bools.Add("weapon1", false);
-        bools.Add("weapon2", false);
-        bools.Add("weapon3", false);
-        bools.Add("weapon4", false);
+
+        string[] initializedButtons = {"jump", "crouched", "slide", "onAttack", "onAttack2", "reload", "spell", "menu", "console", "weapon0", "weapon1", "weapon2", "weapon3", "weapon4"};
+        foreach (string s in initializedButtons){
+            buttons.Add(s, false);
+        }
 
         horizontal = input.Player.Horizontal;
         look = input.Player.Look;
@@ -64,18 +43,13 @@ public class InputManager : MonoBehaviour
         attack2 = input.Player.SecondaryFire;
 
         input.Player.Jump.performed += Jump;
-
         input.Player.Crouch.performed += Slide;
-
         input.Player.PrimaryFire.performed += OnPrimaryFire;
-
         input.Player.SecondaryFire.performed += OnSecondaryFire;
-
         input.Player.Reload.performed += Reload;
-
         input.Player.CastSpell.performed += CastSpell;
-
         input.Player.Menu.performed += Menu;
+        input.Player.Console.performed += Console;
 
         input.Player.Weapon0.performed += Weapon0;
         input.Player.Weapon1.performed += Weapon1;
@@ -87,20 +61,14 @@ public class InputManager : MonoBehaviour
     }
 
     void onDisable(){
-
         input.Player.Jump.performed -= Jump;
-
         input.Player.Crouch.performed -= Slide;
-
         input.Player.PrimaryFire.performed -= OnPrimaryFire;
-
         input.Player.SecondaryFire.performed -= OnSecondaryFire;
-
         input.Player.Reload.performed -= Reload;
-
         input.Player.CastSpell.performed -= CastSpell;
-
         input.Player.Menu.performed -= Menu;
+        input.Player.Console.performed -= Console;
 
         input.Player.Weapon0.performed -= Weapon0;
         input.Player.Weapon1.performed -= Weapon1;
@@ -131,91 +99,66 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    void LateUpdate(){
-        jump = bools["jump"];
-        slide = bools["slide"];
-        onAttack = bools["onAttack"];
-        onAttack2 = bools["onAttack2"];
-        reload = bools["reload"];
-        spell = bools["spell"];
-        menu = bools["menu"];
-        weapon0 = bools["weapon0"];
-        weapon1 = bools["weapon1"];
-        weapon2 = bools["weapon2"];
-        weapon3 = bools["weapon3"];
-        weapon4 = bools["weapon4"];
-    }
-
     void Jump(InputAction.CallbackContext obj){
-        bools["jump"] = true;
         StartCoroutine(Reset("jump"));
     }
 
     void Slide(InputAction.CallbackContext obj){
-        bools["slide"] = true;
         StartCoroutine(Reset("slide"));
     }
 
     void OnPrimaryFire(InputAction.CallbackContext obj){
-        bools["onAttack"] = true;
         StartCoroutine(Reset("onAttack"));
     }
 
     void OnSecondaryFire(InputAction.CallbackContext obj){
-        bools["onAttack2"] = true;
         StartCoroutine(Reset("onAttack2"));
     }
 
     void Reload(InputAction.CallbackContext obj){
-        bools["reload"] = true;
         StartCoroutine(Reset("reload"));
     }
 
     void CastSpell(InputAction.CallbackContext obj){
-        bools["spell"] = true;
         StartCoroutine(Reset("spell"));
     }
 
     void Menu(InputAction.CallbackContext obj){
-        bools["menu"] = true;
         StartCoroutine(Reset("menu"));
     }
 
+    void Console(InputAction.CallbackContext obj){
+        StartCoroutine(Reset("console"));
+    }
+
     void Weapon0(InputAction.CallbackContext obj){
-        bools["weapon0"] = true;
         StartCoroutine(Reset("weapon0"));
     }
 
     void Weapon1(InputAction.CallbackContext obj){
-        bools["weapon1"] = true;
         StartCoroutine(Reset("weapon1"));
     }
 
     void Weapon2(InputAction.CallbackContext obj){
-        bools["weapon2"] = true;
         StartCoroutine(Reset("weapon2"));
     }
 
     void Weapon3(InputAction.CallbackContext obj){
-        bools["weapon3"] = true;
         StartCoroutine(Reset("weapon3"));
     }
 
     void Weapon4(InputAction.CallbackContext obj){
-        bools["weapon4"] = true;
         StartCoroutine(Reset("weapon0"));
     }
 
+    public event Action<Dictionary<string, bool>> OnPressButtons;
+    public void PressButtons(){ OnPressButtons?.Invoke(buttons); }
+
     IEnumerator Reset(string name){
-        int i = 0;
-        while (i == 0){
-            i++;
-            yield return null;
-        }
-        while (i == 1){
-            i++;
-            bools[name] = false;
-            yield return null;
-        }
+        buttons[name] = true;
+        PressButtons();
+        yield return null;
+        buttons[name] = false;
+        PressButtons();
     }
 }

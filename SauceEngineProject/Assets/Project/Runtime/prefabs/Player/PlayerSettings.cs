@@ -17,8 +17,7 @@ public class PlayerSettings : ScriptableObject{
     public int coyoteTime = 10;
 
     public float gravity = 9.81F;
-    public float fallMultiplier = 1.2F;
-    public float groundPull = 6F;
+    public float postJumpPushDown = 3F;
     public float terminalVelocity = 56F;
 
     public float gThreshold = 0.1F;

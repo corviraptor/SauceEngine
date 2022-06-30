@@ -17,9 +17,9 @@ public class PlayerCrouch : MonoBehaviour, IAttachable
         pm.OnCrouch -= Crouch;
     }
 
-    void Crouch(object sender){
+    void Crouch(){
         // 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
-        if (pm.crouchState == 0 && pm.isOnGround && pm.clocks["jumpBuffer"] == 0 && pm.hit.point.y <= pm.center.y - (controller.height/2)){
+        if (pm.crouchState == 0 && pm.isOnGrounder && pm.clocks["jumpBuffer"] == 0 && pm.hit.point.y <= pm.center.y - (controller.height/2)){
             //forces player up to avoid collider expanding into the ground. doesnt activate when player jump is being processed
             controller.enabled = false;
             pm.transform.position = new Vector3(pm.transform.position.x, pm.hit.point.y - controller.center.y + controller.height/2 + 0.1F, pm.transform.position.z);
@@ -28,7 +28,7 @@ public class PlayerCrouch : MonoBehaviour, IAttachable
             return;
         }
         // is crouched if it gets past this
-        if (pm.crouchState == 2 && pm.isOnGround && pm.clocks["jumpBuffer"] == 0 && pm.hit.point.y <= pm.center.y - (controller.height/2)){
+        if (pm.crouchState == 2 && pm.isOnGrounder && pm.clocks["jumpBuffer"] == 0 && pm.hit.point.y <= pm.center.y - (controller.height/2)){
             //when the player is on the ground, this moves them down when crouching to keep their feet at the same level, essentially meaning they just duck instead of having to fall after picking up their feet
             controller.enabled = false;
             pm.transform.position = new Vector3(pm.transform.position.x, pm.hit.point.y - controller.center.y + controller.height/2 + 0.05F, pm.transform.position.z);

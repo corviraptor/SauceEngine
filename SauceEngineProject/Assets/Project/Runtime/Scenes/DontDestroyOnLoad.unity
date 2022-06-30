@@ -150,6 +150,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -170,10 +171,10 @@ MonoBehaviour:
   naiveAccelXY: {x: 0, y: 0, z: 0}
   lookVector: {x: 0, y: 0}
   jump: 0
-  crouched: 0
   slide: 0
-  attack: 0
-  attack2: 0
+  onAttack: 0
+  onAttack2: 0
+  reload: 0
   spell: 0
   menu: 0
   weapon0: 0
@@ -181,6 +182,9 @@ MonoBehaviour:
   weapon2: 0
   weapon3: 0
   weapon4: 0
+  crouched: 0
+  attacking: 0
+  attack2ing: 0
 --- !u!1 &1157205881
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,7 +214,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ccea1b1476a7da49b86b0cd3c63323e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eventSettings: {fileID: 11400000, guid: 2f9f9166bdee71e4688b93f34f01a9df, type: 2}
 --- !u!4 &1157205883
 Transform:
   m_ObjectHideFlags: 0
@@ -221,6 +224,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -252,6 +256,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -298,80 +303,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 591bd1cea0464e64abc4bd27fc58a0bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMovementSFX:
-  - name: Jump
-    clip: {fileID: 8300000, guid: 06f99590a00968342a11f93389f0e7bc, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: Slide
-    clip: {fileID: 8300000, guid: 30f94e6afb3802a479badc97cce1efb1, type: 3}
-    volume: 0.473
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: SlideFail
-    clip: {fileID: 8300000, guid: b921e90ad0d47d54a90829aa0c2b7c74, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: SlideJump
-    clip: {fileID: 8300000, guid: 8c6966cea4bf52e40a4a28967b1b2173, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: SurfAttack
-    clip: {fileID: 8300000, guid: 6d9e0647fe5cf4d438ef1ba28f71af03, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: SurfLoop
-    clip: {fileID: 8300000, guid: bae5f505f2de8954b923937a99821bff, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 1
-  - name: SurfRelease
-    clip: {fileID: 8300000, guid: 56be3ca89c948824889cd446e13b7be9, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: SlipLoop
-    clip: {fileID: 8300000, guid: d0115c58d41315741b0d022c6276d30e, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 1
-  - name: SlipRelease
-    clip: {fileID: 8300000, guid: bf8451597a1ae1a4890d737e54f30470, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  playerSuitSFX:
-  - name: HeatLimit
-    clip: {fileID: 8300000, guid: 45a10650917f2b849b70d67ac2da0a77, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: HeatRecovery
-    clip: {fileID: 8300000, guid: 4559f4768e9fa7146a2b7a281cfe42a5, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
-  - name: Overheat
-    clip: {fileID: 8300000, guid: 88c0dfd9134ee1149b15b675609aaa12, type: 3}
-    volume: 1
-    pitch: 1
-    source: {fileID: 0}
-    loop: 0
+  playerMovementSFX: []
+  playerSuitSFX: []
 --- !u!4 &1603751507
 Transform:
   m_ObjectHideFlags: 0
@@ -382,6 +315,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -418,6 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
   m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
   m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
@@ -456,6 +391,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4

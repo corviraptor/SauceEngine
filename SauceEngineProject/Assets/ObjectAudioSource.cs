@@ -5,37 +5,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using Freya;
 
-public class PlayerAudioHandler : MonoBehaviour
+public class ObjectAudioSource : MonoBehaviour
 {
-    public PlayerHandler playerHandler;
-    public LocalSound[] playerMovementSFX;
-    public LocalSound[] playerSuitSFX;
-    public LocalSound[] weaponSFX;
-    List<LocalSound> sounds = new List<LocalSound>();
+    public WorldSound[] loadedSounds;
+    List<WorldSound> sounds = new List<WorldSound>();
 
-     void Awake(){
-        foreach (LocalSound s in playerMovementSFX){
+    void Awake(){
+        foreach (WorldSound s in loadedSounds){
             sounds.Add(s);
         }
-        foreach (LocalSound s in playerSuitSFX){
-            sounds.Add(s);
-        }
-        foreach (LocalSound s in sounds)
+        foreach (WorldSound s in sounds)
         {
             s.source = gameObject.AddComponent<AudioSource>();
             s.source.clip = s.clip;
             s.source.volume = s.volume;
             s.source.pitch = s.pitch;
             s.source.loop = s.loop;
+            s.source.minDistance = s.minDistance;
+            s.source.maxDistance = s.maxDistance;
+            s.source.spatialBlend = s.spatialBlend;
+            s.source.dopplerLevel = s.dopplerLevel;
         }
-    }
-
-    private void OnEnable(){
-        playerHandler.OnSoundCommand += SoundHandler;
-    }
-
-    private void OnDestroy() {
-        playerHandler.OnSoundCommand -= SoundHandler;
     }
     
     public void SoundHandler(string name, string command, float value){
@@ -68,8 +58,8 @@ public class PlayerAudioHandler : MonoBehaviour
     }
 
     public void PitchShift(string name, float pitch){
-        LocalSound s = null;
-        foreach (LocalSound sound in sounds){
+        WorldSound s = null;
+        foreach (WorldSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -81,8 +71,8 @@ public class PlayerAudioHandler : MonoBehaviour
     }
 
     public void Play(string name){
-        LocalSound s = null;
-        foreach (LocalSound sound in sounds){
+        WorldSound s = null;
+        foreach (WorldSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -93,8 +83,8 @@ public class PlayerAudioHandler : MonoBehaviour
     }
 
     public void PlayFade(string name, float duration){
-        LocalSound s = null;
-        foreach (LocalSound sound in sounds){
+        WorldSound s = null;
+        foreach (WorldSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -107,8 +97,8 @@ public class PlayerAudioHandler : MonoBehaviour
     }
 
     public void Stop(string name){
-        LocalSound s = null;
-        foreach (LocalSound sound in sounds){
+        WorldSound s = null;
+        foreach (WorldSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -119,8 +109,8 @@ public class PlayerAudioHandler : MonoBehaviour
     }
 
     public void StopFade(string name, float duration){
-        LocalSound s = null;
-        foreach (LocalSound sound in sounds){
+        WorldSound s = null;
+        foreach (WorldSound sound in sounds){
             if (sound.name == name){ s = sound; }
         }
 
@@ -131,7 +121,7 @@ public class PlayerAudioHandler : MonoBehaviour
         else { Debug.Log("The desired sound was null!"); }
     }
 
-    IEnumerator FadeIn(LocalSound s, float duration){
+    IEnumerator FadeIn(WorldSound s, float duration){
         int d = (int)Mathfs.Round(duration); 
         int t = 0;
         while (t <= d){
@@ -142,7 +132,7 @@ public class PlayerAudioHandler : MonoBehaviour
         s.source.volume = 1;
     }
 
-    IEnumerator FadeOut(LocalSound s, float duration){
+    IEnumerator FadeOut(WorldSound s, float duration){
         int d = (int)Mathfs.Round(duration);
         int t = d;
         while (t >= d){
@@ -153,4 +143,5 @@ public class PlayerAudioHandler : MonoBehaviour
         s.source.Stop();
     }
 }
+
 

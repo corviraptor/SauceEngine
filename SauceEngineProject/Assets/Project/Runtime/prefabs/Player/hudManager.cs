@@ -20,24 +20,17 @@ public class HudManager : MonoBehaviour
     float newSpeed;
     float newTemperature;
     float temp;
-
     bool initialized;
+
     void OnEnable()
     {
-        initialized = false;
+        playerHandler.OnPlayerHudUpdate += HudUpdate;
         playerHandler.OnWeaponUpdate += WeaponUpdate;
     }
 
     void OnDestroy(){
         playerHandler.OnPlayerHudUpdate -= HudUpdate;
         playerHandler.OnWeaponUpdate -= WeaponUpdate;
-    }
-
-    void Update(){
-        if (!initialized){
-            playerHandler.OnPlayerHudUpdate += HudUpdate;
-            initialized = true;
-        }
     }
 
     private void HudUpdate(object sender, PlayerArgs playerArgs){
@@ -48,10 +41,11 @@ public class HudManager : MonoBehaviour
         }
     }
 
-    private void WeaponUpdate(WeaponManager sender){
+    private void WeaponUpdate(PlayerWeapons sender){
         if (sender.heldGun == null){
             return;
         }
+        
         int loadedRounds = sender.heldGun.loadedRounds;
         int magazineSize = sender.heldGun.magazineSize;
 

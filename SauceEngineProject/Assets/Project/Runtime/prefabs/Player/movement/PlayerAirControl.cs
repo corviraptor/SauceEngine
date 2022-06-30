@@ -15,7 +15,7 @@ public class PlayerAirControl : MonoBehaviour, IAttachable
         pm.OnAirControl -= AirControl;
     }
     // Update is called once per frame
-    void AirControl(object sender){
+    void AirControl(){
         // speed limit
         Vector3 velocityXZ = pm.velocity.KillY();
         float AVproj = Vector3.Dot(velocityXZ, pm.accelXZ * pm.player.airAccel);

@@ -24,7 +24,8 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     public int crouchState = 0;
 
     public bool isOnGround = false;
-    public bool frictionForgiven => clocks["frictionTimer"] > 0 && velocity.KillY().magnitude > player.overcomeThreshold;
+    public bool isOnGrounder = false; // activates only after the first tick, keeping some stuff from enabling during bunnyhopping
+    public bool frictionForgiven => clocks["groundTimer"] > 0 && velocity.KillY().magnitude > player.overcomeThreshold;
     
     public int slopeState = 0;
     bool slideFailPlayed = false;
@@ -38,13 +39,10 @@ public class PlayerMovement : MonoBehaviour, IBlastible
 
         gameObject.tag = "Player";
 
-        clocks.Add("jumpBuffer", 0);
-        clocks.Add("coyoteTime", 0);
-        clocks.Add("jumpCooldown", 0);
-        clocks.Add("postJumpGravity", 0);
-        clocks.Add("slideBuffer", 0);
-        clocks.Add("slide", 0);
-        clocks.Add("blastTime", 0);
+        string[] initializedClocks = {"jumpBuffer", "coyoteTime", "jumpCooldown", "slideBuffer", "slide", "blastTime", "groundTimer"};
+        foreach (string s in initializedClocks){
+            clocks.Add(s, 0);
+        }
 
         foreach (MonoBehaviour module in logic.GetComponents<MonoBehaviour>()){
             if (module is IAttachable){
@@ -110,22 +108,27 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         // - JUMP
         if (InputManager.current.jump && clocks["jumpCooldown"] == 0){
             StartCoroutine(Clock("jumpBuffer", player.jumpForgiveness));
-            StartCoroutine(Clock("frictionTimer", 2));
+            StartCoroutine(Clock("groundTimer", 2));
         }
 
         if (clocks["jumpBuffer"] <= player.jumpForgiveness && clocks["jumpBuffer"] != 0 && clocks["jumpCooldown"] == 0){
-            Jump(this);
+            Jump();
         }
 
         //maintains jump velocity for a few ticks to make sure it goes through
-        if (clocks["jumpCooldown"] != 0 && clocks["jumpCooldown"] < 5){
+        if (clocks["jumpCooldown"] != 0 && clocks["jumpCooldown"] < 2){
             velocity = velocity.KillY() + (transform.up * player.jumpForce);
         }
 
+        //start accelerating player down after a jump to assist gravity to make jumping feel more chunky
+        if (clocks["jumpCooldown"] != 0 && clocks["jumpCooldown"] > 17 && !slideJumped){
+            velocity -= transform.up * player.jumpForce * Time.deltaTime * player.postJumpPushDown;
+        }
+
         // air
-        if (!isOnGround){
-            AirControl(this);
-            Gravity(this);
+        if (!isOnGrounder){
+            AirControl();
+            Gravity();
         }
 
         // - CROUCH: 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
@@ -134,7 +137,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             cc.height = player.height / 2.0F;
             walkSpeedAdj = player.walkSpeed / 2;
 
-            Crouch(this);
+            Crouch();
 
             crouchState = 2;
         }
@@ -155,11 +158,6 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             Slide();
         }
 
-        // ground magnetism - will push you down perpendicular to a standable surface when youre very close to it to keep you from ramping off tiny things
-        if (hit.distance <= cc.height / 2 + player.gMagThreshold && clocks["jumpCooldown"] == 0 && slopeState == 0 && clocks["blastTime"] == 0){
-            velocity -= hit.normal * player.gMagnetism;
-        }
-
         if (!isOnGround){
             // we know we're on the ground if we get past here because of this guard statement
             return;
@@ -173,12 +171,12 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         // more slide logic
         if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature <= player.heatLimit){
             GameEvents.current.HeatPlayer(this, player.slideHeat);
-            GameEvents.current.SoundCommand("Slide", "Play", 0);
+            playerHandler.SoundCommand("Slide", "Play", 0);
             StartCoroutine(Clock("slide", player.slideCooldown));
             Slide();
         }
         else if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature > player.heatLimit && !slideFailPlayed) {
-            GameEvents.current.SoundCommand("SlideFail", "Play", 0);
+            playerHandler.SoundCommand("SlideFail", "Play", 0);
             slideFailPlayed = true;
             StartCoroutine(Clock("slide", player.slideCooldown));
         }
@@ -191,31 +189,51 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             return;
         }
 
+        if (!isOnGrounder){
+            //we know we've been on the ground longer than 1 tick if we get past this guard statement
+            return;
+        }
+
+        /* ground magnetism - will push you down perpendicular to a standable surface when youre very close to it to keep you from ramping off tiny bumps
+        its down here so that you dont get magnetized to the ground when surfing off of a slope that connects to flat ground */
+        if (hit.distance <= cc.height / 2 + player.gMagThreshold && clocks["jumpCooldown"] == 0 && slopeState == 0 && clocks["blastTime"] == 0){
+            velocity -= hit.normal * player.gMagnetism;
+        }
+
         if (accelXZ.sqrMagnitude > 0.001F){
-            Walk(this);
+            Walk();
         }
         else {
-            Friction(this);
+            Friction();
         }
     }
 
     public void StartJumpCooldown(){
         if (clocks["jumpCooldown"] == 0){
-            StartCoroutine(Clock("jumpCooldown", player.coyoteTime + 10));
-            StopCoroutine(Clock("postJumpGravity", 30));
-            StartCoroutine(Clock("postJumpGravity", 30));
+            StartCoroutine(Clock("jumpCooldown", player.coyoteTime + 5));
         }
     }
 
+    float newMaxSlope;
     void GroundTest(){
         Physics.Raycast(center, -transform.up, out hit, Mathf.Infinity, layerMask);
-        if (hit.distance <= cc.height / 2 + player.gThreshold && Vector3.Dot(hit.normal, transform.up) > player.maxSlope){
+
+        newMaxSlope = player.maxSlope;
+
+        if (velocity.KillY().magnitude > player.overcomeThreshold + 5){
+            //player wont be able to walk on some slopes at high speeds so that you can surf up stairs and shit like in tf2
+            newMaxSlope = player.maxSlope + ((1 - player.maxSlope) / 1.5F);
+        }
+
+        if (hit.distance <= cc.height / 2 + player.gThreshold && Vector3.Dot(hit.normal, transform.up) > newMaxSlope){
             if (!isOnGround){ OnGroundEnter(); }
+            if (clocks["groundTimer"] > 1){ isOnGrounder = true; }
             isOnGround = true;
         }
         else {
             if (isOnGround){ OnGroundExit(); }
             isOnGround = false;
+            isOnGrounder = false;
         }
     }
 
@@ -225,12 +243,12 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         if (Physics.BoxCast(center, Vector3.one * cc.radius, Vector3.up, out roofHit, Quaternion.identity, Mathf.Infinity, layerMask) && roofHit.distance < cc.center.y + cc.height / 2){
             //stops player from getting up while in too small of a space. uses BoxCast to prevent player from getting up at the edge of a roof and clipping it
             crouchState = 1;
-            Crouch(this);
+            Crouch();
         }
         else if (slideState == 1){
             //stops player from getting up while in the middle of a slide
             crouchState = 1;
-            Crouch(this);
+            Crouch();
 
         }
         else {
@@ -239,7 +257,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             cc.center = Vector3.zero;
             cc.height = player.height;
 
-            Crouch(this);
+            Crouch();
             crouchState = 0;
         }
     }  
@@ -264,8 +282,8 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             slideState = 0;
             if (!slideJumped){
                 slideJumped = true;
-                GameEvents.current.SoundCommand("SlideJump", "Play", 0);
-                GameEvents.current.SoundCommand("Slide", "Stop", 0);
+                playerHandler.SoundCommand("SlideJump", "Play", 0);
+                playerHandler.SoundCommand("Slide", "Stop", 0);
             }
 
             return;
@@ -286,10 +304,12 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         //we know slide will be executed after this point
         slideState = 1;
         if (velocityXZ.sqrMagnitude < player.slideForce * player.slideForce){
-            velocity = (slideVector * player.slideForce) + (Vector3.up * velocity.y);
+            velocity = (slideVector * player.slideForce);
         }
         else{
-            velocity = (slideVector * velocityXZ.magnitude) + (Vector3.up * velocity.y);
+            /* you will get a penalty in speed if slide jumping past slide's natural speed boost and you won't entirely redirect your momentum
+            because honestly i started to not like how that felt, plus it makes grapple hook less interesting */
+            velocity = Vector3.Lerp(velocityXZ, (slideVector * player.slideForce), 0.5F);
         }
     }
 
@@ -305,28 +325,30 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     bool surfed = false;
     bool slipped = false;
     void SlopeTest(){
-        if (hit.distance <= cc.height / 2 + player.gMagThreshold && Vector3.Dot(hit.normal, transform.up) < player.maxSlope && velocity.sqrMagnitude > player.walkSpeed * player.walkSpeed){
+        if (hit.distance <= cc.height / 2 + player.gMagThreshold && Vector3.Dot(hit.normal, transform.up) < newMaxSlope && velocity.sqrMagnitude > player.walkSpeed * player.walkSpeed){
             /*player is surfing if they are within the ground check distance but the ground is too steep to trigger the ground check, and they are traveling faster than walking speed
             vertical speed also counts more towards surfing, so players won't start to slip as easy if theyre surfing right up an incline because thats fun*/
             slopeState = 2;
             unsloped = false;
-            Slope(this);
+            Slope();
             if (!surfed){
-                GameEvents.current.SoundCommand("SurfAttack", "Play", 0);
-                GameEvents.current.SoundCommand("SlipLoop", "StopFade", 10);
-                GameEvents.current.SoundCommand("SurfLoop", "PlayFade", 10);
+                Debug.Log("Surf");
+                playerHandler.SoundCommand("SurfAttack", "Play", 0);
+                playerHandler.SoundCommand("SlipLoop", "StopFade", 10);
+                playerHandler.SoundCommand("SurfLoop", "PlayFade", 10);
                 surfed = true;
                 slipped = false;
             }
         }
-        else if (hit.distance <= cc.height / 2 + player.gMagThreshold + 0.5F && Vector3.Dot(hit.normal, transform.up) < player.maxSlope){
+        else if (hit.distance <= cc.height / 2 + player.gMagThreshold + 0.5F && Vector3.Dot(hit.normal, transform.up) < newMaxSlope){
             slopeState = 1;
             unsloped = false;
-            Slope(this);
+            Slope();
 
             if (surfed && !slipped){
-                GameEvents.current.SoundCommand("SlipLoop", "PlayFade", 10);
-                GameEvents.current.SoundCommand("SurfLoop", "StopFade", 10);
+                Debug.Log("Slip");
+                playerHandler.SoundCommand("SlipLoop", "Play", 0);
+                playerHandler.SoundCommand("SurfLoop", "StopFade", 10);
                 surfed = false;
                 slipped = true;
             }
@@ -335,16 +357,18 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             slopeState = 0;
             if (!unsloped){
                 //calls the GameEvents system to invoke the Unslope event only once
-                GameEvents.current.SoundCommand("SlipLoop", "StopFade", 10);
-                GameEvents.current.SoundCommand("SurfLoop", "StopFade", 10);
+                playerHandler.SoundCommand("SlipLoop", "StopFade", 10);
+                playerHandler.SoundCommand("SurfLoop", "StopFade", 10);
                 unsloped = true;
             }
             if (slipped){
-                GameEvents.current.SoundCommand("SlipRelease", "Play", 10);
+                Debug.Log("Unslip");
+                playerHandler.SoundCommand("SlipRelease", "Play", 10);
                 slipped = false;
             }
             if (surfed){
-                GameEvents.current.SoundCommand("SurfRelease", "Play", 10);
+                Debug.Log("Unsurf");
+                playerHandler.SoundCommand("SurfRelease", "Play", 10);
                 surfed = false;
             }
         }
@@ -357,7 +381,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     }
 
     void OnGroundEnter(){
-        StartCoroutine(Clock("frictionTimer", player.frictionForgiveness));
+        StartCoroutine(Clock("groundTimer", player.frictionForgiveness));
     }
 
     void OnGroundExit(){
@@ -385,26 +409,26 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         }
     }
 
-    public event Action<object> OnAirControl;
-    public void AirControl(object sender){ OnAirControl?.Invoke(sender); }
+    public event Action OnAirControl;
+    public void AirControl(){ OnAirControl?.Invoke(); }
 
-    public event Action<object> OnGravity;
-    public void Gravity(object sender){ OnGravity?.Invoke(sender); }
+    public event Action OnGravity;
+    public void Gravity(){ OnGravity?.Invoke(); }
 
-    public event Action<object> OnFriction;
-    public void Friction(object sender){ OnFriction?.Invoke(sender); }
+    public event Action OnFriction;
+    public void Friction(){ OnFriction?.Invoke(); }
 
-    public event Action<object> OnWalk;
-    public void Walk(object sender){ OnWalk?.Invoke(sender); }
+    public event Action OnWalk;
+    public void Walk(){ OnWalk?.Invoke(); }
 
-    public event Action<object> OnJump;
-    public void Jump(object sender){ OnJump?.Invoke(sender); }
+    public event Action OnJump;
+    public void Jump(){ OnJump?.Invoke(); }
 
-    public event Action<object> OnSlope;
-    public void Slope(object sender){ OnSlope?.Invoke(sender); }
+    public event Action OnSlope;
+    public void Slope(){ OnSlope?.Invoke(); }
 
-    public event Action<object> OnCrouch;
-    public void Crouch(object sender){ OnCrouch?.Invoke(sender); }
+    public event Action OnCrouch;
+    public void Crouch(){ OnCrouch?.Invoke(); }
 
     IEnumerator Clock(string id, int interval){
         int temp;

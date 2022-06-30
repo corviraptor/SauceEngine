@@ -152,6 +152,15 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Console"",
+                    ""type"": ""Button"",
+                    ""id"": ""38a1a783-fad6-4002-aab5-c32637a1e21b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -429,6 +438,17 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                     ""action"": ""Reload"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51bfdbc1-a18a-488c-a485-d248984f8897"",
+                    ""path"": ""<Keyboard>/backquote"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Console"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -451,6 +471,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         m_Player_Weapon3 = m_Player.FindAction("Weapon3", throwIfNotFound: true);
         m_Player_Weapon4 = m_Player.FindAction("Weapon4", throwIfNotFound: true);
         m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
+        m_Player_Console = m_Player.FindAction("Console", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -524,6 +545,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Weapon3;
     private readonly InputAction m_Player_Weapon4;
     private readonly InputAction m_Player_Menu;
+    private readonly InputAction m_Player_Console;
     public struct PlayerActions
     {
         private @FirstPersonActions m_Wrapper;
@@ -542,6 +564,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         public InputAction @Weapon3 => m_Wrapper.m_Player_Weapon3;
         public InputAction @Weapon4 => m_Wrapper.m_Player_Weapon4;
         public InputAction @Menu => m_Wrapper.m_Player_Menu;
+        public InputAction @Console => m_Wrapper.m_Player_Console;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -593,6 +616,9 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 @Menu.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
                 @Menu.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
                 @Menu.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMenu;
+                @Console.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsole;
+                @Console.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsole;
+                @Console.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsole;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -639,6 +665,9 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 @Menu.started += instance.OnMenu;
                 @Menu.performed += instance.OnMenu;
                 @Menu.canceled += instance.OnMenu;
+                @Console.started += instance.OnConsole;
+                @Console.performed += instance.OnConsole;
+                @Console.canceled += instance.OnConsole;
             }
         }
     }
@@ -659,5 +688,6 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         void OnWeapon3(InputAction.CallbackContext context);
         void OnWeapon4(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
+        void OnConsole(InputAction.CallbackContext context);
     }
 }

@@ -15,7 +15,7 @@ public class PlayerGravity : MonoBehaviour, IAttachable
         pm.OnGravity -= Gravity;
     }
 
-    void Gravity(object sender){
+    void Gravity(){
         //no gravity added if player is falling faster than terminal velocity
         if (pm.velocity.y <= pm.player.terminalVelocity){
             Debug.Log("terminal velocity reached");
@@ -23,11 +23,6 @@ public class PlayerGravity : MonoBehaviour, IAttachable
         }
 
         Vector3 gravityVector = Vector3.up * pm.player.gravity * Time.deltaTime;
-        
-        //strong gravity
-        if (pm.velocity.y < 0 && pm.hit.distance <= pm.player.groundPull && Vector3.Dot(pm.hit.normal, pm.transform.up) > pm.player.maxSlope && pm.clocks["postJumpGravity"] != 0){
-            gravityVector = gravityVector * pm.player.fallMultiplier;
-        }
 
         pm.velocity -= gravityVector;
     }

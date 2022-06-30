@@ -2,15 +2,15 @@ using UnityEngine.Audio;
 using UnityEngine;
 
 [System.Serializable]
-public class Sound
+public class LocalSound
 {
     public string name;
     public AudioClip clip;
 
     [Range(0f,1f)]
-    public float volume;
+    public float volume = 1;
     [Range(0.1f,3f)]
-    public float pitch;
+    public float pitch = 1;
 
     [HideInInspector]
     public AudioSource source;
