@@ -16,8 +16,8 @@ public class GamemodeSystem : MonoBehaviour
         }
     }
 
-    public void switchMode(string name){
-        SceneManager.UnloadSceneAsync("Start");
+    public void SwitchMode(string name, Scene lastScene){
+        SceneManager.UnloadSceneAsync(lastScene);
 
         if(!SceneManager.GetSceneByName(name).isLoaded){
             SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);

@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 9f4b18ffb0e28914299df14d45e48db7
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Iosevka Slab
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 6fdf5ff9597bfa14890ff1b3894ec8f5, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

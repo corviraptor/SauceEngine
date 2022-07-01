@@ -32,6 +32,7 @@ public class PlayerSettings : ScriptableObject{
     public float overcomeThreshold = 20F;
 
     public int slideITicks = 12;
+    public int slideDuration = 30;
     public int slideCooldown = 30;
     public float slideForce = 25F;
 

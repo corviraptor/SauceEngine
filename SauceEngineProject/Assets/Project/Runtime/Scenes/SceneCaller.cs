@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SceneCaller : MonoBehaviour
 {
-    public void onSceneCall(string name){
-        GamemodeSystem.current.switchMode(name);
+    public void OnSceneCall(string name){
+        GamemodeSystem.current.SwitchMode(name, gameObject.scene);
     }
 }

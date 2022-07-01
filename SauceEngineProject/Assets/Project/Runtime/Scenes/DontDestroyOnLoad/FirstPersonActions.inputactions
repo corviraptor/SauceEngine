@@ -42,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Slide",
+                    "type": "Button",
+                    "id": "b476da64-195c-419f-ab58-87d408854718",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "PrimaryFire",
                     "type": "Button",
                     "id": "131929a9-78d9-4ab8-a232-1338c1b27448",
@@ -425,6 +434,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Console",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "870fe43b-e443-4309-9f20-cd890c0518eb",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

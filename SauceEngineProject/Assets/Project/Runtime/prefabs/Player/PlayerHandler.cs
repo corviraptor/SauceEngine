@@ -10,7 +10,6 @@ public class PlayerHandler : MonoBehaviour
     public PlayerSettings player;
     public PlayerArgs playerArgs;
     public PlayerMovement playerMovement;
-    Dictionary<string, bool> buttons = new Dictionary<string, bool>();
 
     void Start(){   
         foreach (Behaviour script in controllerObject.GetComponentsInChildren<Behaviour>()){
@@ -23,11 +22,6 @@ public class PlayerHandler : MonoBehaviour
         playerArgs = new PlayerArgs(Vector3.zero, Vector3.zero, 0F, transform, playerMovement.cc, transform);
 
         GameEvents.current.OnPlayerUpdate += PlayerUpdate;
-        InputManager.current.OnPressButtons += PressButtons;
-    }
-
-    void PressButtons(Dictionary<string, bool> b){
-        buttons = b;
     }
 
     void OnDestroy(){   
@@ -35,7 +29,9 @@ public class PlayerHandler : MonoBehaviour
     }
 
     void LateUpdate(){
-        GameEvents.current.PlayerInfo(this, playerArgs);
+        if (PauseMenu.isPaused){
+            return;
+        }
 
         PlayerPositionUpdate(this, playerArgs);
         PlayerHudUpdate(this, playerArgs);

@@ -28,12 +28,12 @@ public class CameraMovement : MonoBehaviour
     private void PosUpdate(object sender, PlayerArgs playerArgs){
         playerTransform = playerArgs.transform;
         playerHeight = playerArgs.controller.height;
-
+        
         float mouseY = (-InputManager.current.lookVector.y);
         mousePitch += mouseY;
         mousePitch = Mathf.Clamp(mousePitch, -90, 90);
         transform.eulerAngles = new Vector3(mousePitch, playerTransform.eulerAngles.y, playerTransform.eulerAngles.z);
-        transform.position = playerTransform.position + Vector3.up * playerArgs.controller.height / 4;
+        transform.position = playerTransform.position + (playerArgs.controller.center) + Vector3.up * (playerArgs.controller.height / 2 - player.height / 4);
 
         playerHandler.playerArgs.cameraTransform = transform;
     }

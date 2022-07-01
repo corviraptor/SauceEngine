@@ -49,7 +49,7 @@ public class HudManager : MonoBehaviour
         int loadedRounds = sender.heldGun.loadedRounds;
         int magazineSize = sender.heldGun.magazineSize;
 
-        ammoText.text = $"{loadedRounds} / {magazineSize}";
+        ammoText.text = $"{loadedRounds}/{magazineSize}";
     }
 
     IEnumerator HudUpdateCycle(object sender, Vector3 velocity, Vector3 accelXZ){
@@ -65,7 +65,7 @@ public class HudManager : MonoBehaviour
             VelocityIndicator(i, velocity, newSpeed);
             
             //speedometer text
-            speedText.text = $"v = {Mathf.Round(Mathf.Lerp(oldSpeed, newSpeed, i))} m/s";
+            speedText.text = $"v={Mathf.Round(Mathf.Lerp(oldSpeed, newSpeed, i))} m/s";
 
             hudUpdateInProgress = true;
             i += Time.deltaTime * 30;

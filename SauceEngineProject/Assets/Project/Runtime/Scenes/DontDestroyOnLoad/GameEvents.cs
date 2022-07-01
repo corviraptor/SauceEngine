@@ -10,12 +10,6 @@ public class GameEvents : MonoBehaviour
     private void Awake(){
         current = this;
     }
-
-    public void inputUpdate(object sender, float[] a, bool[] b){
-    }
-
-    public void PlayerInfo(object sender, PlayerArgs player){
-    }
     
     public event Action<object> OnPlayerUpdate;
     public void PlayerUpdate(object sender){ OnPlayerUpdate?.Invoke(sender); }

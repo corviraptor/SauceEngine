@@ -64,6 +64,15 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Slide"",
+                    ""type"": ""Button"",
+                    ""id"": ""b476da64-195c-419f-ab58-87d408854718"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""PrimaryFire"",
                     ""type"": ""Button"",
                     ""id"": ""131929a9-78d9-4ab8-a232-1338c1b27448"",
@@ -449,6 +458,17 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                     ""action"": ""Console"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""870fe43b-e443-4309-9f20-cd890c0518eb"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slide"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -461,6 +481,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
+        m_Player_Slide = m_Player.FindAction("Slide", throwIfNotFound: true);
         m_Player_PrimaryFire = m_Player.FindAction("PrimaryFire", throwIfNotFound: true);
         m_Player_SecondaryFire = m_Player.FindAction("SecondaryFire", throwIfNotFound: true);
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
@@ -535,6 +556,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Crouch;
+    private readonly InputAction m_Player_Slide;
     private readonly InputAction m_Player_PrimaryFire;
     private readonly InputAction m_Player_SecondaryFire;
     private readonly InputAction m_Player_Reload;
@@ -554,6 +576,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
+        public InputAction @Slide => m_Wrapper.m_Player_Slide;
         public InputAction @PrimaryFire => m_Wrapper.m_Player_PrimaryFire;
         public InputAction @SecondaryFire => m_Wrapper.m_Player_SecondaryFire;
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
@@ -586,6 +609,9 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 @Crouch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
                 @Crouch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
                 @Crouch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrouch;
+                @Slide.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSlide;
+                @Slide.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSlide;
+                @Slide.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSlide;
                 @PrimaryFire.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPrimaryFire;
                 @PrimaryFire.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPrimaryFire;
                 @PrimaryFire.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPrimaryFire;
@@ -635,6 +661,9 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 @Crouch.started += instance.OnCrouch;
                 @Crouch.performed += instance.OnCrouch;
                 @Crouch.canceled += instance.OnCrouch;
+                @Slide.started += instance.OnSlide;
+                @Slide.performed += instance.OnSlide;
+                @Slide.canceled += instance.OnSlide;
                 @PrimaryFire.started += instance.OnPrimaryFire;
                 @PrimaryFire.performed += instance.OnPrimaryFire;
                 @PrimaryFire.canceled += instance.OnPrimaryFire;
@@ -678,6 +707,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
+        void OnSlide(InputAction.CallbackContext context);
         void OnPrimaryFire(InputAction.CallbackContext context);
         void OnSecondaryFire(InputAction.CallbackContext context);
         void OnReload(InputAction.CallbackContext context);

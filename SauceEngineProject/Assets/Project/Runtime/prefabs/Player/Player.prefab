@@ -32,10 +32,10 @@ RectTransform:
   m_Father: {fileID: 7331363645143111347}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 662.1, y: -365.5}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -125.59741, y: 77.00098}
+  m_SizeDelta: {x: 251.1948, y: 154}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1299221630
 GameObject:
@@ -72,8 +72,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 4.4029}
-  m_SizeDelta: {x: 173.6879, y: 91.1942}
+  m_AnchoredPosition: {x: 0.00010109, y: -0.0000014987}
+  m_SizeDelta: {x: 246.7205, y: 190.8243}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1299221633
 CanvasRenderer:
@@ -104,8 +104,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: eb554ff3e90e77e4aadd263fda51318d, type: 3}
-    m_FontSize: 75
+    m_Font: {fileID: 12800000, guid: 9f4b18ffb0e28914299df14d45e48db7, type: 3}
+    m_FontSize: 150
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -116,7 +116,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.7
-  m_Text: X / X
+  m_Text: X/X
 --- !u!1 &1946551605
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,8 +185,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.5, y: 9.84}
-  m_SizeDelta: {x: 7, y: 9}
+  m_AnchoredPosition: {x: 12.196, y: 20.2}
+  m_SizeDelta: {x: 14.8368, y: 19.0757}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3822208554607156914
 CanvasRenderer:
@@ -265,8 +265,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 10, y: 105}
+  m_AnchoredPosition: {x: -0.0000034869, y: 0}
+  m_SizeDelta: {x: 9.2465, y: 105}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7038336835371568533
 MonoBehaviour:
@@ -452,7 +452,7 @@ GameObject:
   - component: {fileID: 107531698729067651}
   - component: {fileID: 5431301765380737002}
   m_Layer: 0
-  m_Name: CameraParent
+  m_Name: CameraController
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -522,7 +522,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.52}
+  m_AnchoredPosition: {x: 0, y: 0.51999664}
   m_SizeDelta: {x: -4.0398, y: 0.8456}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6970301675042695264
@@ -598,8 +598,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.07830739, y: -0.17299652}
-  m_SizeDelta: {x: 7.8193, y: 103.7944}
+  m_AnchoredPosition: {x: 9.4652, y: 2.171}
+  m_SizeDelta: {x: 15.3488, y: 203.7414}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1548252296106793916
 CanvasRenderer:
@@ -673,8 +673,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 10.030997, y: -115.6}
+  m_SizeDelta: {x: 29.3085, y: 26.1129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5860816362205682391
 GameObject:
@@ -726,153 +726,102 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c381a3a45abc3394e8e1bc87f615e776, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleCastLoop
     clip: {fileID: 8300000, guid: 16081b22e5d58444f8523db754ce54e9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: GrappleReeling
     clip: {fileID: 8300000, guid: 287d87fdf79e7aa43a3879c8806bb08a, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleFail
     clip: {fileID: 8300000, guid: 4c0c8bf9b62efd840be4b78407df57fc, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleReelingLoop
     clip: {fileID: 8300000, guid: 456726ce766c9c14988f7eb03f03c910, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: GrappleRelease1
     clip: {fileID: 8300000, guid: f9a7e714c09135e4393e82f2cf760c8f, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleRelease2
     clip: {fileID: 8300000, guid: 306bf7232d99d494e96b076deb01284c, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleRelease3
     clip: {fileID: 8300000, guid: ebc04e7d1f25802449b2256a0fc6557a, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: Jump
     clip: {fileID: 8300000, guid: 06f99590a00968342a11f93389f0e7bc, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: Slide
     clip: {fileID: 8300000, guid: 30f94e6afb3802a479badc97cce1efb1, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SlideJump
     clip: {fileID: 8300000, guid: 8c6966cea4bf52e40a4a28967b1b2173, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SlideFail
     clip: {fileID: 8300000, guid: b921e90ad0d47d54a90829aa0c2b7c74, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SlipLoop
     clip: {fileID: 8300000, guid: d0115c58d41315741b0d022c6276d30e, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: SlipRelease
     clip: {fileID: 8300000, guid: bf8451597a1ae1a4890d737e54f30470, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SurfAttack
     clip: {fileID: 8300000, guid: 6d9e0647fe5cf4d438ef1ba28f71af03, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SurfLoop
     clip: {fileID: 8300000, guid: bae5f505f2de8954b923937a99821bff, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: SurfRelease
     clip: {fileID: 8300000, guid: 56be3ca89c948824889cd446e13b7be9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   playerSuitSFX:
@@ -880,90 +829,60 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 45a10650917f2b849b70d67ac2da0a77, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: HeatRecovery
     clip: {fileID: 8300000, guid: 4559f4768e9fa7146a2b7a281cfe42a5, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: Overheat
     clip: {fileID: 8300000, guid: 88c0dfd9134ee1149b15b675609aaa12, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: ThrusterAttackBad
     clip: {fileID: 8300000, guid: 57188dea3405ced4f8dffc1e97ef82b3, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: ThrusterAttackGood
     clip: {fileID: 8300000, guid: cc3e4d115d057c742879388b3b03fef7, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: ThrusterBrake
     clip: {fileID: 8300000, guid: 5e91fa88a1b03594a88bc8ad69d19604, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: ThrusterLoopBad
     clip: {fileID: 8300000, guid: 6f4eca5a8bfdf564f8495ad03aa867ee, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: ThrusterLoopGoodHigh
     clip: {fileID: 8300000, guid: b026bc084ea59194093abce5652643f9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: ThrusterLoopGoodLow
     clip: {fileID: 8300000, guid: 7037b2fcebe69464984e8d0273150409, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: WindLoop
     clip: {fileID: 8300000, guid: e36047f9f36851f428b6ca37f86758a9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   weaponSFX: []
@@ -1001,8 +920,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.25, y: 0}
   m_AnchorMax: {x: 0.75, y: 1}
-  m_AnchoredPosition: {x: -0.017199993, y: -0.5196991}
-  m_SizeDelta: {x: 3.4117, y: -10.6685}
+  m_AnchoredPosition: {x: 9.7999935, y: -1.9775}
+  m_SizeDelta: {x: 10.7572, y: 80.1663}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7331363643682953551
 GameObject:
@@ -1040,7 +959,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 155.5102, y: 155.5102}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7331363643682953536
 CanvasRenderer:
@@ -1114,8 +1033,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 287, y: 36}
-  m_SizeDelta: {x: 518.4775, y: 135.9308}
+  m_AnchoredPosition: {x: 234.51575, y: 98.30994}
+  m_SizeDelta: {x: 469.0319, y: 196.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7331363643953079016
 GameObject:
@@ -1191,12 +1110,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 2
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1226,7 +1145,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7331363643953079016}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 563161859da915141a00bb503055757a, type: 3}
   m_Name: 
@@ -1253,7 +1172,7 @@ GameObject:
   - component: {fileID: 7331363644239114762}
   - component: {fileID: 7331363644239114763}
   m_Layer: 5
-  m_Name: HeatometerText
+  m_Name: SpeedometerText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1276,8 +1195,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -10, y: -10}
-  m_SizeDelta: {x: 518.48, y: 130.61}
+  m_AnchoredPosition: {x: 219.80453, y: 64}
+  m_SizeDelta: {x: 556.019, y: 196.42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7331363644239114762
 CanvasRenderer:
@@ -1308,19 +1227,19 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: eb554ff3e90e77e4aadd263fda51318d, type: 3}
-    m_FontSize: 70
+    m_Font: {fileID: 12800000, guid: 9f4b18ffb0e28914299df14d45e48db7, type: 3}
+    m_FontSize: 150
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 100
+    m_MaxSize: 150
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.7
-  m_Text: v = X m/s
+  m_Text: v=X m/s
 --- !u!1 &7331363644462577936
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,8 +1275,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -9.8}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: -52.6}
+  m_SizeDelta: {x: 170.7109, y: 170.7115}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7331363644462577941
 CanvasRenderer:
@@ -1421,7 +1340,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7331363644639164405}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 4.22}
+  m_LocalPosition: {x: 0, y: 0, z: 13.8033}
   m_LocalScale: {x: 1, y: 2, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1432,7 +1351,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 216.1652, y: 232.478}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7331363644940089240
 GameObject:
@@ -1601,6 +1520,7 @@ MonoBehaviour:
   playerHandler: {fileID: 9219539857879874493}
   viewmodelObject: {fileID: 1946551605}
   heldGun: {fileID: 0}
+  recovering: 0
   ready: 1
   drawTime: 15
 --- !u!114 &3291827583582659067
@@ -1621,153 +1541,102 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c381a3a45abc3394e8e1bc87f615e776, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleCastLoop
     clip: {fileID: 8300000, guid: 16081b22e5d58444f8523db754ce54e9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: GrappleReeling
     clip: {fileID: 8300000, guid: 287d87fdf79e7aa43a3879c8806bb08a, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleFail
     clip: {fileID: 8300000, guid: 4c0c8bf9b62efd840be4b78407df57fc, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleReelingLoop
     clip: {fileID: 8300000, guid: 456726ce766c9c14988f7eb03f03c910, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: GrappleRelease1
     clip: {fileID: 8300000, guid: f9a7e714c09135e4393e82f2cf760c8f, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleRelease2
     clip: {fileID: 8300000, guid: 306bf7232d99d494e96b076deb01284c, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: GrappleRelease3
     clip: {fileID: 8300000, guid: ebc04e7d1f25802449b2256a0fc6557a, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: Jump
     clip: {fileID: 8300000, guid: 06f99590a00968342a11f93389f0e7bc, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: Slide
     clip: {fileID: 8300000, guid: 30f94e6afb3802a479badc97cce1efb1, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SlideJump
     clip: {fileID: 8300000, guid: 8c6966cea4bf52e40a4a28967b1b2173, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SlideFail
     clip: {fileID: 8300000, guid: b921e90ad0d47d54a90829aa0c2b7c74, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SlipLoop
     clip: {fileID: 8300000, guid: d0115c58d41315741b0d022c6276d30e, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 1
   - name: SlipRelease
     clip: {fileID: 8300000, guid: bf8451597a1ae1a4890d737e54f30470, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SurfAttack
     clip: {fileID: 8300000, guid: 6d9e0647fe5cf4d438ef1ba28f71af03, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   - name: SurfLoop
     clip: {fileID: 8300000, guid: bae5f505f2de8954b923937a99821bff, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0
-    minDistance: 5
-    maxDistance: 0
     source: {fileID: 0}
     loop: 1
   - name: SurfRelease
     clip: {fileID: 8300000, guid: 56be3ca89c948824889cd446e13b7be9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 0
-    minDistance: 5
-    maxDistance: 50
     source: {fileID: 0}
     loop: 0
   playerSuitSFX:
@@ -1775,90 +1644,60 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 45a10650917f2b849b70d67ac2da0a77, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 0
   - name: HeatRecovery
     clip: {fileID: 8300000, guid: 4559f4768e9fa7146a2b7a281cfe42a5, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 0
   - name: Overheat
     clip: {fileID: 8300000, guid: 88c0dfd9134ee1149b15b675609aaa12, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 0
   - name: ThrusterAttackBad
     clip: {fileID: 8300000, guid: 57188dea3405ced4f8dffc1e97ef82b3, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 0
   - name: ThrusterAttackGood
     clip: {fileID: 8300000, guid: cc3e4d115d057c742879388b3b03fef7, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 0
   - name: ThrusterBrake
     clip: {fileID: 8300000, guid: 5e91fa88a1b03594a88bc8ad69d19604, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 0
   - name: ThrusterLoopBad
     clip: {fileID: 8300000, guid: 6f4eca5a8bfdf564f8495ad03aa867ee, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 1
   - name: ThrusterLoopGoodHigh
     clip: {fileID: 8300000, guid: b026bc084ea59194093abce5652643f9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 1
   - name: ThrusterLoopGoodLow
     clip: {fileID: 8300000, guid: 7037b2fcebe69464984e8d0273150409, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 1
   - name: WindLoop
     clip: {fileID: 8300000, guid: e36047f9f36851f428b6ca37f86758a9, type: 3}
     volume: 0.5
     pitch: 1
-    spatialBlend: 1
-    minDistance: 0
-    maxDistance: 0
     source: {fileID: 0}
     loop: 1
   weaponSFX: []
@@ -1997,6 +1836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllerObject: {fileID: 7331363644940089240}
+  hudObject: {fileID: 7331363643953079016}
   player: {fileID: 11400000, guid: 4f1f159af22dd8a458989b038e6c8465, type: 2}
   playerMovement: {fileID: 546423946}
 --- !u!1 &7331363645543823858
@@ -2025,7 +1865,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7331363645543823858}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 3.4347}
   m_LocalScale: {x: 1, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2034,8 +1874,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -16.1}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: -61.333225}
+  m_SizeDelta: {x: 175.0733, y: 175.076}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7331363645543823863
 CanvasRenderer:
@@ -2110,7 +1950,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 115.477, y: 124.1914}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7331363645711883673
 GameObject:
@@ -2147,7 +1987,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -0.000005722}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 216.1652, y: 232.478}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7366031570913432202
 GameObject:
@@ -2184,8 +2024,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -65.29}
-  m_SizeDelta: {x: 173.6879, y: 91.1942}
+  m_AnchoredPosition: {x: 0.00000050664, y: -0.1723}
+  m_SizeDelta: {x: 161.0625, y: 107.2259}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2958175772399519064
 CanvasRenderer:
@@ -2216,8 +2056,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: eb554ff3e90e77e4aadd263fda51318d, type: 3}
-    m_FontSize: 50
+    m_Font: {fileID: 12800000, guid: 9f4b18ffb0e28914299df14d45e48db7, type: 3}
+    m_FontSize: 80
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -2264,8 +2104,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.25, y: 0}
   m_AnchorMax: {x: 0.75, y: 1}
-  m_AnchoredPosition: {x: -0.00001335144, y: 0}
-  m_SizeDelta: {x: 3.7366, y: 0}
+  m_AnchoredPosition: {x: 9.8, y: 0.9876404}
+  m_SizeDelta: {x: 11.3949, y: 101.1079}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6566409171279452974
 CanvasRenderer:
@@ -2340,8 +2180,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0000070333, y: 0.00073195}
-  m_SizeDelta: {x: 10, y: 105}
+  m_AnchoredPosition: {x: 9.7999935, y: 0.98764}
+  m_SizeDelta: {x: 19.6293, y: 206.1078}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6827211755944512153
 CanvasRenderer:
@@ -2414,10 +2254,10 @@ RectTransform:
   m_Father: {fileID: 7331363645143111347}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -617, y: 0.0000042915}
-  m_SizeDelta: {x: 24.65, y: 119.8197}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 54.44214, y: -4.5935}
+  m_SizeDelta: {x: 32.3758, y: 241.6651}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1325622024
 PrefabInstance:
@@ -2444,7 +2284,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9703b0894c9fa804aa72ec03f31e35cc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.07
+      value: -0.16
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9703b0894c9fa804aa72ec03f31e35cc, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2452,7 +2292,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9703b0894c9fa804aa72ec03f31e35cc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.23
+      value: 3.252
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9703b0894c9fa804aa72ec03f31e35cc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2599,7 +2439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 831af3e44547ed84e8d055276fa9e184, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.03
+      value: -0.294
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 831af3e44547ed84e8d055276fa9e184, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2607,7 +2447,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 831af3e44547ed84e8d055276fa9e184, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.27
+      value: 2.296
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 831af3e44547ed84e8d055276fa9e184, type: 3}
       propertyPath: m_LocalRotation.w
