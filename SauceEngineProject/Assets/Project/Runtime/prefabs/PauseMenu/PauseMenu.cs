@@ -19,6 +19,7 @@ public class PauseMenu : MonoBehaviour
 
     void OnDestroy()
     {
+        InputManager.current.input.Player.Menu.performed -= Menu;
         InputManager.current.input.Player.Console.performed -= Console;
     }
 
@@ -33,16 +34,19 @@ public class PauseMenu : MonoBehaviour
 
     GameObject console;
     void Console(InputAction.CallbackContext obj){
-        if (!isPaused){
-            Pause();
-            return; //return here so that you dont accidentally close the console if its open in the background
-        }
-
         if (console == null){
             console = Instantiate(consolePrefab, windows.transform.position, Quaternion.identity, windows.transform);
         }
-        else {
+        else if (isPaused){
+            // only destroy if we're about to unpause
             Destroy(console);
+        }
+
+        if (!isPaused){
+            Pause();
+        }
+        else{
+            Resume();
         }
     }
 

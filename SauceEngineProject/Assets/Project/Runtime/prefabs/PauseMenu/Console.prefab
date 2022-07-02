@@ -37,7 +37,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00050354004, y: 0.0010681152}
+  m_AnchoredPosition: {x: 0.00048828125, y: 0.0010681152}
   m_SizeDelta: {x: -0.0010376, y: -0.0011292}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6191490617144890456
@@ -99,7 +99,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.34609985, y: -0.34960175}
+  m_AnchoredPosition: {x: 0.34613037, y: -0.34960938}
   m_SizeDelta: {x: 10.3803, y: 8.768}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1462780584532007509
@@ -135,7 +135,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -0.10140228, y: 0.4251709}
+  m_AnchoredPosition: {x: -0.101379395, y: 0.4251709}
   m_SizeDelta: {x: 15.2911, y: 7.9253}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1550709850232015107
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &2378703689914134196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -517,8 +517,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 110017193272296586}
-        m_TargetAssemblyTypeName: DraggableWindow, Assembly-CSharp
+      - m_Target: {fileID: 1934860482025224824}
+        m_TargetAssemblyTypeName: Console, Assembly-CSharp
         m_MethodName: Submit
         m_Mode: 1
         m_Arguments:
@@ -718,7 +718,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.31864166, y: 0.24839783}
+  m_AnchoredPosition: {x: -0.31866455, y: 0.24841309}
   m_SizeDelta: {x: 9.0509, y: 7.5718}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4273215897101482209
@@ -757,7 +757,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00093078613, y: -0.0000023841858}
+  m_AnchoredPosition: {x: 0.0009460449, y: -0.0000023841858}
   m_SizeDelta: {x: 0.0016326904, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7236825951934545024
@@ -1382,7 +1382,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0001296997, y: -0}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: -0.80836487, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5624422360221860152
@@ -1517,7 +1517,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.2532425, y: 0.24829865}
+  m_AnchoredPosition: {x: 0.25323486, y: 0.24829102}
   m_SizeDelta: {x: 10.566, y: 7.5715}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5830202426943048901
@@ -1555,7 +1555,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0013275146, y: 0.0013427734}
+  m_AnchoredPosition: {x: 0.0013427734, y: 0.0013427734}
   m_SizeDelta: {x: 0.0005950928, y: -0.0005950928}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &594690272318318261
@@ -1633,7 +1633,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0013275146, y: 0.0018539429}
+  m_AnchoredPosition: {x: -0.0013427734, y: 0.0018615723}
   m_SizeDelta: {x: 0.0005950928, y: -0.0005950928}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6281548748177539422
@@ -1672,7 +1672,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 1.0356979, y: 0}
+  m_AnchoredPosition: {x: 1.0357056, y: 0}
   m_SizeDelta: {x: -2.0714, y: -4.8334}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6311265467637859292
@@ -1929,7 +1929,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8793359784925926817}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 110017193272296586}
+        m_TargetAssemblyTypeName: DraggableWindow, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8501510241622353962
 GameObject:
   m_ObjectHideFlags: 0
@@ -2050,7 +2062,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0000076293945, y: -0.0013885498}
+  m_AnchoredPosition: {x: 0, y: -0.001373291}
   m_SizeDelta: {x: -0.000030518, y: -0.0027}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1496092108482804797
