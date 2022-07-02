@@ -170,6 +170,15 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""bdef5a9e-39a4-4eae-9434-e0ed8a9556c6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -469,6 +478,17 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                     ""action"": ""Slide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""98bb760c-80cd-4caf-a6e1-24052ddbac68"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -493,6 +513,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         m_Player_Weapon4 = m_Player.FindAction("Weapon4", throwIfNotFound: true);
         m_Player_Menu = m_Player.FindAction("Menu", throwIfNotFound: true);
         m_Player_Console = m_Player.FindAction("Console", throwIfNotFound: true);
+        m_Player_Submit = m_Player.FindAction("Submit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -568,6 +589,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Weapon4;
     private readonly InputAction m_Player_Menu;
     private readonly InputAction m_Player_Console;
+    private readonly InputAction m_Player_Submit;
     public struct PlayerActions
     {
         private @FirstPersonActions m_Wrapper;
@@ -588,6 +610,7 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         public InputAction @Weapon4 => m_Wrapper.m_Player_Weapon4;
         public InputAction @Menu => m_Wrapper.m_Player_Menu;
         public InputAction @Console => m_Wrapper.m_Player_Console;
+        public InputAction @Submit => m_Wrapper.m_Player_Submit;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -645,6 +668,9 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 @Console.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsole;
                 @Console.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsole;
                 @Console.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnConsole;
+                @Submit.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSubmit;
+                @Submit.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSubmit;
+                @Submit.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSubmit;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -697,6 +723,9 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
                 @Console.started += instance.OnConsole;
                 @Console.performed += instance.OnConsole;
                 @Console.canceled += instance.OnConsole;
+                @Submit.started += instance.OnSubmit;
+                @Submit.performed += instance.OnSubmit;
+                @Submit.canceled += instance.OnSubmit;
             }
         }
     }
@@ -719,5 +748,6 @@ public partial class @FirstPersonActions : IInputActionCollection2, IDisposable
         void OnWeapon4(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
         void OnConsole(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
     }
 }

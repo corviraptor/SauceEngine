@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
 
     public Vector3 velocity;
     public Vector3 oldPosition;
-    public Vector3 accelXZ;
+    public Vector3 wishDir;
     public RaycastHit hit;
     public int crouchState = 0;
 
@@ -97,9 +97,9 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         center = transform.position + cc.center;
 
         //input direction
-        accelXZ = InputManager.current.naiveAccelXY.x * transform.right + InputManager.current.naiveAccelXY.y * transform.forward;
-        if (accelXZ.sqrMagnitude > 1){
-            accelXZ = accelXZ.normalized;
+        wishDir = InputManager.current.naiveAccelXY.x * transform.right + InputManager.current.naiveAccelXY.y * transform.forward;
+        if (wishDir.sqrMagnitude > 1){
+            wishDir = wishDir.normalized;
         }
 
         try {
@@ -204,7 +204,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             velocity -= hit.normal * player.gMagnetism;
         }
 
-        if (accelXZ.sqrMagnitude > 0.001F){
+        if (wishDir.sqrMagnitude > 0.001F){
             Walk();
         }
         else {
@@ -338,8 +338,8 @@ public class PlayerMovement : MonoBehaviour, IBlastible
             //slide should only change the player's velocity direction at the beginning of the slide, to prevent weirdness of slide angle being adjusted mid-slide
             slideVector = velocityXZ.normalized;
         }
-        else if (accelXZ.sqrMagnitude > 0.25F){
-            slideVector = accelXZ.normalized;
+        else if (wishDir.sqrMagnitude > 0.25F){
+            slideVector = wishDir.normalized;
         }
         else {
             slideVector = transform.forward;

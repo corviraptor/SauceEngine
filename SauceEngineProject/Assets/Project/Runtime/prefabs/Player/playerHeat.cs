@@ -14,7 +14,13 @@ public class PlayerHeat : MonoBehaviour, IHeatable
 
     void Start(){
         GameEvents.current.OnHeatPlayer += HeatPlayer;
+        GameEvents.current.OnSetPlayerHeat += SetPlayerHeat;
         playerArgs = playerHandler.playerArgs;
+    }
+
+    void OnDestroy(){
+        GameEvents.current.OnHeatPlayer -= HeatPlayer;
+        GameEvents.current.OnSetPlayerHeat -= SetPlayerHeat;
     }
 
     public void AddHeat(object sender, float heat){
@@ -27,6 +33,10 @@ public class PlayerHeat : MonoBehaviour, IHeatable
 
     void HeatPlayer(object sender, float amount){
         AddHeat(this, amount);
+    }
+
+    void SetPlayerHeat(object sender, float value){
+        temperature = value;
     }
 
     bool heatLimited = false;
@@ -69,9 +79,5 @@ public class PlayerHeat : MonoBehaviour, IHeatable
             Debug.Log("Unoverheated!");
             overheated = false;
         }
-    }
-
-    void onDestroy(){
-        GameEvents.current.OnHeatPlayer -= HeatPlayer;
     }
 }

@@ -19,8 +19,8 @@ public class PlayerWalk : MonoBehaviour, IAttachable
         if (pm.frictionForgiven){
             return;
         }
-        Vector3 localWalkDirection = Vector3.ProjectOnPlane(pm.accelXZ, pm.hit.normal).normalized;
-        Vector3 localWalkVector = localWalkDirection * pm.accelXZ.magnitude * pm.walkSpeedAdj;
+        Vector3 localWalkDirection = Vector3.ProjectOnPlane(pm.wishDir, pm.hit.normal).normalized;
+        Vector3 localWalkVector = localWalkDirection * pm.wishDir.magnitude * pm.walkSpeedAdj;
         pm.velocity = pm.velocity - pm.player.walkAcceleration * pm.velocity * Time.deltaTime + pm.player.walkAcceleration * localWalkVector * Time.deltaTime;
     }
 }

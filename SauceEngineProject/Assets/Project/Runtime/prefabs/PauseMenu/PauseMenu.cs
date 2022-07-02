@@ -35,6 +35,7 @@ public class PauseMenu : MonoBehaviour
     void Console(InputAction.CallbackContext obj){
         if (!isPaused){
             Pause();
+            return; //return here so that you dont accidentally close the console if its open in the background
         }
 
         if (console == null){
