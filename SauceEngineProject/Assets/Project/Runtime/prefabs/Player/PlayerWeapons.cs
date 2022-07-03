@@ -8,6 +8,7 @@ public class PlayerWeapons : MonoBehaviour
 {
     public PlayerHandler playerHandler;
     public GameObject viewmodelObject;
+    FirstPersonActions.PlayerActions input => InputManager.current.input;
 
     public WeaponParent heldGun;
 
@@ -29,12 +30,41 @@ public class PlayerWeapons : MonoBehaviour
 
     void OnEnable(){
         GameEvents.current.OnGetWeapon += GetWeapon;
+        InputManager.current.OnPressButtons += OnPressButtons;
 
         foreach (Animator a in viewmodelObject.GetComponentsInChildren<Animator>()){
             viewmodels.Add(a.gameObject.name, a);
             viewmodels[a.gameObject.name].gameObject.SetActive(false);
         }
         ready = true;
+    }
+
+    void OnDestroy(){
+        GameEvents.current.OnGetWeapon -= GetWeapon;
+        InputManager.current.OnPressButtons -= OnPressButtons;
+    }
+
+    WeaponParent weaponTest;
+    void OnPressButtons(Dictionary<string, bool> buttons){
+        // none of this should run if the player doesn't have a gun
+        if (!hasGuns){ return; }
+
+        string lastGun = gunKey;
+
+        /* these are hard coded since i want each binding to correspond to a specific weapon no matter what, i'll probably turn this
+        into something using an array instead tho to make it easier to modify and extend */
+        if (buttons["weapon0"] && inventory.TryGetValue("Stakegun", out weaponTest) && gunKey != "Stakegun"){
+            gunKey = "Stakegun";
+        }
+
+        if (buttons["weapon1"] && inventory.TryGetValue("Shotgun", out weaponTest ) && gunKey != "Shotgun"){
+            gunKey = "Shotgun";
+        }
+
+        if (gunKey != lastGun){
+            // dont draw if gun hasn't changed
+            SwapGun();
+        }
     }
 
     void GetWeapon(object sender, string gun){
@@ -68,39 +98,12 @@ public class PlayerWeapons : MonoBehaviour
 
         playerHandler.WeaponUpdate(this);
 
-        TestForDrawInputs();
-
         if (inventory.TryGetValue(gunKey, out heldGun)){
             heldGun = inventory[gunKey];
         }
 
         EvaluateHeldGunInputs();
         EvaluateReload();
-    }
-
-    WeaponParent weaponTest;
-    void TestForDrawInputs(){
-        if (!InputManager.current.weapon0 && !InputManager.current.weapon1 && !InputManager.current.weapon2){
-            //if none of the selector keys are being inputted, dont bother with this stuff 
-            return;
-        }
-
-        string lastGun = gunKey;
-
-        /* these are hard coded since i want each binding to correspond to a specific weapon no matter what, i'll probably turn this
-        into something using an array instead tho to make it easier to modify and extend */
-        if (InputManager.current.weapon0 && inventory.TryGetValue("Stakegun", out weaponTest) && gunKey != "Stakegun"){
-            gunKey = "Stakegun";
-        }
-
-        if (InputManager.current.weapon1 && inventory.TryGetValue("Shotgun", out weaponTest ) && gunKey != "Shotgun"){
-            gunKey = "Shotgun";
-        }
-
-        if (gunKey != lastGun){
-            // dont draw if gun hasn't changed
-            SwapGun();
-        }
     }
 
     void SwapGun(){
@@ -117,7 +120,7 @@ public class PlayerWeapons : MonoBehaviour
     
     void EvaluateHeldGunInputs(){
         // function won't be called if we are in the middle of drawing a weapon, if the weapon is recovering, or there is no held gun
-        if (InputManager.current.attacking && heldGun.loadedRounds != 0){
+        if (input.PrimaryFire.ReadValue<float>() != 0 && heldGun.loadedRounds != 0){
             //stops reloading an internal mag gun if you press primary fire
             if (reloadQueued == true && heldGun.internalMagazine){
                 reloadQueued = false;
@@ -129,7 +132,7 @@ public class PlayerWeapons : MonoBehaviour
             }
         }
 
-        if (InputManager.current.attack2ing && heldGun.loadedRounds != 0){
+        if (input.SecondaryFire.ReadValue<float>() != 0){
             //stops reloading an internal mag gun if you press secondary fire
             if (reloadQueued == true && heldGun.internalMagazine){
                 reloadQueued = false;
@@ -142,19 +145,19 @@ public class PlayerWeapons : MonoBehaviour
         }
 
 
-        if (!InputManager.current.attack2ing && !primaryReleased && !currentlyReloading){
+        if (input.PrimaryFire.ReadValue<float>() == 0 && !primaryReleased && !currentlyReloading){
             heldGun.PrimaryRelease(pArgs);
             primaryReleased = true;
         }
 
-        if (!InputManager.current.attack2ing && !secondaryReleased && !currentlyReloading){
+        if (input.SecondaryFire.ReadValue<float>() == 0 && !secondaryReleased && !currentlyReloading){
             heldGun.SecondaryRelease(pArgs);
             secondaryReleased = true;
         }
     }  
 
     void EvaluateReload(){
-        if (InputManager.current.reload && heldGun.loadedRounds != heldGun.magazineSize){
+        if (input.Reload.ReadValue<float>() != 0 && heldGun.loadedRounds != heldGun.magazineSize){
             //queue for reload when pressing the reload button
             reloadQueued = true;
         }

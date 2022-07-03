@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
+    FirstPersonActions.PlayerActions input => InputManager.current.input;
+
     [SerializeField] private GameObject windows;
     [SerializeField] private GameObject consolePrefab;
     [SerializeField] private GameObject pauseMenuUI;
@@ -13,14 +15,15 @@ public class PauseMenu : MonoBehaviour
     
     void Start()
     {
-        InputManager.current.input.Player.Menu.performed += Menu;
-        InputManager.current.input.Player.Console.performed += Console;
+        Resume();
+        input.Menu.performed += Menu;
+        input.Console.performed += Console;
     }
 
     void OnDestroy()
     {
-        InputManager.current.input.Player.Menu.performed -= Menu;
-        InputManager.current.input.Player.Console.performed -= Console;
+        input.Menu.performed -= Menu;
+        input.Console.performed -= Console;
     }
 
     void Menu(InputAction.CallbackContext obj){

@@ -18,11 +18,11 @@ public class PlayerAirControl : MonoBehaviour, IAttachable
     void AirControl(){
         // speed limit
         Vector3 velocityXZ = pm.velocity.KillY();
-        float AVproj = Vector3.Dot(velocityXZ, pm.wishDir * pm.player.airAccel);
+        float AVproj = Vector3.Dot(velocityXZ, pm.margs.wishDir * pm.player.airAccel);
 
-        if (AVproj < pm.player.vLimit - (pm.wishDir.magnitude * Time.deltaTime))
+        if (AVproj < pm.player.vLimit - (pm.margs.wishDir.magnitude * Time.deltaTime))
         { 
-            velocityXZ = velocityXZ + (pm.wishDir * pm.player.airAccel * Time.deltaTime);
+            velocityXZ = velocityXZ + (pm.margs.wishDir * pm.player.airAccel * Time.deltaTime);
             pm.velocity = new Vector3(velocityXZ.x, pm.velocity.y, velocityXZ.z);
         }
     }

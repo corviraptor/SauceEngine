@@ -20,15 +20,15 @@ public class PlayerCrouch : MonoBehaviour, IAttachable
 
     void Crouch(){
         // 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
-        if (pm.crouchState == 0){
-            if (pm.hit.point.y < (pm.center - Vector3.up * (controller.height / 2)).y){
+        if (pm.margs.crouchState == 0){
+            if (pm.margs.hit.point.y < (pm.pargs.center - Vector3.up * (controller.height / 2)).y){
                 Uncrouch();
             }
             return;
         }
         // is crouched if it gets past this
 
-        if (pm.crouchState != 2){ return; }
+        if (pm.margs.crouchState != 2){ return; }
         // is manually crouching if it gets past this
 
         if (crouched){ return; }
@@ -40,7 +40,7 @@ public class PlayerCrouch : MonoBehaviour, IAttachable
 
         crouched = true;
         
-        if (!pm.isOnGrounder || pm.clocks["jumpBuffer"] != 0){
+        if (!pm.margs.isOnGrounder || pm.clocks["jumpBuffer"] != 0){
             //when the player is off the ground, this moves them up to keep their eyes at the same level
             Vector3 newPosition = pm.transform.position + Vector3.up * controller.height;
             MoveTransform(newPosition);
@@ -62,7 +62,7 @@ public class PlayerCrouch : MonoBehaviour, IAttachable
 
     void MoveTransform(Vector3 newPosition){
         controller.enabled = false;
-        pm.transform.position = newPosition;
+        pm.pargs.transform.position = newPosition;
         controller.enabled = true;
     }
 }

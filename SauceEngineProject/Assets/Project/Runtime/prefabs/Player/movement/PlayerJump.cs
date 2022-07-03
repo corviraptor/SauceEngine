@@ -17,12 +17,11 @@ public class PlayerJump : MonoBehaviour, IAttachable
 
     //called on spacebar press & during timer 
     void Jump(){
-        if (pm.isOnGround){
+        if (pm.margs.isOnGround){
 
             pm.velocity = new Vector3(pm.velocity.x, pm.player.jumpForce, pm.velocity.z);
 
             pm.StartJumpCooldown();
-            pm.playerHandler.SoundCommand("Jump", "Play", 0);
 
             return;
         }
@@ -31,7 +30,6 @@ public class PlayerJump : MonoBehaviour, IAttachable
             pm.velocity = new Vector3(pm.velocity.x, pm.player.jumpForce, pm.velocity.z);
 
             pm.StartJumpCooldown();
-            pm.playerHandler.SoundCommand("Jump", "Play", 0);
 
             return;
         }

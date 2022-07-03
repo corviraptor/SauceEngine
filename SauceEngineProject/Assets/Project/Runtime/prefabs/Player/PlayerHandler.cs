@@ -6,20 +6,31 @@ using UnityEngine;
 public class PlayerHandler : MonoBehaviour
 {
     public GameObject controllerObject;
+    public GameObject cameraObject;
     public GameObject hudObject;
     public PlayerSettings player;
     public PlayerArgs playerArgs;
     public PlayerMovement playerMovement;
 
     void Start(){   
+        playerArgs = new PlayerArgs(Vector3.zero, Vector3.zero, 0F, transform, playerMovement.cc, Vector3.zero, transform);
+
         foreach (Behaviour script in controllerObject.GetComponentsInChildren<Behaviour>()){
-            script.enabled = true;
+            if (script is IPlayerHandlerModule){
+                IPlayerHandlerModule module = (IPlayerHandlerModule)script;
+                module.InjectDependency(this);
+                script.enabled = true;
+            }
+            if (!(script is AudioSource)){
+                script.enabled = true;
+            }
         }
         foreach (Behaviour script in hudObject.GetComponentsInChildren<Behaviour>()){
             script.enabled = true;
         }
-
-        playerArgs = new PlayerArgs(Vector3.zero, Vector3.zero, 0F, transform, playerMovement.cc, transform);
+        foreach (Behaviour script in cameraObject.GetComponentsInChildren<Behaviour>()){
+            script.enabled = true;
+        }
 
         GameEvents.current.OnPlayerUpdate += PlayerUpdate;
     }
@@ -28,10 +39,12 @@ public class PlayerHandler : MonoBehaviour
         GameEvents.current.OnPlayerUpdate -= PlayerUpdate;
     }
 
+    void FindPlayerMovement(){
+    }
+
     void LateUpdate(){
-        if (PauseMenu.isPaused){
-            return;
-        }
+        if(PauseMenu.isPaused){ return; }
+        if(playerArgs == null){ return; }
 
         PlayerPositionUpdate(this, playerArgs);
         PlayerHudUpdate(this, playerArgs);

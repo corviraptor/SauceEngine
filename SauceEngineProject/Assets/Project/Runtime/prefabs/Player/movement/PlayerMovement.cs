@@ -2,12 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Freya;
 
-public class PlayerMovement : MonoBehaviour, IBlastible
+public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
 {
     public GameObject logic;
-    public PlayerHandler playerHandler;
+    PlayerHandler playerHandler;
+
+    public PlayerArgs pargs;
+    public PlayerMovementArgs margs;
+
+    FirstPersonActions.PlayerActions input => InputManager.current.input;
 
     public CharacterController cc;
     public PlayerSettings player;
@@ -16,19 +22,18 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     //key name, int for progress
     public Dictionary<string, int> clocks = new Dictionary<string, int>();
 
-    public Vector3 center;
-
     public Vector3 velocity;
-    public Vector3 oldPosition;
-    public Vector3 wishDir;
-    public RaycastHit hit;
-    public int crouchState = 0;
+    public Vector3 realVelocity;
+    public Vector3 center;
+    Vector3 wishDir;
+    RaycastHit hit;
+    int crouchState = 0;
 
-    public bool isOnGround = false;
-    public bool isOnGrounder = false; // activates only after the first tick, keeping some stuff from enabling during bunnyhopping
-    public bool frictionForgiven => clocks["groundTimer"] > 0 && velocity.KillY().magnitude > player.overcomeThreshold;
+    bool isOnGround = false;
+    bool isOnGrounder = false; // activates only after the first tick, keeping some stuff from enabling during bunnyhopping
+    bool frictionForgiven => clocks["groundTimer"] > 0 && velocity.KillY().sqrMagnitude > player.overcomeThreshold * player.overcomeThreshold;
     
-    public int slopeState = 0;
+    int slopeState = 0;
     bool slideFailPlayed = false;
     int slideState = 0;
 
@@ -36,8 +41,12 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     public float walkSpeedAdj;
     
 
-    void OnEnable(){
+    public void InjectDependency(PlayerHandler ph){
+        playerHandler = ph;
+        pargs = playerHandler.playerArgs;
 
+        InputManager.current.OnPressButtons += OnPressButtons;
+        
         gameObject.tag = "Player";
 
         /*if youre asking why this is cleaner to me than just having everything use its own coroutine, its nice to have everything use the same system
@@ -53,23 +62,34 @@ public class PlayerMovement : MonoBehaviour, IBlastible
                 attachable.InjectDependency(this);
                 module.enabled = true;
             }
-            else { Debug.Log("HELP!!! In PlayerMovement 56"); }
+            else { Debug.Log("HELP!!! In PlayerMovement OnEnable()"); }
         }
 
         walkSpeedAdj = player.walkSpeed;
     }
 
     void onDestroy(){
+        InputManager.current.OnPressButtons -= OnPressButtons;
 
         foreach (MonoBehaviour module in logic.GetComponents<MonoBehaviour>()){
             module.enabled = false;
         }
     }
 
-    void LateUpdate(){
-        if (PauseMenu.isPaused){
-            return;
+    void OnPressButtons(Dictionary<string, bool> buttons){
+        if (buttons["jump"] && clocks["jumpCooldown"] == 0){
+            StartCoroutine(Clock("jumpBuffer", player.jumpForgiveness));
+            StartCoroutine(Clock("groundTimer", 2));
         }
+
+        if (buttons["slide"] && clocks["slideBuffer"] == 0){
+            StartCoroutine(Clock("slideBuffer", player.jumpForgiveness));
+        }
+    }
+
+    Vector3 oldPosition;
+    void LateUpdate(){
+        if (PauseMenu.isPaused){ return; }
 
         // - YAW ROTATION
         float mouseYaw = InputManager.current.lookVector.x;
@@ -78,19 +98,24 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         //sets player velocity at the end of every frame, then sends info to the event system
         cc.Move(velocity * Time.deltaTime);
 
-        Vector3 realVelocity = (transform.position - oldPosition) / Time.deltaTime;
+        realVelocity = (transform.position - oldPosition) / Time.deltaTime;
 
         //assigns PlayerArgs instance for PlayerHandler
         playerHandler.playerArgs.velocity = realVelocity;
         playerHandler.playerArgs.localVelocity = this.transform.InverseTransformVector(realVelocity);
         playerHandler.playerArgs.transform = transform;
+        playerHandler.playerArgs.center = center;
         playerHandler.playerArgs.controller = cc;
+
+        pargs = playerHandler.playerArgs;
+        margs = new PlayerMovementArgs(wishDir, hit, crouchState, isOnGround, isOnGrounder, frictionForgiven, slopeState);
 
         oldPosition = transform.position;
     }
 
-    // Update is called once per frame
     void Update(){
+        if (PauseMenu.isPaused){ return; }
+        if (margs == null){ return; }
 
         temperature = playerHandler.playerArgs.temperature;
 
@@ -114,12 +139,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         GroundTest();
         SlopeTest();
 
-        // - JUMP
-        if (InputManager.current.jump && clocks["jumpCooldown"] == 0){
-            StartCoroutine(Clock("jumpBuffer", player.jumpForgiveness));
-            StartCoroutine(Clock("groundTimer", 2));
-        }
-
+        // - JUMP 
         if (clocks["jumpBuffer"] <= player.jumpForgiveness && clocks["jumpBuffer"] != 0 && clocks["jumpCooldown"] == 0){
             Jump();
         }
@@ -141,7 +161,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         }
 
         // - CROUCH: 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
-        if (InputManager.current.crouched){
+        if (input.Crouch.ReadValue<float>() != 0){
             Crouch();
             crouchState = 2;
         }
@@ -154,10 +174,6 @@ public class PlayerMovement : MonoBehaviour, IBlastible
         }
 
         // slide
-        if (InputManager.current.slide && velocity.sqrMagnitude > 0.01F && clocks["slideBuffer"] == 0){
-            StartCoroutine(Clock("slideBuffer", player.jumpForgiveness));
-        }
-
         if (clocks["slide"] != 0){
             Slide();
         }
@@ -213,6 +229,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible
     }
 
     public void StartJumpCooldown(){
+        playerHandler.SoundCommand("Jump", "Play", 0);
         if (clocks["jumpCooldown"] == 0){
             StartCoroutine(Clock("jumpCooldown", player.coyoteTime + 5));
         }

@@ -76,12 +76,12 @@ public class Console : MonoBehaviour
 
     void OnEnable()
     {
-        InputManager.current.input.Player.Submit.performed += OnSubmit;
+        InputManager.current.input.Submit.performed += OnSubmit;
         inputField.textComponent.color = Color.white;
     }
 
     void OnDestroy(){
-        InputManager.current.input.Player.Submit.performed -= OnSubmit;
+        InputManager.current.input.Submit.performed -= OnSubmit;
     }
 
     void OnSubmit(InputAction.CallbackContext obj){

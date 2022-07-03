@@ -1195,8 +1195,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 43.494, y: -9.3105}
-  m_SizeDelta: {x: 556.019, y: 177.799}
+  m_AnchoredPosition: {x: 117.78, y: -9.3105}
+  m_SizeDelta: {x: 704.592, y: 177.799}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7331363644239114762
 CanvasRenderer:
@@ -1490,20 +1490,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logic: {fileID: 3209109567978312629}
-  playerHandler: {fileID: 9219539857879874493}
   cc: {fileID: 7331363644940089245}
   player: {fileID: 11400000, guid: 4f1f159af22dd8a458989b038e6c8465, type: 2}
   layerMask:
     serializedVersion: 2
     m_Bits: 51
-  center: {x: 0, y: 0, z: 0}
   velocity: {x: 0, y: 0, z: 0}
-  oldPosition: {x: 0, y: 0, z: 0}
-  accelXZ: {x: 0, y: 0, z: 0}
-  crouchState: 0
-  isOnGround: 0
-  isOnGrounder: 0
-  slopeState: 0
+  realVelocity: {x: 0, y: 0, z: 0}
+  center: {x: 0, y: 0, z: 0}
   walkSpeedAdj: 0
 --- !u!114 &8111527807491484441
 MonoBehaviour:
@@ -1836,6 +1830,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controllerObject: {fileID: 7331363644940089240}
+  cameraObject: {fileID: 3638338238058688118}
   hudObject: {fileID: 7331363643953079016}
   player: {fileID: 11400000, guid: 4f1f159af22dd8a458989b038e6c8465, type: 2}
   playerMovement: {fileID: 546423946}

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Freya;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -10,18 +11,9 @@ public class CameraMovement : MonoBehaviour
     Transform playerTransform;
     float playerHeight;
 
-    bool initialized;
-
     void OnEnable(){
-        initialized = false;
-    }
-
-    void Update(){
-        if (!initialized){
-            playerHandler.OnPlayerPositionUpdate += PosUpdate;
-            mousePitch = 0;
-            initialized = true;
-        }
+        playerHandler.OnPlayerPositionUpdate += PosUpdate;
+        mousePitch = 0;
     }
 
     // should be called *after* LateUpdate
@@ -31,7 +23,7 @@ public class CameraMovement : MonoBehaviour
         
         float mouseY = (-InputManager.current.lookVector.y);
         mousePitch += mouseY;
-        mousePitch = Mathf.Clamp(mousePitch, -90, 90);
+        mousePitch = Mathfs.Clamp(mousePitch, -90, 90);
         transform.eulerAngles = new Vector3(mousePitch, playerTransform.eulerAngles.y, playerTransform.eulerAngles.z);
         transform.position = playerTransform.position + (playerArgs.controller.center) + Vector3.up * (playerArgs.controller.height / 2 - player.height / 4);
 

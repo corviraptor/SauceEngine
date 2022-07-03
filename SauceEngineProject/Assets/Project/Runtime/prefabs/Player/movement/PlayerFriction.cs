@@ -17,7 +17,7 @@ public class PlayerFriction : MonoBehaviour, IAttachable
 
     void Friction(){
         //inequalities here are flipped from what they are in walk since this isn't a guard statement
-        if (!pm.frictionForgiven){
+        if (!pm.margs.frictionForgiven){
             pm.velocity -= pm.velocity.KillY() * pm.player.frictionFactor * Time.deltaTime;
         }
     }
