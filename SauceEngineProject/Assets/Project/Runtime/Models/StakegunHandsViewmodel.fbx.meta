@@ -1,0 +1,235 @@
+fileFormatVersion: 2
+guid: b8095e1c9ffc4e2449b74c9fa5312b99
+ModelImporter:
+  serializedVersion: 21300
+  internalIDToNameTable:
+  - first:
+      74: -1589565994481140759
+    second: RevolverIdlePose
+  - first:
+      74: -8071205266996387948
+    second: RevolverDraw.001
+  - first:
+      74: -4351931296135831099
+    second: StakegunFire.001
+  - first:
+      74: -5644805106626754740
+    second: StakegunFire Last Round
+  - first:
+      74: 229770723416056496
+    second: Reload
+  - first:
+      74: -375097095119221428
+    second: StakegunCoolantStart
+  - first:
+      74: 161683829428536122
+    second: HandsArmatureAction
+  - first:
+      74: 526622536924026787
+    second: StakegunInspect
+  - first:
+      74: 673277544771561842
+    second: IdlePose
+  - first:
+      74: 1893393626920919930
+    second: Draw
+  - first:
+      74: -4579541417933013020
+    second: Fire
+  - first:
+      74: -7593111380480907526
+    second: Fire Last Round
+  - first:
+      74: -1924205794338382360
+    second: Reload.004
+  - first:
+      74: -3127182789117094384
+    second: CoolantStart
+  - first:
+      74: -3416583127951326201
+    second: CoolantLoop
+  - first:
+      74: 6194951653280029247
+    second: Inspect.002
+  - first:
+      74: -6885453675109659935
+    second: Camera|Draw.001
+  - first:
+      74: -5106776832663788314
+    second: Camera|StakegunCoolantLoop
+  - first:
+      74: -8969740862088932420
+    second: HandsArmature|Draw.001
+  - first:
+      74: -979468669598240869
+    second: HandsArmature|HandsArmatureAction
+  - first:
+      74: -519300987295998025
+    second: HandsArmature|Reload
+  - first:
+      74: 9037611258171431382
+    second: HandsArmature|RevolverFanningFire
+  - first:
+      74: -1142507261749758924
+    second: HandsArmature|RevolverFanningReload
+  - first:
+      74: 6870878447506546741
+    second: HandsArmature|RevolverReload
+  - first:
+      74: 3823897710230556797
+    second: HandsArmature|RevolvingFanningReady
+  - first:
+      74: 261359814467108600
+    second: HandsArmature|StakegunCoolantLoop
+  - first:
+      74: -5082747688912823889
+    second: HandsArmature|StakegunCoolantStart
+  - first:
+      74: -7434402906304910548
+    second: HandsArmature|StakegunDraw
+  - first:
+      74: -501006693209758891
+    second: HandsArmature|StakegunFire
+  - first:
+      74: -2394087558302277593
+    second: HandsArmature|StakegunFire Last Round
+  - first:
+      74: -7429540727892841669
+    second: HandsArmature|StakegunFire.001
+  - first:
+      74: 4814604944351496446
+    second: HandsArmature|StakegunIdlePose
+  - first:
+      74: 3533060489039924776
+    second: HandsArmature|StakegunInspect
+  - first:
+      74: -3607348839767435593
+    second: StakegunArmature|CoolantLoop
+  - first:
+      74: -5009196383945876512
+    second: StakegunArmature|CoolantStart
+  - first:
+      74: -6494292234213061977
+    second: StakegunArmature|Fire Last Round
+  - first:
+      74: -5510842257823675546
+    second: StakegunArmature|Draw.001
+  - first:
+      74: -5750632794947497057
+    second: StakegunArmature|Inspect.002
+  - first:
+      74: 5884707973616974952
+    second: StakegunArmature|Reload.004
+  - first:
+      74: -7621161808822551603
+    second: StakegunArmature|IdlePose
+  - first:
+      74: 1899094077320332807
+    second: StakegunArmature|Draw
+  - first:
+      74: -7691816817025965932
+    second: StakegunArmature|Fire
+  - first:
+      74: 6573503561196369228
+    second: StakegunArmature|StakegunCoolantLoop
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

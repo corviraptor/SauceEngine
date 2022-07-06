@@ -16,7 +16,7 @@ MonoBehaviour:
   airAccel: 200
   vLimit: 80
   walkSpeed: 17
-  walkAcceleration: 15
+  walkAcceleration: 12
   height: 2
   mass: 5
   jumpForce: 11
@@ -29,7 +29,7 @@ MonoBehaviour:
   gMagnetism: 1
   gMagThreshold: 0.5
   maxSlope: 0.78
-  frictionFactor: 13
+  frictionFactor: 9
   frictionForgiveness: 5
   overcomeThreshold: 18
   slideITicks: 12

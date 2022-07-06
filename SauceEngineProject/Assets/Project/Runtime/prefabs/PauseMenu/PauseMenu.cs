@@ -9,6 +9,7 @@ public class PauseMenu : MonoBehaviour
 
     [SerializeField] private GameObject windows;
     [SerializeField] private GameObject consolePrefab;
+    [SerializeField] private GameObject settingsPrefab;
     [SerializeField] private GameObject pauseMenuUI;
 
     public static bool isPaused = false;
@@ -48,7 +49,7 @@ public class PauseMenu : MonoBehaviour
         if (!isPaused){
             Pause();
         }
-        else{
+        else if (console == null){
             Resume();
         }
     }
@@ -67,8 +68,15 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    GameObject settings;
     public void Settings(){
-        Debug.Log("Settings");
+        if (settings == null){
+            settings = Instantiate(settingsPrefab, windows.transform.position, Quaternion.identity, windows.transform);
+            settings.transform.position += new Vector3(-20, -20, 0);
+        }
+        else{
+            Destroy(settings);
+        }
     }
 
     public void MainMenu(){

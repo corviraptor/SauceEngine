@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Freya;
 
 public class PlayerWalk : MonoBehaviour, IAttachable
 {
@@ -21,6 +22,11 @@ public class PlayerWalk : MonoBehaviour, IAttachable
         }
         Vector3 localWalkDirection = Vector3.ProjectOnPlane(pm.margs.wishDir, pm.margs.hit.normal).normalized;
         Vector3 localWalkVector = localWalkDirection * pm.margs.wishDir.magnitude * pm.walkSpeedAdj;
-        pm.velocity = pm.velocity - pm.player.walkAcceleration * pm.velocity * Time.deltaTime + pm.player.walkAcceleration * localWalkVector * Time.deltaTime;
+        if (pm.velocity.magnitude <= pm.walkSpeedAdj){
+            pm.velocity += pm.player.walkAcceleration * localWalkVector * Time.deltaTime;
+        }
+        else{
+            pm.velocity = (pm.velocity - pm.velocity * Time.deltaTime + pm.player.walkAcceleration * localWalkVector * Time.deltaTime).normalized * pm.walkSpeedAdj;
+        }
     }
 }

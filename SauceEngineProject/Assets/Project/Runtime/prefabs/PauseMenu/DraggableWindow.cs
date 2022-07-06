@@ -11,15 +11,23 @@ public class DraggableWindow : MonoBehaviour, IDragHandler, IPointerDownHandler,
     [SerializeField] private RectTransform window;
     [SerializeField] private RectTransform[] edges;
     [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject inactiveOverlay;
 
     bool isDraggingWindow;
     bool isResizingWindow;
     int dragDirection;
 
+    public void OnGUI(){
+        if (transform.GetSiblingIndex() != transform.parent.childCount - 1){
+            inactiveOverlay.SetActive(true);
+        }
+    }
+
     public void OnPointerDown(PointerEventData pointerData){
         //pointer down and pointer up are more responsive than drag enter, i need that!!!
         window.SetAsLastSibling();
-
+        inactiveOverlay.SetActive(false);
+        
         if(RectTransformUtility.RectangleContainsScreenPoint(dragBar, pointerData.position)){
             isDraggingWindow = true;
         }

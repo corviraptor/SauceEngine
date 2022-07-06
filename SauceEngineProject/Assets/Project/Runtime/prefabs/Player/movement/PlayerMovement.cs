@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
     int crouchState = 0;
 
     bool isOnGround = false;
-    bool isOnGrounder = false; // activates only after the first tick, keeping some stuff from enabling during bunnyhopping
+    bool isOnGrounder = false; // activates only after the first 2 ticks of groundedness, keeping some stuff from enabling during bunnyhopping
     bool frictionForgiven => clocks["groundTimer"] > 0 && velocity.KillY().sqrMagnitude > player.overcomeThreshold * player.overcomeThreshold;
     
     int slopeState = 0;
@@ -246,7 +246,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
 
         if (hit.distance <= cc.height / 2 + player.gThreshold && Vector3.Dot(hit.normal, transform.up) > newMaxSlope){
             if (!isOnGround){ OnGroundEnter(); }
-            if (clocks["groundTimer"] > 1){ isOnGrounder = true; }
+            if (clocks["groundTimer"] > 2){ isOnGrounder = true; }
             isOnGround = true;
         }
         else if (hit.distance <= cc.height / 2 + player.gThreshold && hit.collider.tag == "Stairs" && newMaxSlope == player.maxSlope){
