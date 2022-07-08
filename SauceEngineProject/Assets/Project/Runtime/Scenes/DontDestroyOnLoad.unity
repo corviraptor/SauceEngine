@@ -170,22 +170,6 @@ MonoBehaviour:
   player: {fileID: 11400000, guid: 4f1f159af22dd8a458989b038e6c8465, type: 2}
   naiveAccelXY: {x: 0, y: 0, z: 0}
   lookVector: {x: 0, y: 0}
-  attacking: 0
-  attack2ing: 0
-  crouched: 0
-  jump: 0
-  slide: 0
-  onAttack: 0
-  onAttack2: 0
-  reload: 0
-  spell: 0
-  menu: 0
-  console: 0
-  weapon0: 0
-  weapon1: 0
-  weapon2: 0
-  weapon3: 0
-  weapon4: 0
 --- !u!1 &1157205881
 GameObject:
   m_ObjectHideFlags: 0
