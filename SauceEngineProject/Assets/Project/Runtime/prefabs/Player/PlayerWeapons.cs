@@ -9,23 +9,21 @@ public class PlayerWeapons : MonoBehaviour
     public PlayerHandler playerHandler;
     public GameObject viewmodelObject;
     FirstPersonActions.PlayerActions input => InputManager.current.input;
-
-    public WeaponParent heldGun;
-
+    public WeaponParent gun;
     PlayerArgs pArgs;
-
     public Dictionary<string, Animator> viewmodels = new Dictionary<string, Animator>();
     Dictionary<string, WeaponParent> inventory = new Dictionary<string, WeaponParent>();
 
+    public bool loadQueued = false;
+    public bool actioning = false;
+    bool loading = false;
+    bool hasAGun = false;
+    bool primaryReleased = true;
+    bool secondaryReleased = true;
+
     string gunKey;
-    bool hasGuns = false;
-    public bool recovering = false;
-    public bool ready = true;
-    bool primaryReleased = false;
-    bool secondaryReleased = false;
-    bool currentlyReloading = false;
-    bool reloadQueued = false;
-    public int drawTime = 15;
+
+    int drawTime = 15;
 
 
     void OnEnable(){
@@ -36,7 +34,6 @@ public class PlayerWeapons : MonoBehaviour
             viewmodels.Add(a.gameObject.name, a);
             viewmodels[a.gameObject.name].gameObject.SetActive(false);
         }
-        ready = true;
     }
 
     void OnDestroy(){
@@ -47,11 +44,11 @@ public class PlayerWeapons : MonoBehaviour
     WeaponParent weaponTest;
     void OnPressButtons(Dictionary<string, bool> buttons){
         // none of this should run if the player doesn't have a gun
-        if (!hasGuns){ return; }
+        if (hasAGun == false){ return; }
 
         string lastGun = gunKey;
 
-        /* these are hard coded since i want each binding to correspond to a specific weapon no matter what, i'll probably turn this
+        /* these are hard coded since i want each binding to correspond to a specific gun no matter what, i'll probably turn this
         into something using an array instead tho to make it easier to modify and extend */
         if (buttons["weapon0"] && inventory.TryGetValue("Stakegun", out weaponTest) && gunKey != "Stakegun"){
             gunKey = "Stakegun";
@@ -67,241 +64,216 @@ public class PlayerWeapons : MonoBehaviour
         }
     }
 
-    void GetWeapon(object sender, string gun){
-        if (gun == null){
-            return;
-        }
-        if (gameObject.GetComponent(Type.GetType(gun)) != null){
-            return;
-        }
-
-        gunKey = gun;
-        foreach (Animator a in viewmodels.Values){
-            a.gameObject.SetActive(false);
-        }
-        viewmodels[gunKey].gameObject.SetActive(true);
-
-        hasGuns = true;
+    void GetWeapon(object sender, string g){
+        gunKey = g;
+        if (gunKey == null){ return; }
+        if (gameObject.GetComponent(Type.GetType(gunKey)) != null){ return; }
 
         WeaponParent gunComponent = (WeaponParent)gameObject.AddComponent(Type.GetType(gunKey));
         gunComponent.InjectDependency(this);
         inventory.Add(gunKey, gunComponent);
+
+        SwapGun();
+        hasAGun = true;
     }
     
     void Update(){
         pArgs = playerHandler.playerArgs;
 
-        if (!hasGuns){
-            // none of this should run if the player doesn't have a gun
-            return;
-        }
+        if (hasAGun == false){ return; }
 
         playerHandler.WeaponUpdate(this);
 
-        if (inventory.TryGetValue(gunKey, out heldGun)){
-            heldGun = inventory[gunKey];
+        if (inventory.TryGetValue(gunKey, out gun)){
+            gun = inventory[gunKey];
         }
 
-        EvaluateHeldGunInputs();
-        EvaluateReload();
+        EvaluateGunInputs();
+
+        if (input.Reload.ReadValue<float>() != 0 && gun.loadedRounds != gun.magSize){
+            //queue for reload when pressing the reload button
+            loadQueued = true;
+        }
+
+        if (gun.loadedRounds == 0){
+            //queue for reload automatically if no rounds are left
+            loadQueued = true;
+        }
+
+        if (loadQueued){
+            EvaluateReload();
+        }
+        
     }
 
     void SwapGun(){
         foreach (Animator a in viewmodels.Values){
             a.gameObject.SetActive(false);
         }
+        gun = inventory[gunKey];
+        viewmodels[gunKey].gameObject.SetActive(true);
 
         StopAllCoroutines();
-
-        viewmodels[gunKey].gameObject.SetActive(true);
         StartCoroutine(Draw());
 
     }
+
+    IEnumerator Draw(){
+        // reset fuckin everything
+        loading = false;
+        loadQueued = false;
+        primaryReleased = false;
+        secondaryReleased = false;
+        gun.chambered = false;
+
+        // round is chambered during draw
+        actioning = true;
+
+        yield return new WaitForSeconds(drawTime / 60F);
+
+        // set gun to chambered at end of draw time so you can fire immediately after no matter what
+        actioning = false;
+        gun.chambered = true;
+    }
     
-    void EvaluateHeldGunInputs(){
-        // function won't be called if we are in the middle of drawing a weapon, if the weapon is recovering, or there is no held gun
-        if (input.PrimaryFire.ReadValue<float>() != 0 && heldGun.loadedRounds != 0){
-            //stops reloading an internal mag gun if you press primary fire
-            if (reloadQueued == true && heldGun.internalMagazine){
-                reloadQueued = false;
+    void EvaluateGunInputs(){
+        // function won't be called if we are in the middle of drawing a gun, if the gun is actioning, or there is no held gun
+        if (input.PrimaryFire.ReadValue<float>() != 0 && gun.loadedRounds != 0){
+            // stops reloading a fixed mag gun if you press primary fire
+            if (loadQueued == true && gun.fixedMag){
+                loadQueued = false;
+            }
+            primaryReleased = false;
+
+            if (actioning || loading){
+                return;
             }
 
-            if (ready){
-                primaryReleased = false;
-                heldGun.PrimaryFire(pArgs);
-            }
+            gun.PrimaryFire(pArgs);
         }
 
         if (input.SecondaryFire.ReadValue<float>() != 0){
-            //stops reloading an internal mag gun if you press secondary fire
-            if (reloadQueued == true && heldGun.internalMagazine){
-                reloadQueued = false;
+            // stops reloading a fixed mag gun if you press secondary fire
+            if (loadQueued == true && gun.fixedMag){
+                loadQueued = false;
+            }
+            secondaryReleased = false;
+
+            if (actioning || loading){
+                return;
             }
 
-            if (ready){
-                secondaryReleased = false;
-                heldGun.SecondaryFire(pArgs);
-            }
+            gun.SecondaryFire(pArgs);
         }
 
-
-        if (input.PrimaryFire.ReadValue<float>() == 0 && !primaryReleased && !currentlyReloading){
-            heldGun.PrimaryRelease(pArgs);
+        if (input.PrimaryFire.ReadValue<float>() == 0 && !primaryReleased && !loading){
             primaryReleased = true;
+
+            if (actioning || loading){
+                return;
+            }
+
+            gun.PrimaryRelease(pArgs);
         }
 
-        if (input.SecondaryFire.ReadValue<float>() == 0 && !secondaryReleased && !currentlyReloading){
-            heldGun.SecondaryRelease(pArgs);
+        if (input.SecondaryFire.ReadValue<float>() == 0 && !secondaryReleased && !loading){
             secondaryReleased = true;
+
+            if (actioning || loading){
+                return;
+            }
+
+            gun.SecondaryRelease(pArgs);
         }
     }  
 
     void EvaluateReload(){
-        if (input.Reload.ReadValue<float>() != 0 && heldGun.loadedRounds != heldGun.magazineSize){
-            //queue for reload when pressing the reload button
-            reloadQueued = true;
-        }
-
-        if (heldGun.loadedRounds == heldGun.magazineSize){
-            reloadQueued = false;
-        }
-
-        if (heldGun.loadedRounds == 0){
-            //queue for reload automatically if no rounds are left
-            reloadQueued = true;
-        }
-
-        if (recovering){
-            //dont do reloads while recovering 
+        if (actioning){
+            // dont do reloads while actioning 
             return;
         }
 
-        if (currentlyReloading){
-            //dont do reloads in the middle of a reload animation
+        if (loading){
+            // dont do reloads in the middle of a reload animation
             return;
         }
-        
-        if (!heldGun.internalMagazine){
-            ReloadExtMag();
+
+        if (gun.reloadStage == 2){
+            loadQueued = false;
+        }
+
+        // PlayReload() sets the time per animation so it should run before everything else here
+        gun.PlayReload();
+        StopAllCoroutines();
+        StartCoroutine(Reload());
+    }
+
+    // None of these coroutines should ever run concurrently, so use StopAllCoroutines() before starting one to make sure theyre not interfering!
+    // thanks for this note past me this was really useful and i wouldve forgotten:)
+    IEnumerator Reload(){
+        loading = true;
+
+        yield return new WaitForSeconds(gun.loadTime / 60F);
+
+        while (loading){
+            if (gun.reloadStage == 1 && gun.fixedMag && gun.loadedRounds + gun.roundsToLoad <= gun.magSize){
+                gun.loadedRounds += gun.roundsToLoad;
+            }
+            else {
+                gun.loadedRounds = gun.magSize;
+            }
+
+            if (gun.reloadStage == 2 && !gun.fixedMag){
+                gun.loadedRounds = gun.magSize;
+            }
+
+            if (!loadQueued){
+                // reset reloadStage after finishing reloading
+                gun.reloadStage = 0;
+            }
+
+            loading = false;
+
+            TestReloadStateChange();
+        }
+    }
+
+    void TestReloadStateChange(){
+        if (gun.reloadStage == 1 && !gun.fixedMag){
+            gun.reloadStage = 2;
+        }
+
+        if (gun.reloadStage == 0){
+            gun.reloadStage = 1;
+        }
+        else if (gun.loadedRounds < gun.magSize){
+            gun.reloadStage = 1;
         }
         else {
-            ReloadIntMag();
+            gun.reloadStage = 2;
         }
     }
 
-    void ReloadExtMag(){
-        if (reloadQueued && !currentlyReloading){
-            //start reload
-            ready = false;
-            StopAllCoroutines();
-            StartCoroutine(ExtReloadTimer());
-            heldGun.viewmodel.SetTrigger("ReloadStart");
-            return;
-        }
-    }
-
-    bool reloadStarted = false;
-    void ReloadIntMag(){
-        if (reloadStarted && !reloadQueued){
-            // plays end of reload animation when reload is unqueued
-            reloadStarted = false;
-            StopAllCoroutines();
-            StartCoroutine(IntReloadTimer());
-            heldGun.viewmodel.SetTrigger("ReloadEnd");
-            return;
-        }
-
-        if (reloadQueued && !reloadStarted){
-            //start of reload
-            reloadStarted = true;
-            ready = false;
-            StopAllCoroutines();
-            StartCoroutine(IntReloadTimer());
-            heldGun.viewmodel.SetTrigger("ReloadStart");
-            return;
-        }
-        
-        if (reloadQueued && reloadStarted){
-            reloadStarted = true;
-            StopAllCoroutines();
-            StartCoroutine(IntReloadTimer());
-            heldGun.viewmodel.SetTrigger("ReloadLoop");
-            return;
-        }
-    }
-
-    //None of these coroutines should ever run concurrently, so use StopAllCoroutines() before starting one to make sure theyre not interfering!
-    IEnumerator ExtReloadTimer(){
-        // for external magazines
-        ready = false;
-        currentlyReloading = true;
-
-        yield return new WaitForSeconds(Time.fixedDeltaTime * heldGun.reloadTime);
-
-        currentlyReloading = false;
-        UpdateAmmo();
-        ready = true;
-    }
-
-    IEnumerator IntReloadTimer(){
-        // for internal magazines
-        ready = false;
-        currentlyReloading = true;
-
-        yield return new WaitForSeconds(Time.fixedDeltaTime * heldGun.reloadTime);
-
-        currentlyReloading = false;
-
-        if (!reloadStarted){
-            ready = true;
-        }
-        else {
-            UpdateAmmo();
-        }
-    }
-
-    void UpdateAmmo(){
-        if (!reloadQueued){
-            // dont run if this is the end of reload animation
-            return;
-        }
-        if (heldGun.loadedRounds >= heldGun.magazineSize){
-            //dont add rounds if we are at or above the magazine size, this theoretically should not be called
-            Debug.Log("Magazine limit reached");
-            return;
-        }
-
-        if (heldGun.internalMagazine){
-            heldGun.loadedRounds++;
-        }
-        else {
-            heldGun.loadedRounds = heldGun.magazineSize;
-        }
-    }
 
     int gunInterval;
-    public void Recover(int interval){
+    public void Chamber(int interval){
         gunInterval = interval;
-        StartCoroutine(RecoveryTimer());
+        StartCoroutine(ChamberTimer());
     }
 
-    IEnumerator RecoveryTimer(){
-        recovering = true;
-        yield return new WaitForSeconds(Time.fixedDeltaTime * gunInterval);
-        recovering = false;
-        if (!reloadStarted){
-            ready = true;
-        }
+    IEnumerator ChamberTimer(){
+        actioning = true;
+        Debug.Log("Chambering started");
+
+        yield return new WaitForSeconds(gunInterval / 60F);
+
+        Debug.Log("Chambering Finished");
+
+        actioning = false;
+        gun.chambered = true;
     }
 
-    IEnumerator Draw(){
-        currentlyReloading = false;
-        reloadStarted = false;
-        reloadQueued = false;
-
-        yield return new WaitForSeconds(Time.fixedDeltaTime * drawTime);
-
-        // set gun to ready at end of draw time so you can fire immediately after no matter what
-        ready = true;
+    public void PlayViewmodelAnimation (string name){
+        viewmodels[gunKey].SetTrigger(name);
     }
 }

@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Revolver : WeaponParent
 {
-    public override void InjectDependency(PlayerWeapons pw){
-        playerWeapons = pw;
+    public override void InjectDependency(PlayerWeapons playerWeapons){
+        pw = playerWeapons;
+    }
+
+    public override void PlayReload(){
     }
 
     void Update(){

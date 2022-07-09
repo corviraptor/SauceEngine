@@ -4,48 +4,73 @@ using UnityEngine;
 
 public class Shotgun : WeaponParent
 {
-    public override void InjectDependency(PlayerWeapons pw){
-        internalMagazine = true;
-        playerWeapons = pw;
-        recoveryTime = 50;
-        reloadTime = 20;
-        magazineSize = 8;
-        loadedRounds = magazineSize;
-        viewmodel = playerWeapons.viewmodels["Shotgun"];
+    public int startTime = 0;
+    public int baseLoadTime = 42;
+    public int lastLoadTime = 28;
+    public int finish1Time = 40;
+    public int finish2Time = 25;
+
+    public override void InjectDependency(PlayerWeapons playerWeapons){
+        pw = playerWeapons;
+        viewmodel = pw.viewmodels["Shotgun"];
+
+        chamberTime = 80;
+        loadTime = baseLoadTime;
+
+        fixedMag = true;
+        chambered = false;
+        magSize = 8;
+        loadedRounds = magSize;
+        roundsToLoad = 2;
+        reloadStage = 0;
+    }
+
+    public override void PlayReload(){
+        if (reloadStage == 0){
+            viewmodel.SetTrigger("LoadStart");
+            loadTime = startTime;
+            return;
+        }
+
+        if (!pw.loadQueued && !chambered){
+            viewmodel.SetTrigger("LoadFinish1");
+            loadTime = finish1Time;
+            return;
+        }
+        else if (!pw.loadQueued){
+            viewmodel.SetTrigger("LoadFinish2");
+            loadTime = finish2Time;
+            return;
+
+        }
+
+        if (loadedRounds + roundsToLoad > magSize){
+            Debug.Log(loadedRounds + roundsToLoad + " = " + loadedRounds + " + " + roundsToLoad + " > " + magSize);
+            viewmodel.SetTrigger("LoadLast");
+            loadTime = lastLoadTime;
+            return;
+        }
+
+        // only gets here if all other "special" reload animations havent been run
+        viewmodel.SetTrigger("LoadLoop");
+        loadTime = baseLoadTime;
     }
 
     void Update(){
     }
 
     public override void PrimaryFire(PlayerArgs playerArgs){
-        if (playerWeapons.ready){
+        if (chambered){
+            chambered = false;
             loadedRounds--;
-            playerWeapons.Recover(recoveryTime);
-            viewmodel.SetTrigger("PrimaryFire");
-            playerWeapons.ready = false;
+            viewmodel.SetTrigger("Attack1");
+            pw.Chamber(chamberTime);
         }
     }
 
-    public override void PrimaryRelease(PlayerArgs playerArgs){
-    }
+    public override void PrimaryRelease(PlayerArgs playerArgs){}
     
-    public override void SecondaryFire(PlayerArgs playerArgs){
-        if (loadedRounds <= 1){ 
-            //cant alt fire without at least 2 rounds loaded since it consumes 2 rounds
-            return;
-        }
-        if (playerWeapons.ready){
-            GameObject rocketInstance = ObjectPooler.SharedInstance.GetPooledObject(0);
-            rocketInstance.SetActive(true);
-            rocketInstance.transform.position = playerArgs.cameraTransform.position + playerArgs.cameraTransform.forward; 
-            rocketInstance.transform.rotation = playerArgs.cameraTransform.rotation;
-
-            loadedRounds -= 2;
-            playerWeapons.Recover(recoveryTime);
-            viewmodel.SetTrigger("SecondaryFire");
-            playerWeapons.ready = false;
-        }
-    }
+    public override void SecondaryFire(PlayerArgs playerArgs){}
 
     public override void SecondaryRelease(PlayerArgs playerArgs){}
 

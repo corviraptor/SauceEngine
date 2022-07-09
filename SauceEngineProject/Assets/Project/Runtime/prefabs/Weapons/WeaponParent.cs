@@ -6,20 +6,25 @@ public abstract class WeaponParent : MonoBehaviour
 {   
     public Dictionary<string, int> clocks = new Dictionary<string, int>();
 
-    public PlayerWeapons playerWeapons;
+    public PlayerWeapons pw;
 
     public Animator viewmodel;  
 
-    public bool internalMagazine = false;
+    public int chamberTime;
+    public int loadTime;
 
-    public int recoveryTime = 30;
-    public int reloadTime = 30;
-    public int magazineSize = 5;
-    public int loadedRounds = 5;
+    public bool fixedMag;
+    public bool chambered;
+    public int magSize;
+    public int loadedRounds;
+    public int roundsToLoad;
+    public int reloadStage;
 
     protected WeaponParent(){}
 
     public abstract void InjectDependency(PlayerWeapons pw);
+
+    public abstract void PlayReload();
 
     public abstract void PrimaryFire(PlayerArgs playerArgs);
 

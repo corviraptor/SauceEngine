@@ -42,12 +42,12 @@ public class HudManager : MonoBehaviour
     }
 
     private void WeaponUpdate(PlayerWeapons sender){
-        if (sender.heldGun == null){
+        if (sender.gun == null){
             return;
         }
         
-        int loadedRounds = sender.heldGun.loadedRounds;
-        int magazineSize = sender.heldGun.magazineSize;
+        int loadedRounds = sender.gun.loadedRounds;
+        int magazineSize = sender.gun.magSize;
 
         ammoText.text = $"{loadedRounds}/{magazineSize}";
     }

@@ -108,7 +108,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
         playerHandler.playerArgs.controller = cc;
 
         pargs = playerHandler.playerArgs;
-        margs = new PlayerMovementArgs(wishDir, hit, crouchState, isOnGround, isOnGrounder, frictionForgiven, slopeState);
+        margs = new PlayerMovementArgs(wishDir, hit, crouchState, isOnGround, isOnGrounder, frictionForgiven, slopeState, slideState);
 
         oldPosition = transform.position;
     }
@@ -178,15 +178,9 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
             Slide();
         }
 
-        if (!isOnGround){
-            // we know we're on the ground if we get past here because of this guard statement
-            return;
-        }
-
-        if (clocks["blastTime"] != 0){
-            // we know we havent just blast jumped past here because of this guard statement
-            return;
-        }
+        // guard statements
+        if (!isOnGround){ return; }
+        if (clocks["blastTime"] != 0){ return; }
         
         // more slide logic
         if (clocks["slideBuffer"] <= player.jumpForgiveness && clocks["slideBuffer"] != 0 && clocks["slide"] == 0 && temperature <= player.heatLimit){
@@ -204,15 +198,10 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
             slideFailPlayed = false;
         }
 
-        if (slideState == 1){
-            //we know we're not in the middle of a slide past here because of this guard statement
-            return;
-        }
-
-        if (!isOnGrounder){
-            //we know we've been on the ground longer than 1 tick if we get past this guard statement
-            return;
-        }
+        // more guard statements
+        if (slideState == 1){ return; }
+        if (!isOnGrounder){ return; }
+        if (clocks["jumpCooldown"] != 0 && clocks["jumpCooldown"] < 5){ return; } //stops player from slowing down after jumping due to friction
 
         /* ground magnetism - will push you down perpendicular to a standable surface when youre very close to it to keep you from ramping off tiny bumps
         its down here so that you dont get magnetized to the ground when surfing off of a slope that connects to flat ground */
@@ -347,12 +336,13 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
     }  
 
     bool slideJumped = false;
-    void Slide(){ //i know its weird that slide doesn't have its own script but it'd be a hassle to try and manage the timers in another script and it isnt that big so whatever
+    void Slide(){ 
+        // I have tried very, very hard to get this stupid function out of the main playermovement class. in order to do that, i'd have to make most of these variables public though.
         Vector3 velocityXZ = velocity.KillY();
         Vector3 slideVector;
 
         if (clocks["slide"] != 1){
-            //slide should only change the player's velocity direction at the beginning of the slide, to prevent weirdness of slide angle being adjusted mid-slide
+            // slide should only change the player's velocity direction at the beginning of the slide, to prevent weirdness of slide angle being adjusted mid-slide
             slideVector = velocityXZ.normalized;
         }
         else if (wishDir.sqrMagnitude > 0.25F){
@@ -363,7 +353,6 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
         }
 
         if (clocks["jumpCooldown"] != 0 && clocks["slide"] < player.slideDuration && temperature <= player.heatLimit){ //slide jump
-            slideState = 0;
             if (!slideJumped){
                 slideJumped = true;
                 playerHandler.SoundCommand("SlideJump", "Play", 0);
@@ -392,10 +381,11 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
         if (velocityXZ.sqrMagnitude < player.slideForce * player.slideForce){
             velocity = (slideVector * player.slideForce);
         }
-        else{
+        else {
             /* you will get a penalty in speed if slide jumping past slide's natural speed boost and you won't entirely redirect your momentum
-            because honestly i started to not like how that felt, plus it makes grapple hook less interesting */
-            velocity = Vector3.Lerp(velocityXZ, (slideVector * player.slideForce), 0.5F);
+            because honestly i started to not like how that felt, plus it makes grapple hook less interesting. i was considering making this a 
+            partial penalty but that complicated things and also i guess its better to teach the player this way */
+            velocity = (Vector3.Lerp(slideVector, velocity.normalized, 0.5F) * player.slideForce);
         }
     }
 
