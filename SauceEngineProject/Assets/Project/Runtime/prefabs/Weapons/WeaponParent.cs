@@ -24,7 +24,7 @@ public abstract class WeaponParent : MonoBehaviour
 
     public abstract void InjectDependency(PlayerWeapons pw);
 
-    public abstract void PlayReload();
+    public abstract void SetLoadTime(bool loadStarted, bool loadQueued);
 
     public abstract void PrimaryFire(PlayerArgs playerArgs);
 

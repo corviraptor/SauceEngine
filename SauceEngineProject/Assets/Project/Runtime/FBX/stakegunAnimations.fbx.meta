@@ -1,62 +1,41 @@
 fileFormatVersion: 2
-guid: 93cc14820ca8e2c4fa316b4791ea89f5
+guid: 064be7d1de90d74448b01400c34b67f5
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable:
   - first:
       74: -623603649343465320
-    second: Default
+    second: stakegun.default
   - first:
-      74: 1893393626920919930
-    second: Draw
+      74: -7308761921454852672
+    second: stakegun.draw
   - first:
-      74: 7572344613039948371
-    second: Attack1
+      74: 2617428415493128774
+    second: stakegun.attack1
   - first:
-      74: 8114531597553069840
-    second: shotgun.Attack2
+      74: -3125426386555763590
+    second: stakegun.coolantstart
   - first:
-      74: -1609281748187839663
-    second: ReloadStart
+      74: -8912536925602081690
+    second: stakegun.coolantloop
   - first:
-      74: 723096430288179899
-    second: ReloadLoop
+      74: -2156564707799354006
+    second: stakegun.reload
   - first:
-      74: -8075932436479917701
-    second: ReloadLast
+      74: -2402466185406918360
+    second: stakegun.reloadstart
   - first:
-      74: -6817640827690298509
-    second: ReloadFinish1
+      74: 6927942722875681625
+    second: stakegun.magout
   - first:
-      74: -5468114977337844123
-    second: ReloadFinish2
+      74: 3919186254352815696
+    second: stakegun.reloadboltpull
   - first:
-      74: 6423330017675647253
-    second: shotgun.Default
+      74: -623603649343465320
+    second: stakegun.default
   - first:
-      74: -8739373465453961662
-    second: shotgun.Draw
-  - first:
-      74: 8659870758552704582
-    second: shotgun.Attack1
-  - first:
-      74: -3441288637135199994
-    second: shotgun.ReloadStart
-  - first:
-      74: -339420148072045627
-    second: shotgun.ReloadLoop
-  - first:
-      74: -426663317282892346
-    second: shotgun.ReloadLast
-  - first:
-      74: 4282959222021889117
-    second: shotgun.ReloadFinish1
-  - first:
-      74: -6934472165027623639
-    second: shotgun.ReloadFinish2
-  - first:
-      74: 6370675387004327996
-    second: shotgun.default
+      74: 7481695780069729735
+    second: stakegun.magin
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -87,11 +66,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: shotgun.Draw
+      name: stakegun.draw
       takeName: Scene
       internalID: 0
       firstFrame: 2
-      lastFrame: 36
+      lastFrame: 46
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -116,11 +95,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.Attack1
+      name: stakegun.attack1
       takeName: Scene
       internalID: 0
-      firstFrame: 36
-      lastFrame: 138
+      firstFrame: 46
+      lastFrame: 114
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -145,11 +124,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.Attack2
+      name: stakegun.coolantstart
       takeName: Scene
       internalID: 0
-      firstFrame: 139
-      lastFrame: 187
+      firstFrame: 115
+      lastFrame: 154
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -174,11 +153,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.ReloadStart
+      name: stakegun.coolantloop
       takeName: Scene
       internalID: 0
-      firstFrame: 188
-      lastFrame: 204
+      firstFrame: 154
+      lastFrame: 293
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -203,40 +182,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.ReloadLoop
+      name: stakegun.reload
       takeName: Scene
       internalID: 0
-      firstFrame: 205
-      lastFrame: 263
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 1
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 1
-    - serializedVersion: 16
-      name: shotgun.ReloadLast
-      takeName: Scene
-      internalID: 0
-      firstFrame: 264
-      lastFrame: 287
+      firstFrame: 293
+      lastFrame: 397
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -261,11 +211,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.ReloadFinish1
+      name: stakegun.reloadstart
       takeName: Scene
       internalID: 0
-      firstFrame: 288
-      lastFrame: 337
+      firstFrame: 293
+      lastFrame: 304
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -290,11 +240,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.ReloadFinish2
+      name: stakegun.magout
       takeName: Scene
       internalID: 0
-      firstFrame: 338
-      lastFrame: 371
+      firstFrame: 304
+      lastFrame: 315
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -319,11 +269,69 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: shotgun.default
+      name: stakegun.reloadboltpull
       takeName: Scene
       internalID: 0
-      firstFrame: 36
-      lastFrame: 37
+      firstFrame: 334
+      lastFrame: 397
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: stakegun.default
+      takeName: Scene
+      internalID: 0
+      firstFrame: 45
+      lastFrame: 46
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 1
+    - serializedVersion: 16
+      name: stakegun.magin
+      takeName: Scene
+      internalID: 0
+      firstFrame: 316
+      lastFrame: 333
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

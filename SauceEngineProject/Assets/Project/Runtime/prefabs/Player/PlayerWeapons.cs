@@ -11,19 +11,19 @@ public class PlayerWeapons : MonoBehaviour
     FirstPersonActions.PlayerActions input => InputManager.current.input;
     public WeaponParent gun;
     PlayerArgs pArgs;
+
     public Dictionary<string, Animator> viewmodels = new Dictionary<string, Animator>();
     Dictionary<string, WeaponParent> inventory = new Dictionary<string, WeaponParent>();
 
-    public bool loadQueued = false;
-    public bool actioning = false;
+    bool actioning = false;
+    bool loadQueued = false;
     bool loading = false;
+    bool loadStarted = false;
     bool hasAGun = false;
     bool primaryReleased = true;
     bool secondaryReleased = true;
-
     string gunKey;
-
-    int drawTime = 15;
+    int drawTime = 25;
 
 
     void OnEnable(){
@@ -100,10 +100,15 @@ public class PlayerWeapons : MonoBehaviour
             loadQueued = true;
         }
 
-        if (loadQueued){
-            EvaluateReload();
+        if (gun.reloadStage != 0){
+            //queue for reload automatically if we're in the middle of a reload with a fixed mag gun
+            loadQueued = true;
         }
-        
+
+        if (loadQueued && !actioning && !loading){
+            StopAllCoroutines();
+            StartCoroutine(Reload());
+        }
     }
 
     void SwapGun(){
@@ -115,16 +120,19 @@ public class PlayerWeapons : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(Draw());
-
     }
 
     IEnumerator Draw(){
         // reset fuckin everything
         loading = false;
-        loadQueued = false;
+        loadStarted = false;
         primaryReleased = false;
         secondaryReleased = false;
         gun.chambered = false;
+        if (gun.fixedMag){
+            // dont bother with reload stage stuff if gun has fixed mag
+            gun.reloadStage = 0;
+        }
 
         // round is chambered during draw
         actioning = true;
@@ -134,6 +142,7 @@ public class PlayerWeapons : MonoBehaviour
         // set gun to chambered at end of draw time so you can fire immediately after no matter what
         actioning = false;
         gun.chambered = true;
+        StopAllCoroutines();
     }
     
     void EvaluateGunInputs(){
@@ -143,11 +152,10 @@ public class PlayerWeapons : MonoBehaviour
             if (loadQueued == true && gun.fixedMag){
                 loadQueued = false;
             }
+
             primaryReleased = false;
 
-            if (actioning || loading){
-                return;
-            }
+            if (actioning || loadStarted){ return; }
 
             gun.PrimaryFire(pArgs);
         }
@@ -157,11 +165,10 @@ public class PlayerWeapons : MonoBehaviour
             if (loadQueued == true && gun.fixedMag){
                 loadQueued = false;
             }
+            
             secondaryReleased = false;
 
-            if (actioning || loading){
-                return;
-            }
+            if (actioning || loadStarted){ return; }
 
             gun.SecondaryFire(pArgs);
         }
@@ -169,9 +176,7 @@ public class PlayerWeapons : MonoBehaviour
         if (input.PrimaryFire.ReadValue<float>() == 0 && !primaryReleased && !loading){
             primaryReleased = true;
 
-            if (actioning || loading){
-                return;
-            }
+            if (actioning || loadStarted){ return; }
 
             gun.PrimaryRelease(pArgs);
         }
@@ -179,81 +184,65 @@ public class PlayerWeapons : MonoBehaviour
         if (input.SecondaryFire.ReadValue<float>() == 0 && !secondaryReleased && !loading){
             secondaryReleased = true;
 
-            if (actioning || loading){
-                return;
-            }
+            if (actioning || loadStarted){ return; }
 
             gun.SecondaryRelease(pArgs);
         }
     }  
 
-    void EvaluateReload(){
-        if (actioning){
-            // dont do reloads while actioning 
-            return;
-        }
-
-        if (loading){
-            // dont do reloads in the middle of a reload animation
-            return;
-        }
-
-        if (gun.reloadStage == 2){
-            loadQueued = false;
-        }
-
-        // PlayReload() sets the time per animation so it should run before everything else here
-        gun.PlayReload();
-        StopAllCoroutines();
-        StartCoroutine(Reload());
-    }
-
-    // None of these coroutines should ever run concurrently, so use StopAllCoroutines() before starting one to make sure theyre not interfering!
-    // thanks for this note past me this was really useful and i wouldve forgotten:)
     IEnumerator Reload(){
+        gun.SetLoadTime(loadStarted, loadQueued);
         loading = true;
 
         yield return new WaitForSeconds(gun.loadTime / 60F);
 
-        while (loading){
-            if (gun.reloadStage == 1 && gun.fixedMag && gun.loadedRounds + gun.roundsToLoad <= gun.magSize){
-                gun.loadedRounds += gun.roundsToLoad;
-            }
-            else {
-                gun.loadedRounds = gun.magSize;
-            }
-
-            if (gun.reloadStage == 2 && !gun.fixedMag){
-                gun.loadedRounds = gun.magSize;
-            }
-
-            if (!loadQueued){
-                // reset reloadStage after finishing reloading
-                gun.reloadStage = 0;
-            }
-
+        while (loading && gun.fixedMag){ //fixed mag
             loading = false;
 
-            TestReloadStateChange();
+            if (loadStarted && gun.loadedRounds + gun.roundsToLoad <= gun.magSize){
+                gun.loadedRounds += gun.roundsToLoad;
+            }
+            else if (gun.loadedRounds + gun.roundsToLoad > gun.magSize){
+                gun.loadedRounds = gun.magSize;
+            }
+
+
+            if (loadQueued){
+                TestReloadStateChangeFixed();
+            }
+            else {
+                loadStarted = false;
+            }
+        }
+
+        while (loading && !gun.fixedMag){ //non-fixed mag
+            loading = false;
+
+            gun.reloadStage++;
+            Debug.Log("Incremented reloadStage: " + gun.reloadStage);
+            if (!loadStarted){
+                loadStarted = true;
+            }
+
+            if (gun.reloadStage == 4){
+                gun.loadedRounds = gun.magSize;
+                gun.reloadStage = 0;
+                loadStarted = false;
+                loadQueued = false;
+            }
         }
     }
 
-    void TestReloadStateChange(){
-        if (gun.reloadStage == 1 && !gun.fixedMag){
-            gun.reloadStage = 2;
+    void TestReloadStateChangeFixed(){
+        if (!loadStarted){
+            loadStarted = true;
         }
-
-        if (gun.reloadStage == 0){
-            gun.reloadStage = 1;
-        }
-        else if (gun.loadedRounds < gun.magSize){
-            gun.reloadStage = 1;
-        }
-        else {
-            gun.reloadStage = 2;
+        else if (gun.loadedRounds >= gun.magSize){
+            loadQueued = false;
+            StopAllCoroutines();
+            StartCoroutine(Reload()); // start last cycle to close the weapon
         }
     }
-
 
     int gunInterval;
     public void Chamber(int interval){

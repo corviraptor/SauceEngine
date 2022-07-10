@@ -7,7 +7,7 @@ public class Shotgun : WeaponParent
     public int startTime = 0;
     public int baseLoadTime = 42;
     public int lastLoadTime = 28;
-    public int finish1Time = 40;
+    public int finish1Time = 100;
     public int finish2Time = 25;
 
     public override void InjectDependency(PlayerWeapons playerWeapons){
@@ -19,33 +19,26 @@ public class Shotgun : WeaponParent
 
         fixedMag = true;
         chambered = false;
-        magSize = 8;
+        magSize = 6;
         loadedRounds = magSize;
         roundsToLoad = 2;
         reloadStage = 0;
     }
 
-    public override void PlayReload(){
-        if (reloadStage == 0){
+    public override void SetLoadTime(bool loadStarted, bool loadQueued){
+        if (!loadQueued){
+            viewmodel.SetTrigger("LoadFinish1");
+            loadTime = finish1Time;
+            return;
+        }
+
+        if (loadStarted == false){
             viewmodel.SetTrigger("LoadStart");
             loadTime = startTime;
             return;
         }
 
-        if (!pw.loadQueued && !chambered){
-            viewmodel.SetTrigger("LoadFinish1");
-            loadTime = finish1Time;
-            return;
-        }
-        else if (!pw.loadQueued){
-            viewmodel.SetTrigger("LoadFinish2");
-            loadTime = finish2Time;
-            return;
-
-        }
-
         if (loadedRounds + roundsToLoad > magSize){
-            Debug.Log(loadedRounds + roundsToLoad + " = " + loadedRounds + " + " + roundsToLoad + " > " + magSize);
             viewmodel.SetTrigger("LoadLast");
             loadTime = lastLoadTime;
             return;
@@ -54,9 +47,6 @@ public class Shotgun : WeaponParent
         // only gets here if all other "special" reload animations havent been run
         viewmodel.SetTrigger("LoadLoop");
         loadTime = baseLoadTime;
-    }
-
-    void Update(){
     }
 
     public override void PrimaryFire(PlayerArgs playerArgs){

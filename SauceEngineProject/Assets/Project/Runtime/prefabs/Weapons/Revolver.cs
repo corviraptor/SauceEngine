@@ -8,7 +8,7 @@ public class Revolver : WeaponParent
         pw = playerWeapons;
     }
 
-    public override void PlayReload(){
+    public override void SetLoadTime(bool loadStarted, bool loadQueued){
     }
 
     void Update(){
