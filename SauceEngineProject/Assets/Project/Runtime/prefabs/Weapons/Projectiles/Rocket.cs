@@ -10,7 +10,7 @@ public class Rocket : Projectile
     public float blastPower = 50;
 
     void FixedUpdate(){
-        rb.AddForce((transform.forward * speed) - (transform.up * drop), ForceMode.VelocityChange);
+        rb.velocity = (transform.forward * speed) - (transform.up * drop);
     }
 
     protected override void OnTriggerEnter(Collider collider){
@@ -37,5 +37,6 @@ public class Rocket : Projectile
             yield return new WaitForSeconds(100);
         }
         gameObject.SetActive(false);
+        Debug.Log("Cleaned up rocket!");
     }
 }

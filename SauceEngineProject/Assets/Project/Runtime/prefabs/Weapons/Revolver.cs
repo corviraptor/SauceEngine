@@ -2,30 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Revolver : WeaponParent
+public class Revolver : MonoBehaviour, IShootable
 {
-    public override void InjectDependency(PlayerWeapons playerWeapons){
-        pw = playerWeapons;
-    }
+    public int loadedRounds { get; set; }
+    public int magSize { get; set; }
+    public bool chambered { get; set; }
 
-    public override void SetLoadTime(bool loadStarted, bool loadQueued){
-    }
+    public void InjectDependency(PlayerWeapons playerWeapons){}
 
-    void Update(){
-    }
+    void Update(){}
 
-    public override void PrimaryFire(PlayerArgs playerArgs){
-    }
+    public void Draw(int drawTime){}
 
-    public override void PrimaryRelease(PlayerArgs playerArgs){
-    }
-    
-    public override void SecondaryFire(PlayerArgs playerArgs){
-    }
+    public void PrimaryFire(PlayerArgs pargs){}
 
-    public override void SecondaryRelease(PlayerArgs playerArgs){
-    }
+    public void SecondaryFire(PlayerArgs pargs){}
 
-    public override void WeaponSpell(PlayerArgs playerArgs){
-    }
+    public void PrimaryRelease(){}
+
+    public void SecondaryRelease(){}
+
+    public void Reload(){}
 }

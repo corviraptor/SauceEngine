@@ -2,82 +2,117 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stakegun : WeaponParent
+public class Stakegun : MonoBehaviour, IShootable
 {   
-    public float coolantDrain = 30;
-    public int startTime = 11;
-    public int magoutTime = 12;
-    public int maginTime = 17;
-    public int boltpullTime = 63;
+    public int loadedRounds { get; set; }
+    public int magSize { get; set; }
+    public bool chambered { get; set; }
+
+    Dictionary<string, int> clocks = new Dictionary<string, int>();
+
+    PlayerWeapons pw;
+
+    Animator viewmodel;  
+
+    int chamberTime;
+    int reloadStage;
+
+    bool loadQueued = false;
+    bool loading;
+
+
+    float coolantDrain = 30;
+    int startTime = 11;
+    int magOutTime = 12;
+    int magInTime = 17;
+    int boltPullTime = 63;
     bool coolanting = false;
     float coolant = 100;
 
-    public override void InjectDependency(PlayerWeapons playerWeapons){
+    public void InjectDependency(PlayerWeapons playerWeapons){
         pw = playerWeapons;
         viewmodel = pw.viewmodels["Stakegun"];
 
         chamberTime = 68;
-        loadTime = startTime;
 
-        fixedMag = false;
         chambered = false;
-        reloadStage = 3;
         magSize = 5;
         loadedRounds = magSize;
-        roundsToLoad = magSize;
-        reloadStage = 0;
-    }
-
-    public override void SetLoadTime(bool loadStarted, bool loadQueued){
-
-        if (loadStarted == false){
-            viewmodel.SetTrigger("LoadStart");
-            loadTime = startTime;
-            Debug.Log("Reload Started...");
-            return;
-        }
-
-        // only gets here if the start reload animation finishes
-        switch (reloadStage) {
-            case 1:
-                loadTime = magoutTime;
-                viewmodel.SetTrigger("MagOut");
-                break;
-            case 2:
-                loadTime = maginTime; 
-                viewmodel.SetTrigger("MagIn");
-                break;
-            case 3:
-                loadTime = boltpullTime; 
-                viewmodel.SetTrigger("BoltPull");
-                break;
-            default:
-                Debug.Log("Stakegun reloadStage is out of range!");
-                break;
-        }
     }
 
     void Update(){
+        if (loadQueued || loadedRounds <= 0){ Reload(); }
     }
-
-    public override void PrimaryFire(PlayerArgs playerArgs){
-        if (chambered){
+    
+    public void Draw(int drawTime){
+        loading = false;
+        if (!loadQueued){
             chambered = false;
-            loadedRounds--;
-            viewmodel.SetTrigger("Attack1");
-            pw.Chamber(chamberTime);
+            StartCoroutine(DoDraw(drawTime));
         }
     }
 
-    public override void PrimaryRelease(PlayerArgs playerArgs){
+    IEnumerator DoDraw(int drawTime){
+        yield return new WaitForSeconds(drawTime / 60F);
+        chambered = true;
     }
 
-    public override void SecondaryFire(PlayerArgs playerArgs){
+    public void PrimaryFire(PlayerArgs pargs){
+        loadQueued = false;
+        if (chambered && !loading && loadedRounds > 0){
+            chambered = false;
+            loadedRounds--;
+            viewmodel.SetTrigger("Attack1");
+            StartCoroutine(Chamber());
+        }
     }
 
-    public override void SecondaryRelease(PlayerArgs playerArgs){
+    public void SecondaryFire(PlayerArgs pargs){}
+
+    IEnumerator Chamber(){
+        yield return new WaitForSeconds(chamberTime / 60F);
+        chambered = true;
     }
 
-    public override void WeaponSpell(PlayerArgs playerArgs){
+    public void PrimaryRelease(){}
+
+    public void SecondaryRelease(){}
+    
+    public void Reload(){
+        loadQueued = true;
+        if (loadedRounds < magSize && chambered && !loading){
+            loading = true;
+            StartCoroutine(DoReload());
+        }
+    }
+
+    IEnumerator DoReload(){
+        viewmodel.SetTrigger("LoadStart");
+        yield return new WaitForSeconds(startTime / 60F);
+        if (reloadStage == 0){
+            viewmodel.SetTrigger("MagOut");
+            yield return new WaitForSeconds(magOutTime / 60F);
+            reloadStage = 1;
+            Debug.Log("1");
+        }
+        if (reloadStage == 1){
+            // rn ive combined these because the draw animation is being mean, figure that out later future me ok?
+            viewmodel.SetTrigger("MagIn");
+            yield return new WaitForSeconds(magInTime / 60F);
+            reloadStage = 2;
+            Debug.Log("2");
+        }
+        if (reloadStage == 2){
+            viewmodel.SetTrigger("BoltPull");
+            yield return new WaitForSeconds(boltPullTime / 60F);
+            reloadStage = 0;
+            Debug.Log("0");
+
+            loadedRounds = magSize;
+            loadQueued = false;
+            loading = false;
+            chambered = true;
+        }
+
     }
 }
