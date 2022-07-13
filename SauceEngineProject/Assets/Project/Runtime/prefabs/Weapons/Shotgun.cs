@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,9 @@ public class Shotgun : MonoBehaviour, IShootable
 
     bool loadQueued = false;
     bool loading;
+
+    int beadsPerShot = 6;
+    float spread = 4F;
 
     int chamberTime;
     int startTime = 10;
@@ -57,6 +61,21 @@ public class Shotgun : MonoBehaviour, IShootable
             viewmodel.SetTrigger("Attack1");
             chamberTime = 80;
             StartCoroutine(Chamber());
+            SpawnBeads(pargs);
+        }
+    }
+
+    void SpawnBeads(PlayerArgs pargs){
+        List<GameObject> beadsToSpawn = new List<GameObject>{};
+        for (int i = 0; i <= beadsPerShot; i++){
+            beadsToSpawn.Add(ObjectPooler.SharedInstance.GetPooledObject(1));
+        }
+        foreach (GameObject bead in beadsToSpawn){
+            bead.SetActive(true);
+            bead.transform.position = pargs.cameraTransform.position + pargs.cameraTransform.forward * 0.5F;
+            bead.transform.eulerAngles = new Vector3(pargs.cameraTransform.rotation.eulerAngles.x, pargs.cameraTransform.rotation.eulerAngles.y + (beadsToSpawn.IndexOf(bead) - 0.5F * beadsPerShot) * spread / beadsPerShot, pargs.cameraTransform.rotation.eulerAngles.z);
+            ShotgunBead beadComponent = bead.GetComponent<ShotgunBead>();
+            beadComponent.rb.AddForce(bead.transform.forward * beadComponent.speed, ForceMode.VelocityChange);
         }
     }
     
@@ -68,11 +87,9 @@ public class Shotgun : MonoBehaviour, IShootable
             viewmodel.SetTrigger("Attack2");
             chamberTime = 40;
             StartCoroutine(Chamber());
-
-            Debug.Log("Fired Rocket!");
             GameObject rocket = ObjectPooler.SharedInstance.GetPooledObject(0);
             rocket.SetActive(true);
-            rocket.transform.position = pargs.cameraTransform.position + pargs.cameraTransform.forward;
+            rocket.transform.position = pargs.cameraTransform.position + pargs.cameraTransform.forward * 0.5F;
             rocket.transform.rotation = pargs.cameraTransform.rotation;
         }
     }

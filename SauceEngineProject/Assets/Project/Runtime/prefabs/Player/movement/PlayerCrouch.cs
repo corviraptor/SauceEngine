@@ -21,9 +21,7 @@ public class PlayerCrouch : MonoBehaviour, IAttachable
     void Crouch(){
         // 0 is uncrouched, 1 is failing to stand, 2 is crouching manually
         if (pm.margs.crouchState == 0){
-            if (pm.margs.hit.point.y < (pm.pargs.center - Vector3.up * (controller.height / 2)).y){
-                Uncrouch();
-            }
+            Uncrouch();
             return;
         }
         // is crouched if it gets past this

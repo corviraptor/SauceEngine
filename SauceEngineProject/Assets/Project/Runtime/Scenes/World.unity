@@ -2095,7 +2095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4c41ac9245b87c4192012080077d830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Damping: 0.02
+  m_Damping: 0
 --- !u!114 &1269077135
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -2915,6 +2915,10 @@ PrefabInstance:
       propertyPath: m_TranslationOffsets.Array.data[0].y
       value: -0.10695219
       objectReference: {fileID: 0}
+    - target: {fileID: 7331363644940089245, guid: 64411a349f8c810478b7673b7ccdf1d3, type: 3}
+      propertyPath: m_SkinWidth
+      value: 0.0001
+      objectReference: {fileID: 0}
     - target: {fileID: 7331363645153479025, guid: 64411a349f8c810478b7673b7ccdf1d3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3497,7 +3501,10 @@ MonoBehaviour:
   itemsToPool:
   - objectToPool: {fileID: 5504433046805047328, guid: d60e40ead04b18648b1e95948061728e, type: 3}
     amountToPool: 50
-    shouldExpand: 0
+    shouldExpand: 1
+  - objectToPool: {fileID: 1025588887709398542, guid: aed30f9963c8aa4449e08d5dff1e6cab, type: 3}
+    amountToPool: 200
+    shouldExpand: 1
   pooledObjects: []
 --- !u!1 &1728017728
 GameObject:

@@ -21,11 +21,11 @@ public class Stakegun : MonoBehaviour, IShootable
     bool loading;
 
 
-    float coolantDrain = 30;
     int startTime = 11;
     int magOutTime = 12;
     int magInTime = 17;
     int boltPullTime = 63;
+    float coolantDrain = 30;
     bool coolanting = false;
     float coolant = 100;
 
@@ -42,6 +42,9 @@ public class Stakegun : MonoBehaviour, IShootable
 
     void Update(){
         if (loadQueued || loadedRounds <= 0){ Reload(); }
+        if (coolant < 100 && !coolanting){
+            coolant += coolantDrain * 0.5F * Time.deltaTime;
+        }
     }
     
     public void Draw(int drawTime){
@@ -67,7 +70,19 @@ public class Stakegun : MonoBehaviour, IShootable
         }
     }
 
-    public void SecondaryFire(PlayerArgs pargs){}
+    public void SecondaryFire(PlayerArgs pargs){
+        loadQueued = false;
+        if (chambered && !loading && coolant > 10){
+            if (coolanting){
+                coolant -= coolantDrain * Time.deltaTime;
+                viewmodel.SetTrigger("Attack2Loop");
+            }
+            else {
+                coolanting = true;
+                viewmodel.SetTrigger("Attack2");
+            }
+        }
+    }
 
     IEnumerator Chamber(){
         yield return new WaitForSeconds(chamberTime / 60F);
@@ -76,7 +91,13 @@ public class Stakegun : MonoBehaviour, IShootable
 
     public void PrimaryRelease(){}
 
-    public void SecondaryRelease(){}
+    public void SecondaryRelease(){
+        Debug.Log("wawahhw");
+        if (coolanting){
+            coolanting = false;
+            viewmodel.SetTrigger("Attack2Release");
+        }
+    }
     
     public void Reload(){
         loadQueued = true;

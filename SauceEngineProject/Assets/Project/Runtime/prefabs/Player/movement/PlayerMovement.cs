@@ -316,8 +316,8 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
 
     RaycastHit roofHit;
     void UncrouchTest(){
-        //boxcast returns false if nothing was hit, cc.center.y + cc.height / 2 = the distance from the center that needs to be clear to stand up without getting stuck
-        if (Physics.BoxCast(center, Vector3.one * cc.radius, Vector3.up, out roofHit, Quaternion.identity, Mathf.Infinity, layerMask) && roofHit.distance < cc.center.y + cc.height / 2){
+        //boxcast returns false if nothing was hit. center.y + player.height / 4 is distance that needs to be cleared
+        if (Physics.BoxCast(center, Vector3.one * cc.radius, Vector3.up, out roofHit, Quaternion.identity, Mathf.Infinity, layerMask) && roofHit.distance < center.y + player.height / 4){
             //stops player from getting up while in too small of a space. uses BoxCast to prevent player from getting up at the edge of a roof and clipping it
             crouchState = 1;
             Crouch();
@@ -329,7 +329,7 @@ public class PlayerMovement : MonoBehaviour, IBlastible, IPlayerHandlerModule
 
         }
         else {
-            //this will only be called once, as once crouchState is 0 UncrouchTest will not be called by Update
+            //this will only be called once, as once crouchState is 0 UncrouchTest will not be called by Update. except maybe not idk
             crouchState = 0;
             Crouch();
         }
